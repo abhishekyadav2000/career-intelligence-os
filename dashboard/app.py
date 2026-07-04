@@ -58,6 +58,20 @@ from src.pipeline_engine import PIPELINE_STAGES, load_pipeline_cards, save_pipel
 from src.role_reasoning_engine import build_role_deep_dive, load_role_reasoning
 from src.schedule_engine import get_daily_plan, get_next_activities, load_launch_plan, mark_activity_done
 
+from dashboard.icc_state import (
+    CONVERSATION_TYPES,
+    INTERVIEW_STAGES,
+    build_company_options,
+    format_company_option,
+    format_job_option,
+    get_jobs_for_company,
+    init_icc_state,
+    on_company_change,
+    on_job_change,
+    resolve_icc_context,
+    set_target,
+)
+
 # ── Page config ───────────────────────────────────────────────────────────────
 
 st.set_page_config(
@@ -70,24 +84,38 @@ st.set_page_config(
 PROFESSIONAL_CSS = """
 <style>
     .ci-header {
-        background: linear-gradient(135deg, #1a2332 0%, #2d3a4f 100%);
-        padding: 1.5rem 2rem;
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        padding: 1.25rem 2rem;
         border-radius: 8px;
-        margin-bottom: 1.5rem;
-        border-left: 4px solid #4a90d9;
+        margin-bottom: 1.25rem;
+        border-left: 4px solid #2563eb;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
     .ci-header h1 {
-        color: #ffffff;
-        font-size: 1.75rem;
+        color: #f8fafc;
+        font-size: 1.65rem;
         font-weight: 600;
-        margin: 0 0 0.25rem 0;
+        margin: 0 0 0.2rem 0;
         letter-spacing: -0.02em;
     }
     .ci-header p {
-        color: #b8c5d6;
-        font-size: 0.95rem;
+        color: #cbd5e1;
+        font-size: 0.9rem;
         margin: 0;
     }
+    .ci-header-meta {
+        text-align: right;
+        color: #94a3b8;
+        font-size: 0.8rem;
+    }
+    .ci-breadcrumb {
+        color: #64748b;
+        font-size: 0.85rem;
+        margin-bottom: 0.75rem;
+    }
+    .ci-breadcrumb strong { color: #2563eb; }
     .status-badge {
         display: inline-block;
         padding: 0.15rem 0.6rem;
@@ -97,49 +125,62 @@ PROFESSIONAL_CSS = """
         text-transform: uppercase;
         letter-spacing: 0.04em;
     }
-    .status-verified { background: #1e3a2f; color: #6ee7b7; }
-    .status-partial { background: #3a3520; color: #fcd34d; }
-    .status-placeholder { background: #2a2a2a; color: #9ca3af; }
-    .status-needs_verification { background: #3a2020; color: #fca5a5; }
-    .confidence-verified_public { background: #1e3a2f; color: #6ee7b7; }
-    .confidence-user_verified { background: #1a3348; color: #7dd3fc; }
-    .confidence-source_backed { background: #2a3520; color: #bef264; }
-    .confidence-hypothesis { background: #3a3520; color: #fcd34d; }
-    .confidence-placeholder { background: #2a2a2a; color: #9ca3af; }
-    .confidence-stale { background: #3a2020; color: #fca5a5; }
+    .status-verified { background: #064e3b; color: #6ee7b7; }
+    .status-partial { background: #78350f; color: #fcd34d; }
+    .status-placeholder { background: #334155; color: #94a3b8; }
+    .status-needs_verification { background: #7f1d1d; color: #fca5a5; }
+    .confidence-verified_public { background: #064e3b; color: #6ee7b7; }
+    .confidence-user_verified { background: #1e3a5f; color: #7dd3fc; }
+    .confidence-source_backed { background: #365314; color: #bef264; }
+    .confidence-hypothesis { background: #78350f; color: #fcd34d; }
+    .confidence-placeholder { background: #334155; color: #94a3b8; }
+    .confidence-stale { background: #7f1d1d; color: #fca5a5; }
     .mc-panel {
-        background: #1a2332;
-        padding: 1rem 1.5rem;
+        background: #0f172a;
+        padding: 1.25rem 1.5rem;
         border-radius: 8px;
-        border: 1px solid #333;
+        border: 1px solid #334155;
         margin-bottom: 1rem;
     }
-    .health-green { color: #34d399; font-weight: 600; }
-    .health-yellow { color: #fbbf24; font-weight: 600; }
-    .health-red { color: #f87171; font-weight: 600; }
+    .sync-indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.8rem;
+        color: #059669;
+        font-weight: 500;
+    }
+    .sync-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #059669;
+        display: inline-block;
+    }
+    .health-green { color: #059669; font-weight: 600; }
+    .health-yellow { color: #d97706; font-weight: 600; }
+    .health-red { color: #dc2626; font-weight: 600; }
     .ci-footer {
         margin-top: 3rem;
         padding-top: 1rem;
-        border-top: 1px solid #333;
-        color: #888;
+        border-top: 1px solid #334155;
+        color: #64748b;
         font-size: 0.8rem;
     }
     div[data-testid="stMetric"] {
-        background: #1a1a1a;
+        background: #0f172a;
         padding: 0.75rem 1rem;
         border-radius: 6px;
-        border: 1px solid #333;
+        border: 1px solid #334155;
+    }
+    .sidebar-stat {
+        font-size: 0.85rem;
+        color: #94a3b8;
+        margin: 0.15rem 0;
     }
 </style>
 """
 st.markdown(PROFESSIONAL_CSS, unsafe_allow_html=True)
-
-ICC_COMPANIES = ["JPMorgan Chase", "Citi", "Capital One", "Toyota Motor North America", "AT&T"]
-CONVERSATION_TYPES = ["recruiter", "hiring manager", "peer", "alumni", "informational"]
-INTERVIEW_STAGES = [
-    "initial outreach", "recruiter screen", "hiring manager screen",
-    "technical interview", "final round", "follow-up",
-]
 
 STATUS_LABELS = {
     "verified": ("Verified", "status-verified"),
@@ -210,10 +251,16 @@ def copy_to_clipboard_button(text: str, key: str) -> None:
 # ── Header ────────────────────────────────────────────────────────────────────
 
 st.markdown(
-    """
+    f"""
     <div class="ci-header">
-        <h1>Career Intelligence OS</h1>
-        <p>Sponsor-aware career intelligence for enterprise technology roles</p>
+        <div>
+            <h1>Career Intelligence OS</h1>
+            <p>Sponsor-aware career intelligence for enterprise technology roles</p>
+        </div>
+        <div class="ci-header-meta">
+            v{__version__}<br>
+            Enterprise Dashboard
+        </div>
     </div>
     """,
     unsafe_allow_html=True,
@@ -286,10 +333,22 @@ card_by_job = {c["job_id"]: c for c in mc_cards}
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────
 
+st.sidebar.header("System")
+with st.sidebar.container(border=True):
+    st.markdown("**Quick Stats**")
+    st.markdown(f'<p class="sidebar-stat">{len(companies_df)} companies loaded</p>', unsafe_allow_html=True)
+    st.markdown(f'<p class="sidebar-stat">{len(jobs_df)} active roles</p>', unsafe_allow_html=True)
+    st.markdown(f'<p class="sidebar-stat">{len(mc_cards)} pipeline cards</p>', unsafe_allow_html=True)
+    if not profiles_df.empty and "last_updated" in profiles_df.columns:
+        last_updated = profiles_df["last_updated"].dropna().max()
+        if last_updated:
+            st.caption(f"Data last updated: {last_updated}")
+
+st.sidebar.divider()
 st.sidebar.header("Filters")
 industry_opts = sorted(companies_df["industry"].unique())
 industry_filter = st.sidebar.multiselect("Industry", options=industry_opts, default=industry_opts)
-company_filter = st.sidebar.selectbox("Company", options=["All"] + sorted(companies_df["company"].unique()))
+company_filter = st.sidebar.selectbox("Overview Filter", options=["All"] + sorted(companies_df["company"].unique()))
 action_filter = st.sidebar.multiselect(
     "Recommendation",
     options=["apply now", "network first", "research more", "skip/watchlist"],
@@ -327,80 +386,183 @@ with st.sidebar.expander("System Status", expanded=False):
         icon = render_health_indicator(check["status"])
         st.markdown(f"{icon} {check['step']}: {check['detail']}", unsafe_allow_html=True)
 
+def _export_brief_from_panel():
+    if st.session_state.icc_company_id and st.session_state.icc_job_id:
+        brief = generate_conversation_brief(
+            st.session_state.icc_company_id,
+            st.session_state.icc_job_id,
+            jobs_df,
+            st.session_state.icc_person_type,
+            st.session_state.icc_interview_stage,
+        )
+        st.session_state.current_brief = brief
+        st.session_state.brief_markdown = export_brief_markdown(brief)
+
+
 # ── ICC global selectors (session state) ─────────────────────────────────────
 
-if "icc_company" not in st.session_state:
-    st.session_state.icc_company = ICC_COMPANIES[0]
-if "current_brief" not in st.session_state:
-    st.session_state.current_brief = None
-if "brief_markdown" not in st.session_state:
-    st.session_state.brief_markdown = ""
+init_icc_state(st.session_state, companies_df, jobs_df)
 
-st.subheader("Selected Target")
-st.caption("Persistent context for Mission Control and Interview Command Center tabs.")
+st.sidebar.divider()
+st.sidebar.header("Company Search")
+st.sidebar.caption("Filter the global target selector below.")
+st.sidebar.text_input(
+    "Search companies",
+    placeholder="e.g. JPMorgan, Dell, finance…",
+    key="icc_company_search",
+)
 
-icc_col1, icc_col2, icc_col3, icc_col4 = st.columns(4)
+company_options = build_company_options(
+    companies_df, company_rank_df, st.session_state.icc_company_search,
+)
+total_companies = len(companies_df)
+shown_count = len(company_options)
 
-with icc_col1:
-    icc_company_name = st.selectbox("Target Company", options=ICC_COMPANIES, key="icc_company")
-with icc_col2:
-    company_jobs = jobs_df[jobs_df["company_name"] == icc_company_name].sort_values("title")
-    icc_job_options = company_jobs["job_id"].tolist()
-    if not icc_job_options:
-        icc_job_options = jobs_df["job_id"].tolist()[:1]
-    icc_job_id = st.selectbox(
-        "Target Role",
-        options=icc_job_options,
-        format_func=lambda jid: f"{jobs_df[jobs_df['job_id']==jid]['title'].values[0]} ({jid})",
-        key="icc_job",
-    )
-with icc_col3:
-    icc_conversation_type = st.selectbox("Conversation Type", options=CONVERSATION_TYPES, index=1, key="icc_conv_type")
-with icc_col4:
-    icc_interview_stage = st.selectbox("Interview Stage", options=INTERVIEW_STAGES, index=2, key="icc_stage")
+if not company_options:
+    company_options = build_company_options(companies_df, company_rank_df)
+    shown_count = len(company_options)
 
-icc_company_row = companies_df[companies_df["company_name"] == icc_company_name]
-icc_company_id = icc_company_row.iloc[0]["company_id"] if not icc_company_row.empty else ""
-icc_job_row = jobs_df[jobs_df["job_id"] == icc_job_id].iloc[0] if icc_job_id else None
+if st.session_state.icc_company_id not in company_options and company_options:
+    st.session_state.icc_company_id = company_options[0]
+    on_company_change(st.session_state, companies_df, jobs_df)
+
+def _handle_company_change():
+    on_company_change(st.session_state, companies_df, jobs_df)
+
+def _handle_job_change():
+    on_job_change(st.session_state, jobs_df)
+
+icc_ctx = resolve_icc_context(st.session_state, companies_df, jobs_df)
+icc_company_id = icc_ctx["company_id"]
+icc_company_name = icc_ctx["company_name"]
+icc_job_id = icc_ctx["job_id"]
+icc_job_row = icc_ctx["job_row"]
+icc_person_type = icc_ctx["person_type"]
+icc_interview_stage = icc_ctx["interview_stage"]
+selection_complete = icc_ctx["selection_complete"]
 selected_card = card_by_job.get(icc_job_id, {})
 
-st.markdown('<div class="mc-panel">', unsafe_allow_html=True)
-st_col1, st_col2, st_col3, st_col4, st_col5 = st.columns(5)
-job_title = icc_job_row["title"] if icc_job_row is not None else "N/A"
-st_col1.metric("Company", icc_company_name)
-st_col2.metric("Role", job_title[:28] + ("…" if len(job_title) > 28 else ""))
-st_col3.metric("Contact Type", selected_card.get("contact_type", icc_conversation_type))
-st_col4.metric("Pipeline Stage", selected_card.get("pipeline_stage", "—"))
-st_col5.metric("Priority", selected_card.get("priority_score", "—"))
+with st.container(border=True):
+    st.subheader("Selected Target")
+    count_label = f"{shown_count} of {total_companies} companies"
+    if st.session_state.icc_company_search.strip():
+        count_label += f" matching \"{st.session_state.icc_company_search.strip()}\""
+    st.caption(f"Persistent context synced across all tabs · {count_label}")
+    st.markdown(
+        f'<p class="ci-breadcrumb">Mission Control &rsaquo; '
+        f'<strong>{icc_company_name or "Select company"}</strong> &rsaquo; '
+        f'{icc_ctx["job_title"] or "Select role"}</p>',
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        '<span class="sync-indicator"><span class="sync-dot"></span>Synced across all views</span>',
+        unsafe_allow_html=True,
+    )
 
-panel_a, panel_b = st.columns([2, 1])
-with panel_a:
-    st.write(f"**Next action:** {selected_card.get('next_action', 'Select a role and review Mission Control queue')}")
-    proof_title = selected_card.get("proof_asset_title", "")
-    if proof_title:
-        conf = selected_card.get("data_confidence", "placeholder")
-        st.markdown(
-            f"**Proof asset:** {proof_title} {render_confidence_badge(conf)}",
-            unsafe_allow_html=True,
+    icc_col1, icc_col2, icc_col3, icc_col4 = st.columns(4)
+
+    with icc_col1:
+        st.selectbox(
+            f"Target Company ({total_companies} total)",
+            options=company_options,
+            format_func=lambda cid: format_company_option(cid, companies_df),
+            key="icc_company_id",
+            on_change=_handle_company_change,
+            help="All DFW Top-50 companies sorted by priority score.",
         )
-with panel_b:
-    if st.button("Export Brief", key="panel_export_brief", type="primary"):
-        if icc_company_id and icc_job_id:
-            st.session_state.current_brief = generate_conversation_brief(
-                icc_company_id, icc_job_id, jobs_df,
-                icc_conversation_type, icc_interview_stage,
+    with icc_col2:
+        company_jobs = get_jobs_for_company(icc_company_id, jobs_df)
+        icc_job_options = company_jobs["job_id"].tolist()
+        if not icc_job_options:
+            st.selectbox("Target Role", options=["—"], disabled=True, help="No roles for this company.")
+            icc_job_id = ""
+        else:
+            if icc_job_id not in icc_job_options:
+                st.session_state.icc_job_id = icc_job_options[0]
+                on_job_change(st.session_state, jobs_df)
+                icc_job_id = st.session_state.icc_job_id
+            st.selectbox(
+                f"Target Role ({len(icc_job_options)} roles)",
+                options=icc_job_options,
+                format_func=lambda jid: format_job_option(jid, jobs_df),
+                key="icc_job_id",
+                on_change=_handle_job_change,
+                help="All open roles for the selected company.",
             )
-            st.session_state.brief_markdown = export_brief_markdown(st.session_state.current_brief)
-            st.success("Brief generated — see Command Center tab.")
+            icc_job_id = st.session_state.icc_job_id
+            icc_job_row = jobs_df[jobs_df["job_id"] == icc_job_id].iloc[0]
+    with icc_col3:
+        st.selectbox(
+            "Conversation Type",
+            options=CONVERSATION_TYPES,
+            key="icc_person_type",
+            help="Contact persona for brief and people map ranking.",
+        )
+        icc_person_type = st.session_state.icc_person_type
+    with icc_col4:
+        st.selectbox(
+            "Interview Stage",
+            options=INTERVIEW_STAGES,
+            key="icc_interview_stage",
+            help="Stage-specific talking points and next actions.",
+        )
+        icc_interview_stage = st.session_state.icc_interview_stage
 
-with st.expander("Quick links to related views"):
-    ql1, ql2, ql3 = st.columns(3)
-    ql1.caption("Company 360 · People Map · Proof Assets tabs")
-    ql2.caption(f"Stage: {icc_interview_stage} · Type: {icc_conversation_type}")
-    ql3.caption(f"Recommendation: {selected_card.get('recommendation_action', '—')}")
+    if not selection_complete:
+        st.info("Select a company and role to unlock Company 360, People Map, Role Deep Dive, and Proof Assets.")
 
-st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown('<div class="mc-panel">', unsafe_allow_html=True)
+    st_col1, st_col2, st_col3, st_col4, st_col5 = st.columns(5)
+    job_title = icc_job_row["title"] if icc_job_row is not None else "—"
+    st_col1.metric("Company", icc_company_name or "—")
+    st_col2.metric("Role", job_title[:28] + ("…" if len(str(job_title)) > 28 else ""))
+    st_col3.metric("Contact Type", selected_card.get("contact_type", icc_person_type))
+    st_col4.metric("Pipeline Stage", selected_card.get("pipeline_stage", "—"))
+    st_col5.metric("Priority", selected_card.get("priority_score", "—"))
+
+    panel_a, panel_b = st.columns([2, 1])
+    with panel_a:
+        st.write(f"**Next action:** {selected_card.get('next_action', 'Select a role and review Mission Control queue')}")
+        proof_title = selected_card.get("proof_asset_title", "")
+        if proof_title:
+            conf = selected_card.get("data_confidence", "placeholder")
+            st.markdown(
+                f"**Proof asset:** {proof_title} {render_confidence_badge(conf)}",
+                unsafe_allow_html=True,
+            )
+    with panel_b:
+        st.button(
+            "Export Brief",
+            key="panel_export_brief",
+            type="primary",
+            disabled=not selection_complete,
+            help="Generate a conversation brief for the selected company and role.",
+            on_click=_export_brief_from_panel,
+        )
+
+    with st.expander("Quick links to related views"):
+        ql1, ql2, ql3 = st.columns(3)
+        ql1.caption("Company 360 · People Map · Proof Assets tabs")
+        ql2.caption(f"Stage: {icc_interview_stage} · Type: {icc_person_type}")
+        ql3.caption(f"Recommendation: {selected_card.get('recommendation_action', '—')}")
+
+    st.markdown("</div>", unsafe_allow_html=True)
+
 st.divider()
+
+def _sync_role_fit_job():
+    selected = st.session_state.role_fit_job
+    job_row_sel = jobs_df[jobs_df["job_id"] == selected]
+    if not job_row_sel.empty:
+        set_target(st.session_state, job_row_sel.iloc[0]["company_id"], selected, companies_df, jobs_df)
+
+
+def _sync_interview_job():
+    selected = st.session_state.int_job
+    job_row_sel = jobs_df[jobs_df["job_id"] == selected]
+    if not job_row_sel.empty:
+        set_target(st.session_state, job_row_sel.iloc[0]["company_id"], selected, companies_df, jobs_df)
+
 
 # ── Tabs ──────────────────────────────────────────────────────────────────────
 
@@ -497,6 +659,20 @@ def tab_mission_control():
     if not targets_df.empty:
         tcols = ["priority_score", "company_name", "job_title", "pipeline_stage", "recommendation_action", "data_confidence"]
         st.dataframe(targets_df[[c for c in tcols if c in targets_df.columns]], use_container_width=True, hide_index=True)
+        st.caption("Set global target from a pipeline card:")
+        for idx, row in targets_df.head(5).iterrows():
+            label = f"{row.get('company_name', '')[:20]} — {row.get('job_title', '')[:24]}"
+            if st.button(label, key=f"mc_target_{row.get('job_id', idx)}"):
+                job_row = jobs_df[jobs_df["job_id"] == row.get("job_id")]
+                if not job_row.empty:
+                    set_target(
+                        st.session_state,
+                        job_row.iloc[0]["company_id"],
+                        row.get("job_id"),
+                        companies_df,
+                        jobs_df,
+                    )
+                    st.rerun()
 
     st.divider()
     col_r, col_b = st.columns(2)
@@ -564,19 +740,19 @@ def tab_mission_control():
 
 def tab_command_center():
     st.subheader("Interview Command Center")
-    job_title = icc_job_row["title"] if icc_job_row is not None else "N/A"
-    st.caption(f"{icc_company_name} · {job_title} · {icc_conversation_type} · {icc_interview_stage}")
+    job_title = icc_job_row["title"] if icc_job_row is not None else "—"
+    st.caption(f"{icc_company_name} · {job_title} · {icc_person_type} · {icc_interview_stage}")
 
     btn_col1, btn_col2, btn_col3 = st.columns(3)
     with btn_col1:
-        if st.button("Generate Brief", type="primary", key="gen_brief"):
+        if st.button("Generate Brief", type="primary", key="gen_brief", disabled=not selection_complete):
             st.session_state.current_brief = generate_conversation_brief(
                 icc_company_id, icc_job_id, jobs_df,
-                icc_conversation_type, icc_interview_stage,
+                icc_person_type, icc_interview_stage,
             )
             st.session_state.brief_markdown = export_brief_markdown(st.session_state.current_brief)
     with btn_col2:
-        if st.button("Save Brief", key="save_brief"):
+        if st.button("Save Brief", key="save_brief", disabled=not st.session_state.current_brief):
             if st.session_state.current_brief:
                 path = save_conversation_brief(st.session_state.current_brief, st.session_state.brief_markdown)
                 st.success(f"Saved to {path}")
@@ -587,14 +763,17 @@ def tab_command_center():
             st.download_button(
                 "Download Markdown",
                 st.session_state.brief_markdown,
-                file_name=f"brief_{icc_job_id}_{icc_conversation_type.replace(' ', '_')}.md",
+                file_name=f"brief_{icc_job_id}_{icc_person_type.replace(' ', '_')}.md",
                 mime="text/markdown",
                 key="dl_brief",
             )
 
     brief = st.session_state.current_brief
     if not brief:
-        st.info("Select a company and role above, then click **Generate Brief** to build a seven-section conversation package.")
+        if not selection_complete:
+            st.info("Select a company and role in **Selected Target** above to enable brief generation.")
+        else:
+            st.info("Click **Generate Brief** to build a seven-section conversation package.")
         return
 
     readiness = score_brief_completeness(brief)
@@ -747,7 +926,7 @@ def tab_people_map():
                 "No verified contact — add research_sources careers_portal row or people_map entry."
             )
     else:
-        ranked = rank_contacts_for_conversation(icc_company_id, icc_conversation_type, icc_interview_stage, people_df)
+        ranked = rank_contacts_for_conversation(icc_company_id, icc_person_type, icc_interview_stage, people_df)
         ranked = [p for p in ranked if p["contact_type"] in pm_filter]
         display_rows = []
         for p in ranked:
@@ -840,7 +1019,7 @@ def tab_proof_assets():
         for a in match_assets_to_role(icc_job_id, proof_df, jobs_df)[:5]:
             st.write(f"- {a['title']} (score: {a['match_score']})")
     with st.expander("Interview Packet Research Prompt"):
-        st.code(generate_interview_packet_prompt(icc_company_id, icc_job_id, jobs_df, icc_conversation_type), language="markdown")
+        st.code(generate_interview_packet_prompt(icc_company_id, icc_job_id, jobs_df, icc_person_type), language="markdown")
 
 
 def tab_overview():
@@ -865,9 +1044,17 @@ def tab_overview():
 
 def tab_company_ranking():
     st.subheader("Company Priority Ranking")
+    st.caption(f"Global target: **{icc_company_name}** · Click a row context in Mission Control to sync selection.")
+    display_rank = company_rank_df.copy()
+    display_rank["selected"] = display_rank["company"] == icc_company_name
     st.dataframe(
-        company_rank_df[["company", "industry", "location", "priority_score", "priority_label", "job_count", "contact_count"]],
-        use_container_width=True, hide_index=True,
+        display_rank[["company", "industry", "location", "priority_score", "priority_label", "job_count", "contact_count", "selected"]],
+        use_container_width=True,
+        hide_index=True,
+        column_config={
+            "selected": st.column_config.CheckboxColumn("Target", disabled=True),
+            "priority_score": st.column_config.NumberColumn("Priority", format="%.1f"),
+        },
     )
     st.bar_chart(company_rank_df.set_index("company")["priority_score"].head(15))
 
@@ -888,6 +1075,7 @@ def tab_role_fit():
         index=role_fit_jobs.index(default_job) if default_job in role_fit_jobs else 0,
         format_func=lambda jid: f"{scores_df[scores_df['job_id']==jid]['title'].values[0]} @ {scores_df[scores_df['job_id']==jid]['company'].values[0]}",
         key="role_fit_job",
+        on_change=_sync_role_fit_job,
     )
     detail = next(s for s in scores if s["job_id"] == selected)
     st.write(f"**{detail['fit_label']}** ({detail['fit_score']}/100)")
@@ -943,6 +1131,7 @@ def tab_interview_prep():
         index=int_jobs.index(int_default) if int_default in int_jobs else 0,
         format_func=lambda jid: f"{scores_df[scores_df['job_id']==jid]['title'].values[0]} @ {scores_df[scores_df['job_id']==jid]['company'].values[0]}",
         key="int_job",
+        on_change=_sync_interview_job,
     )
     prep = next(i for i in interviews if i["job_id"] == int_job)
     for section, key in [("Technical", "technical_topics"), ("Business", "business_topics"), ("Behavioral", "behavioral_topics")]:
@@ -1052,6 +1241,7 @@ st.markdown(
     f"""
     <div class="ci-footer">
         Career Intelligence OS v{__version__} · Internal research tool ·
+        {total_companies} companies · {len(jobs_df)} roles ·
         Data derived from structured CSV sources · Verify all contact and company information independently ·
         Not affiliated with any employer listed
     </div>
