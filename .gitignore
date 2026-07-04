@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# Data / DB
+data/career_intel.db
+*.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+.DS_Store
+
+# Streamlit
+.streamlit/secrets.toml

@@ -1,0 +1,76 @@
+contact_id,company_id,company_name,contact_type,persona,name,linkedin_search,priority_tier,status
+CT0001,C001,JPMorgan Chase,recruiter,Talent Acquisition Partner,Sample Talent 1,"""JPMorgan Chase"" ""Talent Acquisition Partner"" ""Plano""",Tier 1 - attack first,replied
+CT0002,C001,JPMorgan Chase,hiring_manager,Engineering Manager,Sample Engineering 2,"""JPMorgan Chase"" ""Engineering Manager"" ""Plano""",Tier 1 - attack first,not_contacted
+CT0003,C001,JPMorgan Chase,alumni,UNT Alumni - Technology Analyst,Sample UNT 3,"""JPMorgan Chase"" ""UNT Alumni - Technology Analyst"" ""Plano""",Tier 1 - attack first,not_contacted
+CT0004,C002,Goldman Sachs,recruiter,Talent Acquisition Partner,Sample Talent 4,"""Goldman Sachs"" ""Talent Acquisition Partner"" ""Dallas""",Tier 1 - attack first,replied
+CT0005,C002,Goldman Sachs,hiring_manager,Engineering Manager,Sample Engineering 5,"""Goldman Sachs"" ""Engineering Manager"" ""Dallas""",Tier 1 - attack first,not_contacted
+CT0006,C002,Goldman Sachs,peer,Cloud Engineer,Sample Cloud 6,"""Goldman Sachs"" ""Cloud Engineer"" ""Dallas""",Tier 1 - attack first,messaged
+CT0007,C003,Bank of America,recruiter,University Recruiter,Sample University 7,"""Bank of America"" ""University Recruiter"" ""Dallas""",Tier 1 - attack first,not_contacted
+CT0008,C003,Bank of America,hiring_manager,Technology Risk Manager,Sample Technology 8,"""Bank of America"" ""Technology Risk Manager"" ""Dallas""",Tier 1 - attack first,not_contacted
+CT0009,C003,Bank of America,alumni,UNT Alumni - Cloud Engineer,Sample UNT 9,"""Bank of America"" ""UNT Alumni - Cloud Engineer"" ""Dallas""",Tier 1 - attack first,not_contacted
+CT0010,C004,Citi,recruiter,University Recruiter,Sample University 10,"""Citi"" ""University Recruiter"" ""Irving""",Tier 1 - attack first,not_contacted
+CT0011,C004,Citi,hiring_manager,Technology Risk Manager,Sample Technology 11,"""Citi"" ""Technology Risk Manager"" ""Irving""",Tier 1 - attack first,replied
+CT0012,C004,Citi,peer,Data Analyst,Sample Data 12,"""Citi"" ""Data Analyst"" ""Irving""",Tier 1 - attack first,not_contacted
+CT0013,C005,Charles Schwab,recruiter,University Recruiter,Sample University 13,"""Charles Schwab"" ""University Recruiter"" ""Westlake""",Tier 1 - attack first,not_contacted
+CT0014,C005,Charles Schwab,hiring_manager,Data Platform Manager,Sample Data 14,"""Charles Schwab"" ""Data Platform Manager"" ""Westlake""",Tier 1 - attack first,not_contacted
+CT0015,C005,Charles Schwab,peer,Security Engineer,Sample Security 15,"""Charles Schwab"" ""Security Engineer"" ""Westlake""",Tier 1 - attack first,not_contacted
+CT0016,C006,Capital One,recruiter,Technical Recruiter,Sample Technical 16,"""Capital One"" ""Technical Recruiter"" ""Plano""",Tier 1 - attack first,replied
+CT0017,C006,Capital One,hiring_manager,Engineering Manager,Sample Engineering 17,"""Capital One"" ""Engineering Manager"" ""Plano""",Tier 1 - attack first,not_contacted
+CT0018,C006,Capital One,peer,Data Analyst,Sample Data 18,"""Capital One"" ""Data Analyst"" ""Plano""",Tier 1 - attack first,not_contacted
+CT0019,C007,Toyota Motor North America,recruiter,Technical Recruiter,Sample Technical 19,"""Toyota Motor North America"" ""Technical Recruiter"" ""Plano""",Tier 1 - attack first,messaged
+CT0020,C007,Toyota Motor North America,hiring_manager,Engineering Manager,Sample Engineering 20,"""Toyota Motor North America"" ""Engineering Manager"" ""Plano""",Tier 1 - attack first,not_contacted
+CT0021,C007,Toyota Motor North America,alumni,UNT Alumni - MIS Graduate,Sample UNT 21,"""Toyota Motor North America"" ""UNT Alumni - MIS Graduate"" ""Plano""",Tier 1 - attack first,messaged
+CT0022,C008,AT&T,recruiter,University Recruiter,Sample University 22,"""AT&T"" ""University Recruiter"" ""Dallas""",Tier 1 - attack first,messaged
+CT0023,C008,AT&T,hiring_manager,Data Platform Manager,Sample Data 23,"""AT&T"" ""Data Platform Manager"" ""Dallas""",Tier 1 - attack first,replied
+CT0024,C008,AT&T,alumni,UNT Alumni - MIS Graduate,Sample UNT 24,"""AT&T"" ""UNT Alumni - MIS Graduate"" ""Dallas""",Tier 1 - attack first,not_contacted
+CT0025,C009,Ericsson,recruiter,University Recruiter,Sample University 25,"""Ericsson"" ""University Recruiter"" ""Plano""",Tier 1 - attack first,not_contacted
+CT0026,C009,Ericsson,hiring_manager,Cybersecurity Manager,Sample Cybersecurity 26,"""Ericsson"" ""Cybersecurity Manager"" ""Plano""",Tier 1 - attack first,not_contacted
+CT0027,C009,Ericsson,alumni,UNT Alumni - Cloud Engineer,Sample UNT 27,"""Ericsson"" ""UNT Alumni - Cloud Engineer"" ""Plano""",Tier 1 - attack first,not_contacted
+CT0028,C010,NTT DATA,recruiter,Talent Acquisition Partner,Sample Talent 28,"""NTT DATA"" ""Talent Acquisition Partner"" ""Plano""",Tier 1 - attack first,not_contacted
+CT0029,C010,NTT DATA,hiring_manager,Technology Risk Manager,Sample Technology 29,"""NTT DATA"" ""Technology Risk Manager"" ""Plano""",Tier 1 - attack first,not_contacted
+CT0030,C010,NTT DATA,alumni,UNT Alumni - Technology Analyst,Sample UNT 30,"""NTT DATA"" ""UNT Alumni - Technology Analyst"" ""Plano""",Tier 1 - attack first,messaged
+CT0031,C011,Samsung Electronics America / Samsung Austin Semiconductor,recruiter,Technical Recruiter,Sample Technical 31,"""Samsung Electronics America / Samsung Austin Semiconductor"" ""Technical Recruiter"" ""Plano""",Tier 1 - attack first,not_contacted
+CT0032,C011,Samsung Electronics America / Samsung Austin Semiconductor,hiring_manager,Technology Risk Manager,Sample Technology 32,"""Samsung Electronics America / Samsung Austin Semiconductor"" ""Technology Risk Manager"" ""Plano""",Tier 1 - attack first,not_contacted
+CT0033,C011,Samsung Electronics America / Samsung Austin Semiconductor,peer,Cloud Engineer,Sample Cloud 33,"""Samsung Electronics America / Samsung Austin Semiconductor"" ""Cloud Engineer"" ""Plano""",Tier 1 - attack first,not_contacted
+CT0034,C012,KPMG,recruiter,Talent Acquisition Partner,Sample Talent 34,"""KPMG"" ""Talent Acquisition Partner"" ""Dallas""",Tier 1 - attack first,replied
+CT0035,C012,KPMG,hiring_manager,Technology Risk Manager,Sample Technology 35,"""KPMG"" ""Technology Risk Manager"" ""Dallas""",Tier 1 - attack first,not_contacted
+CT0036,C012,KPMG,peer,Security Engineer,Sample Security 36,"""KPMG"" ""Security Engineer"" ""Dallas""",Tier 1 - attack first,replied
+CT0037,C013,Deloitte,recruiter,Technical Recruiter,Sample Technical 37,"""Deloitte"" ""Technical Recruiter"" ""Dallas""",Tier 1 - attack first,messaged
+CT0038,C013,Deloitte,hiring_manager,Data Platform Manager,Sample Data 38,"""Deloitte"" ""Data Platform Manager"" ""Dallas""",Tier 1 - attack first,not_contacted
+CT0039,C013,Deloitte,peer,Data Analyst,Sample Data 39,"""Deloitte"" ""Data Analyst"" ""Dallas""",Tier 1 - attack first,not_contacted
+CT0040,C014,Accenture,recruiter,Talent Acquisition Partner,Sample Talent 40,"""Accenture"" ""Talent Acquisition Partner"" ""Dallas""",Tier 1 - attack first,not_contacted
+CT0041,C014,Accenture,hiring_manager,Data Platform Manager,Sample Data 41,"""Accenture"" ""Data Platform Manager"" ""Dallas""",Tier 1 - attack first,not_contacted
+CT0042,C014,Accenture,peer,Cloud Engineer,Sample Cloud 42,"""Accenture"" ""Cloud Engineer"" ""Dallas""",Tier 1 - attack first,not_contacted
+CT0043,C015,Cognizant,recruiter,University Recruiter,Sample University 43,"""Cognizant"" ""University Recruiter"" ""DFW""",Tier 1 - attack first,messaged
+CT0044,C015,Cognizant,hiring_manager,Technology Risk Manager,Sample Technology 44,"""Cognizant"" ""Technology Risk Manager"" ""DFW""",Tier 1 - attack first,replied
+CT0045,C015,Cognizant,peer,Data Analyst,Sample Data 45,"""Cognizant"" ""Data Analyst"" ""DFW""",Tier 1 - attack first,not_contacted
+CT0046,C016,Infosys,recruiter,University Recruiter,Sample University 46,"""Infosys"" ""University Recruiter"" ""Richardson""",Tier 1 - attack first,replied
+CT0047,C016,Infosys,hiring_manager,Cybersecurity Manager,Sample Cybersecurity 47,"""Infosys"" ""Cybersecurity Manager"" ""Richardson""",Tier 1 - attack first,not_contacted
+CT0048,C016,Infosys,alumni,UNT Alumni - MIS Graduate,Sample UNT 48,"""Infosys"" ""UNT Alumni - MIS Graduate"" ""Richardson""",Tier 1 - attack first,not_contacted
+CT0049,C017,Oracle,recruiter,Talent Acquisition Partner,Sample Talent 49,"""Oracle"" ""Talent Acquisition Partner"" ""Austin""",Tier 2 - strong sponsor / verify DFW,replied
+CT0050,C018,Tesla,recruiter,Talent Acquisition Partner,Sample Talent 50,"""Tesla"" ""Talent Acquisition Partner"" ""Austin""",Tier 2 - TX sponsor / DFW uncertain,not_contacted
+CT0051,C019,Hewlett Packard Enterprise,recruiter,Talent Acquisition Partner,Sample Talent 51,"""Hewlett Packard Enterprise"" ""Talent Acquisition Partner"" ""Plano""",Tier 2 - strong sponsor / verify roles,replied
+CT0052,C020,Dell Technologies / Dell USA / Dell Products,recruiter,University Recruiter,Sample University 52,"""Dell Technologies / Dell USA / Dell Products"" ""University Recruiter"" ""Round Rock""",Tier 2 - strong sponsor / TX,not_contacted
+CT0053,C021,Texas Instruments,recruiter,Technical Recruiter,Sample Technical 53,"""Texas Instruments"" ""Technical Recruiter"" ""Dallas""",Tier 1 - attack first,not_contacted
+CT0054,C021,Texas Instruments,hiring_manager,Engineering Manager,Sample Engineering 54,"""Texas Instruments"" ""Engineering Manager"" ""Dallas""",Tier 1 - attack first,not_contacted
+CT0055,C021,Texas Instruments,alumni,UNT Alumni - MIS Graduate,Sample UNT 55,"""Texas Instruments"" ""UNT Alumni - MIS Graduate"" ""Dallas""",Tier 1 - attack first,not_contacted
+CT0056,C022,American Airlines,recruiter,Talent Acquisition Partner,Sample Talent 56,"""American Airlines"" ""Talent Acquisition Partner"" ""Fort Worth""",Tier 1 - attack first,not_contacted
+CT0057,C022,American Airlines,hiring_manager,Data Platform Manager,Sample Data 57,"""American Airlines"" ""Data Platform Manager"" ""Fort Worth""",Tier 1 - attack first,not_contacted
+CT0058,C022,American Airlines,peer,Data Analyst,Sample Data 58,"""American Airlines"" ""Data Analyst"" ""Fort Worth""",Tier 1 - attack first,replied
+CT0059,C023,Southwest Airlines,recruiter,Technical Recruiter,Sample Technical 59,"""Southwest Airlines"" ""Technical Recruiter"" ""Dallas""",Tier 1 - attack first,not_contacted
+CT0060,C023,Southwest Airlines,hiring_manager,Engineering Manager,Sample Engineering 60,"""Southwest Airlines"" ""Engineering Manager"" ""Dallas""",Tier 1 - attack first,not_contacted
+CT0061,C023,Southwest Airlines,alumni,UNT Alumni - MIS Graduate,Sample UNT 61,"""Southwest Airlines"" ""UNT Alumni - MIS Graduate"" ""Dallas""",Tier 1 - attack first,not_contacted
+CT0062,C024,McKesson,recruiter,Technical Recruiter,Sample Technical 62,"""McKesson"" ""Technical Recruiter"" ""Irving""",Tier 1 - attack first,not_contacted
+CT0063,C024,McKesson,hiring_manager,Cybersecurity Manager,Sample Cybersecurity 63,"""McKesson"" ""Cybersecurity Manager"" ""Irving""",Tier 1 - attack first,not_contacted
+CT0064,C024,McKesson,alumni,UNT Alumni - MIS Graduate,Sample UNT 64,"""McKesson"" ""UNT Alumni - MIS Graduate"" ""Irving""",Tier 1 - attack first,replied
+CT0065,C025,CBRE,recruiter,Talent Acquisition Partner,Sample Talent 65,"""CBRE"" ""Talent Acquisition Partner"" ""Dallas""",Tier 2 - DFW HQ / verify sponsorship,not_contacted
+CT0066,C026,Lockheed Martin,recruiter,Technical Recruiter,Sample Technical 66,"""Lockheed Martin"" ""Technical Recruiter"" ""Fort Worth""",Tier 2 - strong DFW / sponsorship constraints,replied
+CT0067,C027,Raytheon / RTX,recruiter,Talent Acquisition Partner,Sample Talent 67,"""Raytheon / RTX"" ""Talent Acquisition Partner"" ""McKinney""",Tier 2 - strong DFW / sponsorship constraints,not_contacted
+CT0068,C028,BNSF Railway,recruiter,Talent Acquisition Partner,Sample Talent 68,"""BNSF Railway"" ""Talent Acquisition Partner"" ""Fort Worth""",Tier 2 - DFW HQ / verify sponsorship,not_contacted
+CT0069,C029,GM Financial,recruiter,Technical Recruiter,Sample Technical 69,"""GM Financial"" ""Technical Recruiter"" ""Fort Worth""",Tier 2 - DFW HQ / verify sponsorship,not_contacted
+CT0070,C030,Sabre,recruiter,Technical Recruiter,Sample Technical 70,"""Sabre"" ""Technical Recruiter"" ""Southlake""",Tier 2 - DFW tech / verify sponsorship,not_contacted
+CT0071,C031,Alkami Technology,recruiter,Talent Acquisition Partner,Sample Talent 71,"""Alkami Technology"" ""Talent Acquisition Partner"" ""Plano""",Tier 2 - DFW tech / verify sponsorship,messaged
+CT0072,C032,Tyler Technologies,recruiter,Talent Acquisition Partner,Sample Talent 72,"""Tyler Technologies"" ""Talent Acquisition Partner"" ""Plano""",Tier 2 - DFW tech / verify sponsorship,replied
+CT0073,C033,State Farm,recruiter,University Recruiter,Sample University 73,"""State Farm"" ""University Recruiter"" ""Richardson""",Tier 2 - DFW hub / verify sponsorship,not_contacted
+CT0074,C034,Liberty Mutual,recruiter,Technical Recruiter,Sample Technical 74,"""Liberty Mutual"" ""Technical Recruiter"" ""Plano""",Tier 2 - DFW hub / verify sponsorship,not_contacted
+CT0075,C035,PepsiCo / Frito-Lay,recruiter,University Recruiter,Sample University 75,"""PepsiCo / Frito-Lay"" ""University Recruiter"" ""Plano""",Tier 2 - DFW hub / verify sponsorship,messaged

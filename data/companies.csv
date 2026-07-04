@@ -1,0 +1,51 @@
+company_id,rank,company_name,location,industry,priority_tier,sponsor_signal,h1b_confidence,dfw_fit,role_fit,networking_roi
+C001,1,JPMorgan Chase,Plano / Dallas,Finance + Technology,Tier 1 - attack first,DFW mega tech center; >800 open positions reported June 2026; validate sponsorship via DOL/USCIS,4,5,5,5
+C002,2,Goldman Sachs,Dallas,Finance + Engineering,Tier 1 - attack first,Major Dallas campus; large DFW expansion; sponsor history must be verified in DOL/USCIS per role,4,5,5,5
+C003,3,Bank of America,Dallas,Finance + Technology,Tier 1 - attack first,DFW expansion source; sponsor history must be checked in DOL/USCIS,4,5,5,4
+C004,4,Citi,Irving,Finance + Technology Operations,Tier 1 - attack first,Large Irving campus; finance-tech hiring signal; DOL/USCIS validation required,4,5,5,4
+C005,5,Charles Schwab,Westlake / DFW,Financial Services + Tech,Tier 1 - attack first,Texas top H-1B employer list; DFW HQ/large presence,5,5,5,4
+C006,6,Capital One,Plano,Finance + Software Engineering,Tier 1 - attack first,Plano top employer; known technology employer; DOL/USCIS verification needed,4,5,5,4
+C007,7,Toyota Motor North America,Plano,Automotive + Data/Cloud/Security,Tier 1 - attack first,Plano top employer; DOL/USCIS validation needed for sponsor evidence,3,5,5,4
+C008,8,AT&T,Dallas / Plano / Irving,Telecom + Cloud + Security,Tier 1 - attack first,Texas top H-1B employer list; DFW HQ/major presence,5,5,5,4
+C009,9,Ericsson,Plano,Telecom Infrastructure,Tier 1 - attack first,Texas top H-1B employer list; Plano top employer,5,5,5,4
+C010,10,NTT DATA,Plano / Dallas,IT Services + Consulting,Tier 1 - attack first,Texas top H-1B employer list; Plano top employer,5,5,5,4
+C011,11,Samsung Electronics America / Samsung Austin Semiconductor,Plano / Austin,Electronics + Semiconductor,Tier 1 - attack first,Texas top H-1B employer list; Plano Samsung employer signal,5,4,5,4
+C012,12,KPMG,Dallas,Consulting + Risk + Cyber,Tier 1 - attack first,Texas top H-1B employer list,5,5,5,4
+C013,13,Deloitte,Dallas,Consulting + Technology,Tier 1 - attack first,Large DFW consulting presence; DOL/USCIS verification needed,4,5,5,4
+C014,14,Accenture,Dallas,Technology Consulting,Tier 1 - attack first,Major H-1B employer historically; DOL/USCIS verification needed for Dallas,4,5,5,4
+C015,15,Cognizant,DFW / Texas client sites,IT Services + AI Builder,Tier 1 - attack first,Texas #1 H-1B employer in cited list,5,4,5,4
+C016,16,Infosys,Richardson / Texas client sites,IT Services + Consulting,Tier 1 - attack first,Texas #2 H-1B employer in cited list,5,4,5,4
+C017,17,Oracle,Austin / Texas + cloud roles,Cloud + Enterprise Software,Tier 2 - strong sponsor / verify DFW,Texas top H-1B employer list,5,3,5,4
+C018,18,Tesla,Austin / North Texas optional,Automotive + AI + Manufacturing,Tier 2 - TX sponsor / DFW uncertain,Texas top H-1B employer list,5,2,5,5
+C019,19,Hewlett Packard Enterprise,Plano / Texas,Enterprise Cloud + Infrastructure,Tier 2 - strong sponsor / verify roles,Texas top H-1B employer list,5,4,5,4
+C020,20,Dell Technologies / Dell USA / Dell Products,Round Rock / Texas; DFW ecosystem,Enterprise Infrastructure,Tier 2 - strong sponsor / TX,Texas top H-1B employer list includes Dell entities and EMC,5,3,5,4
+C021,21,Texas Instruments,Dallas / Richardson,Semiconductor + Embedded + Data,Tier 1 - attack first,Texas top H-1B employer list; DFW HQ,5,5,4,4
+C022,22,American Airlines,Fort Worth,Aviation + Technology,Tier 1 - attack first,Texas top H-1B employer list; DFW HQ,5,5,5,4
+C023,23,Southwest Airlines,Dallas,Aviation + Tech Operations,Tier 1 - attack first,DFW HQ; sponsor evidence should be verified via DOL/USCIS,3,5,5,4
+C024,24,McKesson,Irving,Healthcare Distribution + Tech,Tier 1 - attack first,DFW Fortune/HQ; sponsor verification needed,4,5,5,4
+C025,25,CBRE,Dallas,Real Estate + Data/Tech,Tier 2 - DFW HQ / verify sponsorship,DFW Fortune/HQ; DOL/USCIS validation needed,3,5,4,4
+C026,26,Lockheed Martin,Fort Worth / Grand Prairie,Aerospace + Defense,Tier 2 - strong DFW / sponsorship constraints,DFW defense employer; sponsorship may be restricted by clearance/export control,2,5,4,3
+C027,27,Raytheon / RTX,McKinney / Richardson,Defense + Aerospace Tech,Tier 2 - strong DFW / sponsorship constraints,DFW defense presence; sponsorship may be restricted,2,5,4,3
+C028,28,BNSF Railway,Fort Worth,Transportation + Tech Operations,Tier 2 - DFW HQ / verify sponsorship,DFW HQ; DOL/USCIS validation needed,3,5,4,4
+C029,29,GM Financial,Fort Worth,FinTech + Auto Finance,Tier 2 - DFW HQ / verify sponsorship,DFW HQ; sponsor verification needed,3,5,5,4
+C030,30,Sabre,Southlake,Travel Tech,Tier 2 - DFW tech / verify sponsorship,DFW technology company; sponsor verification needed,3,5,5,4
+C031,31,Alkami Technology,Plano,FinTech SaaS,Tier 2 - DFW tech / verify sponsorship,Plano fintech; sponsor verification needed,3,5,5,4
+C032,32,Tyler Technologies,Plano,GovTech SaaS,Tier 2 - DFW tech / verify sponsorship,Plano HQ; sponsor verification needed,3,5,4,4
+C033,33,State Farm,Richardson,Insurance + Enterprise Tech,Tier 2 - DFW hub / verify sponsorship,Large Richardson presence; sponsor verification needed,3,5,4,4
+C034,34,Liberty Mutual,Plano,Insurance + Tech,Tier 2 - DFW hub / verify sponsorship,Plano top employer; sponsor verification needed,3,5,4,4
+C035,35,PepsiCo / Frito-Lay,Plano,Consumer Goods + Supply Chain Tech,Tier 2 - DFW hub / verify sponsorship,Plano top employer; sponsor verification needed,3,5,4,4
+C036,36,Wells Fargo,Irving / Dallas,Finance + Risk + Technology,Tier 2 - strong finance / verify DFW,Sponsor history likely via DOL; DFW presence; validate current roles,4,4,5,4
+C037,37,Morgan Stanley,Dallas,Finance + Technology,Tier 2 - future expansion / verify roles,Dallas expansion news; sponsor validation needed,4,4,5,4
+C038,38,Nasdaq,Dallas,Exchange + FinTech,Tier 2 - emerging DFW / verify sponsorship,Dallas regional HQ signal; sponsor validation needed,3,4,5,4
+C039,39,NYSE Texas / Intercontinental Exchange,Dallas,Exchange + Capital Markets Tech,Tier 2 - emerging DFW / verify sponsorship,NYSE Texas opened/leased Dallas presence; sponsor validation needed,3,4,5,4
+C040,40,Siemens Industry Software,Plano / Texas,Industrial Software,Tier 2 - sponsor / tech fit,Texas top H-1B employer list,5,3,5,4
+C041,41,NXP USA,Dallas / Austin,Semiconductor + Embedded Systems,Tier 2 - sponsor / tech fit,Texas top H-1B employer list,5,3,4,4
+C042,42,Indeed,Austin / Texas / Remote,HR Tech + Data,Tier 2 - sponsor / TX,Texas top H-1B employer list,5,2,5,4
+C043,43,UT Southwestern Medical Center,Dallas,Healthcare + Research Tech,Tier 2 - sponsor / local,Texas top H-1B employer list; Dallas institution,5,5,4,3
+C044,44,Dallas Independent School District,Dallas,Education + IT,Tier 3 - local / sponsor signal,Texas top H-1B employer list; Dallas local,4,5,3,3
+C045,45,Baylor College of Medicine / Baylor Scott & White ecosystem,Dallas / Texas,Healthcare + Research Tech,Tier 2 - sponsor / healthcare,Texas top H-1B employer list for Baylor College of Medicine; DFW healthcare ecosystem,4,4,4,3
+C046,46,Fluor Corporation,Irving,Engineering + Construction Tech,Tier 2 - DFW HQ / verify sponsorship,DFW Fortune/HQ; sponsor validation needed,3,5,4,3
+C047,47,Jacobs Solutions,Dallas,Engineering + Tech Consulting,Tier 2 - DFW HQ / verify sponsorship,DFW Fortune/HQ; sponsor validation needed,3,5,4,3
+C048,48,Kimberly-Clark,Irving,Consumer Goods + Enterprise Tech,Tier 2 - DFW HQ / verify sponsorship,DFW Fortune/HQ; sponsor validation needed,3,5,4,3
+C049,49,Celanese,Irving,Chemicals + Data/IT,Tier 3 - DFW HQ / verify sponsorship,DFW Fortune/HQ; sponsor validation needed,3,5,3,3
+C050,50,Vistra,Irving,Energy + Data/IT/Security,Tier 3 - DFW HQ / verify sponsorship,DFW Fortune/HQ; sponsor validation needed,3,5,4,3
