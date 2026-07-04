@@ -23,7 +23,8 @@ Built from analysis of the DFW Top-50 Sponsor-Friendly Company Workbook, this pr
 ## Quick Start
 
 ```bash
-# Clone and enter project
+# Clone the repository
+git clone https://github.com/abhishekyadav2000/career-intelligence-os.git
 cd career-intelligence-os
 
 # Create virtual environment (recommended)
