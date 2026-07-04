@@ -11,7 +11,9 @@ from src.data_confidence import get_confidence_warnings, is_stale
 from src.message_queue_engine import build_message_queue
 from src.pipeline_engine import (
     PIPELINE_STAGES,
+    apply_quick_filters,
     build_pipeline_cards,
+    filter_cards_by_company,
     get_blocked_cards,
     get_follow_up_due,
     get_pipeline_metrics,
@@ -28,6 +30,32 @@ from src.schedule_engine import (
 )
 
 
+def apply_scope_filters(
+    cards: list[dict],
+    *,
+    company_id: str | None = None,
+    focus_mode: bool = False,
+    pipeline_stages: list[str] | None = None,
+    priority_tiers: list[str] | None = None,
+    role_families: list[str] | None = None,
+    jobs_df: pd.DataFrame | None = None,
+    companies_df: pd.DataFrame | None = None,
+) -> list[dict]:
+    scoped = cards
+    if focus_mode and company_id:
+        scoped = filter_cards_by_company(scoped, company_id)
+    if pipeline_stages or priority_tiers or role_families:
+        scoped = apply_quick_filters(
+            scoped,
+            pipeline_stages=pipeline_stages or None,
+            priority_tiers=priority_tiers or None,
+            role_families=role_families or None,
+            jobs_df=jobs_df,
+            companies_df=companies_df,
+        )
+    return scoped
+
+
 def get_top_targets(cards: list[dict], limit: int = 10) -> list[dict]:
     active = [
         c for c in cards
@@ -37,8 +65,18 @@ def get_top_targets(cards: list[dict], limit: int = 10) -> list[dict]:
     return active[:limit]
 
 
-def get_action_queue(cards: list[dict], limit: int = 15) -> list[dict]:
-    return get_today_queue(cards, limit=limit)
+def get_action_queue(
+    cards: list[dict],
+    schedule_df: list[dict] | None = None,
+    company_id: str | None = None,
+    limit: int = 15,
+) -> list[dict]:
+    return get_today_queue(
+        cards,
+        limit=limit,
+        company_id=company_id,
+        schedule_df=schedule_df,
+    )
 
 
 def get_pipeline_board(cards: list[dict]) -> dict[str, list[dict]]:
@@ -153,7 +191,15 @@ def get_execution_warnings(cards: list[dict], data: dict, reference: datetime | 
     return warnings
 
 
-def build_mission_control(data: dict, date: datetime | str | None = None) -> dict:
+def build_mission_control(
+    data: dict,
+    date: datetime | str | None = None,
+    company_id: str | None = None,
+    focus_mode: bool = False,
+    pipeline_stages: list[str] | None = None,
+    priority_tiers: list[str] | None = None,
+    role_families: list[str] | None = None,
+) -> dict:
     """Build full Mission Control payload for dashboard."""
     ref = date if isinstance(date, datetime) else datetime.now()
     if isinstance(date, str):
@@ -163,12 +209,33 @@ def build_mission_control(data: dict, date: datetime | str | None = None) -> dic
             ref = datetime.now()
 
     saved = load_pipeline_cards()
-    cards = saved if saved else build_pipeline_cards(data, reference=ref)
+    all_cards = saved if saved else build_pipeline_cards(data, reference=ref)
+    jobs_df = data.get("jobs", pd.DataFrame())
+    companies_df = data.get("companies", pd.DataFrame())
 
+    scoped_company_id = company_id if focus_mode else None
+    cards = apply_scope_filters(
+        all_cards,
+        company_id=scoped_company_id,
+        focus_mode=focus_mode,
+        pipeline_stages=pipeline_stages,
+        priority_tiers=priority_tiers,
+        role_families=role_families,
+        jobs_df=jobs_df,
+        companies_df=companies_df,
+    )
+
+    schedule = load_activity_schedule()
     metrics = get_pipeline_metrics(cards)
     readiness = get_monday_readiness_score(cards, data, reference=ref)
     top_targets = get_top_targets(cards)
-    action_queue = get_action_queue(cards)
+    action_queue = get_action_queue(
+        all_cards if focus_mode else cards,
+        schedule_df=schedule,
+        company_id=scoped_company_id,
+    )
+    if focus_mode and scoped_company_id:
+        action_queue = filter_cards_by_company(action_queue, scoped_company_id)
     board = get_pipeline_board(cards)
     warnings = get_execution_warnings(cards, data, reference=ref)
     message_queue = build_message_queue(cards, data)
@@ -181,6 +248,8 @@ def build_mission_control(data: dict, date: datetime | str | None = None) -> dic
 
     return {
         "date": ref.strftime("%Y-%m-%d"),
+        "focus_mode": focus_mode,
+        "company_id": scoped_company_id,
         "readiness": readiness,
         "metrics": metrics,
         "top_target": top_target,
@@ -196,5 +265,6 @@ def build_mission_control(data: dict, date: datetime | str | None = None) -> dic
         "next_activities": next_activities,
         "overdue_activities": overdue,
         "cards": cards,
+        "all_cards": all_cards,
         "briefs_ready": sum(1 for c in cards if c.get("proof_asset_title")),
     }

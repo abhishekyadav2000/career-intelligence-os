@@ -306,14 +306,60 @@ def save_pipeline_cards(cards: list[dict], path: Path | None = None) -> Path:
     return p
 
 
-def get_today_queue(cards: list[dict], limit: int = 15) -> list[dict]:
+def filter_cards_by_company(cards: list[dict], company_id: str | None) -> list[dict]:
+    if not company_id:
+        return cards
+    return [c for c in cards if c.get("company_id") == company_id]
+
+
+def apply_quick_filters(
+    cards: list[dict],
+    *,
+    pipeline_stages: list[str] | None = None,
+    priority_tiers: list[str] | None = None,
+    role_families: list[str] | None = None,
+    jobs_df: pd.DataFrame | None = None,
+    companies_df: pd.DataFrame | None = None,
+) -> list[dict]:
+    """Apply sidebar quick filters to pipeline cards."""
+    filtered = cards
+    if pipeline_stages:
+        stage_set = set(pipeline_stages)
+        filtered = [c for c in filtered if c.get("pipeline_stage") in stage_set]
+
+    if priority_tiers and companies_df is not None and not companies_df.empty:
+        tier_map = dict(zip(companies_df["company_id"], companies_df.get("priority_tier", "")))
+        tier_set = set(priority_tiers)
+        filtered = [
+            c for c in filtered
+            if tier_map.get(c.get("company_id", ""), "Tier 2") in tier_set
+        ]
+
+    if role_families and jobs_df is not None and not jobs_df.empty:
+        role_map = dict(zip(jobs_df["job_id"], jobs_df.get("role_family", "")))
+        family_set = set(role_families)
+        filtered = [
+            c for c in filtered
+            if role_map.get(c.get("job_id", ""), "") in family_set
+        ]
+
+    return filtered
+
+
+def get_today_queue(
+    cards: list[dict],
+    limit: int = 15,
+    company_id: str | None = None,
+    schedule_df: list[dict] | None = None,
+) -> list[dict]:
     active_stages = {
         "Research Needed",
         "Person Verification",
         "Ready to Contact",
         "Follow-Up Due",
     }
-    queue = [c for c in cards if c.get("pipeline_stage") in active_stages]
+    scoped = filter_cards_by_company(cards, company_id)
+    queue = [c for c in scoped if c.get("pipeline_stage") in active_stages]
     queue.sort(key=lambda c: float(c.get("priority_score", 0)), reverse=True)
     return queue[:limit]
 

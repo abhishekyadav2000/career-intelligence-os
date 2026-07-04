@@ -61,12 +61,15 @@ from src.schedule_engine import get_daily_plan, get_next_activities, load_launch
 from dashboard.icc_state import (
     CONVERSATION_TYPES,
     INTERVIEW_STAGES,
+    QUICK_FILTER_CAPTION,
     build_company_options,
     format_company_option,
     format_job_option,
+    get_company_quick_stats,
     get_jobs_for_company,
     init_icc_state,
     on_company_change,
+    on_focus_mode_change,
     on_job_change,
     resolve_icc_context,
     set_target,
@@ -177,6 +180,41 @@ PROFESSIONAL_CSS = """
         font-size: 0.85rem;
         color: #94a3b8;
         margin: 0.15rem 0;
+    }
+    .ci-context-bar {
+        position: sticky;
+        top: 0;
+        z-index: 999;
+        background: #0f172a;
+        border: 1px solid #334155;
+        border-radius: 8px;
+        padding: 0.65rem 1.25rem;
+        margin-bottom: 1rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.25rem;
+        align-items: center;
+        font-size: 0.85rem;
+        color: #cbd5e1;
+    }
+    .ci-context-bar strong { color: #f8fafc; }
+    .ci-scope-focused {
+        background: #1e3a5f;
+        border: 1px solid #2563eb;
+        color: #bfdbfe;
+        padding: 0.6rem 1rem;
+        border-radius: 6px;
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
+    }
+    .ci-scope-portfolio {
+        background: #1e293b;
+        border: 1px solid #475569;
+        color: #94a3b8;
+        padding: 0.6rem 1rem;
+        border-radius: 6px;
+        margin-bottom: 1rem;
+        font-size: 0.9rem;
     }
 </style>
 """
@@ -324,45 +362,155 @@ scores_df = pd.DataFrame([
 rec_df = pd.DataFrame(recommendations)
 company_rank_df = pd.DataFrame(company_scores)
 
-# ── Mission Control data ───────────────────────────────────────────────────────
+init_icc_state(st.session_state, companies_df, jobs_df)
+total_companies = len(companies_df)
 
-mission_control = build_mission_control(data, date=datetime.now())
-mc_cards = mission_control["cards"]
-message_queue = mission_control["message_queue"]
-card_by_job = {c["job_id"]: c for c in mc_cards}
+# ── Sidebar (company-first context) ───────────────────────────────────────────
 
-# ── Sidebar ───────────────────────────────────────────────────────────────────
+st.sidebar.header("Target Context")
 
-st.sidebar.header("System")
-with st.sidebar.container(border=True):
-    st.markdown("**Quick Stats**")
-    st.markdown(f'<p class="sidebar-stat">{len(companies_df)} companies loaded</p>', unsafe_allow_html=True)
-    st.markdown(f'<p class="sidebar-stat">{len(jobs_df)} active roles</p>', unsafe_allow_html=True)
-    st.markdown(f'<p class="sidebar-stat">{len(mc_cards)} pipeline cards</p>', unsafe_allow_html=True)
-    if not profiles_df.empty and "last_updated" in profiles_df.columns:
-        last_updated = profiles_df["last_updated"].dropna().max()
-        if last_updated:
-            st.caption(f"Data last updated: {last_updated}")
-
-st.sidebar.divider()
-st.sidebar.header("Filters")
-industry_opts = sorted(companies_df["industry"].unique())
-industry_filter = st.sidebar.multiselect("Industry", options=industry_opts, default=industry_opts)
-company_filter = st.sidebar.selectbox("Overview Filter", options=["All"] + sorted(companies_df["company"].unique()))
-action_filter = st.sidebar.multiselect(
-    "Recommendation",
-    options=["apply now", "network first", "research more", "skip/watchlist"],
-    default=["apply now", "network first", "research more"],
+st.sidebar.text_input(
+    "Company Search",
+    placeholder="e.g. JPMorgan, Dell, finance…",
+    key="icc_company_search",
+    help="Filter the company dropdown below.",
 )
 
-filtered_scores = scores_df.copy()
-if company_filter != "All":
-    filtered_scores = filtered_scores[filtered_scores["company"] == company_filter]
-filtered_scores = filtered_scores[filtered_scores["job_id"].isin(
-    rec_df[rec_df["action"].isin(action_filter)]["job_id"]
-)]
+company_options = build_company_options(
+    companies_df, company_rank_df, st.session_state.icc_company_search,
+)
+shown_count = len(company_options)
+
+if not company_options:
+    company_options = build_company_options(companies_df, company_rank_df)
+    shown_count = len(company_options)
+
+if st.session_state.icc_company_id not in company_options and company_options:
+    st.session_state.icc_company_id = company_options[0]
+
+st.sidebar.caption(f"Showing {shown_count} of {total_companies} companies")
+
+
+def _handle_company_change():
+    on_company_change(st.session_state, companies_df, jobs_df)
+
+
+def _handle_job_change():
+    on_job_change(st.session_state, jobs_df)
+
+
+def _handle_focus_mode_change():
+    on_focus_mode_change(st.session_state)
+
+
+st.sidebar.selectbox(
+    "Target Company",
+    options=company_options,
+    format_func=lambda cid: format_company_option(cid, companies_df),
+    key="icc_company_id",
+    on_change=_handle_company_change,
+    help="Primary control — all views follow this selection.",
+)
+
+company_jobs_sidebar = get_jobs_for_company(st.session_state.icc_company_id, jobs_df)
+icc_job_options_sidebar = company_jobs_sidebar["job_id"].tolist()
+if icc_job_options_sidebar:
+    if st.session_state.get("icc_job_id") not in icc_job_options_sidebar:
+        st.session_state.icc_job_id = icc_job_options_sidebar[0]
+    st.sidebar.selectbox(
+        "Target Role",
+        options=icc_job_options_sidebar,
+        format_func=lambda jid: format_job_option(jid, jobs_df),
+        key="icc_job_id",
+        on_change=_handle_job_change,
+        help="Roles for the selected company.",
+    )
+else:
+    st.sidebar.selectbox("Target Role", options=["—"], disabled=True)
+
+with st.sidebar.expander("Person & Stage", expanded=False):
+    st.selectbox(
+        "Person Type",
+        options=CONVERSATION_TYPES,
+        key="icc_person_type",
+    )
+    st.selectbox(
+        "Interview Stage",
+        options=INTERVIEW_STAGES,
+        key="icc_interview_stage",
+    )
+
+st.sidebar.toggle(
+    "Focus Mode",
+    key="icc_focus_mode",
+    help="ON: filter Mission Control to selected company. OFF: portfolio-wide view.",
+    on_change=_handle_focus_mode_change,
+)
 
 st.sidebar.divider()
+st.sidebar.subheader("Quick Filters")
+st.sidebar.caption(QUICK_FILTER_CAPTION)
+
+pipeline_stage_opts = list(PIPELINE_STAGES)
+tier_opts = sorted(companies_df["priority_tier"].dropna().unique().tolist())
+role_family_opts = sorted(jobs_df["role_family"].dropna().unique().tolist())
+
+st.sidebar.multiselect(
+    "Pipeline stage",
+    options=pipeline_stage_opts,
+    key="icc_pipeline_stage_filter",
+)
+st.sidebar.multiselect(
+    "Priority tier",
+    options=tier_opts,
+    key="icc_priority_tier_filter",
+)
+st.sidebar.multiselect(
+    "Role family",
+    options=role_family_opts,
+    key="icc_role_family_filter",
+)
+
+icc_ctx = resolve_icc_context(st.session_state, companies_df, jobs_df)
+icc_company_id = icc_ctx["company_id"]
+icc_company_name = icc_ctx["company_name"]
+icc_job_id = icc_ctx["job_id"]
+icc_job_row = icc_ctx["job_row"]
+icc_person_type = icc_ctx["person_type"]
+icc_interview_stage = icc_ctx["interview_stage"]
+icc_focus_mode = icc_ctx["focus_mode"]
+icc_scope_label = icc_ctx["scope_label"]
+selection_complete = icc_ctx["selection_complete"]
+
+# ── Mission Control data (scoped to sidebar context) ────────────────────────────
+
+mission_control = build_mission_control(
+    data,
+    date=datetime.now(),
+    company_id=icc_company_id,
+    focus_mode=icc_focus_mode,
+    pipeline_stages=st.session_state.icc_pipeline_stage_filter or None,
+    priority_tiers=st.session_state.icc_priority_tier_filter or None,
+    role_families=st.session_state.icc_role_family_filter or None,
+)
+mc_cards = mission_control["cards"]
+message_queue = mission_control["message_queue"]
+card_by_job = {c["job_id"]: c for c in mission_control.get("all_cards", mc_cards)}
+
+st.sidebar.divider()
+st.sidebar.subheader("Quick Stats")
+if icc_focus_mode and icc_company_id:
+    qstats = get_company_quick_stats(icc_company_id, jobs_df, mission_control.get("all_cards", mc_cards))
+    st.sidebar.metric("Jobs", qstats["jobs"])
+    st.sidebar.metric("Pipeline cards", qstats["pipeline_cards"])
+    st.sidebar.metric("Follow-ups due", qstats["follow_ups_due"])
+    st.sidebar.metric("Brief readiness", qstats["briefs_ready"])
+else:
+    st.sidebar.metric("Companies", total_companies)
+    st.sidebar.metric("Active roles", len(jobs_df))
+    st.sidebar.metric("Pipeline cards", len(mission_control.get("all_cards", mc_cards)))
+    st.sidebar.metric("Follow-ups due", mission_control["metrics"].get("follow_up_due", 0))
+
 with st.sidebar.expander("System Status", expanded=False):
     health = run_health_check()
     overall_html = render_health_indicator(health["overall"])
@@ -386,6 +534,12 @@ with st.sidebar.expander("System Status", expanded=False):
         icon = render_health_indicator(check["status"])
         st.markdown(f"{icon} {check['step']}: {check['detail']}", unsafe_allow_html=True)
 
+if not profiles_df.empty and "last_updated" in profiles_df.columns:
+    last_updated = profiles_df["last_updated"].dropna().max()
+    if last_updated:
+        st.sidebar.caption(f"Data last updated: {last_updated}")
+
+
 def _export_brief_from_panel():
     if st.session_state.icc_company_id and st.session_state.icc_job_id:
         brief = generate_conversation_brief(
@@ -399,117 +553,70 @@ def _export_brief_from_panel():
         st.session_state.brief_markdown = export_brief_markdown(brief)
 
 
-# ── ICC global selectors (session state) ─────────────────────────────────────
+# Portfolio-wide filters for Overview / Role Fit tabs
+industry_opts = sorted(companies_df["industry"].unique())
+action_filter = ["apply now", "network first", "research more"]
 
-init_icc_state(st.session_state, companies_df, jobs_df)
+filtered_scores = scores_df.copy()
+if icc_focus_mode and icc_company_id:
+    filtered_scores = filtered_scores[filtered_scores["company"] == icc_company_name]
+filtered_scores = filtered_scores[filtered_scores["job_id"].isin(
+    rec_df[rec_df["action"].isin(action_filter)]["job_id"]
+)]
 
-st.sidebar.divider()
-st.sidebar.header("Company Search")
-st.sidebar.caption("Filter the global target selector below.")
-st.sidebar.text_input(
-    "Search companies",
-    placeholder="e.g. JPMorgan, Dell, finance…",
-    key="icc_company_search",
-)
-
-company_options = build_company_options(
-    companies_df, company_rank_df, st.session_state.icc_company_search,
-)
-total_companies = len(companies_df)
-shown_count = len(company_options)
-
-if not company_options:
-    company_options = build_company_options(companies_df, company_rank_df)
-    shown_count = len(company_options)
-
-if st.session_state.icc_company_id not in company_options and company_options:
-    st.session_state.icc_company_id = company_options[0]
-    on_company_change(st.session_state, companies_df, jobs_df)
-
-def _handle_company_change():
-    on_company_change(st.session_state, companies_df, jobs_df)
-
-def _handle_job_change():
-    on_job_change(st.session_state, jobs_df)
-
-icc_ctx = resolve_icc_context(st.session_state, companies_df, jobs_df)
-icc_company_id = icc_ctx["company_id"]
-icc_company_name = icc_ctx["company_name"]
-icc_job_id = icc_ctx["job_id"]
-icc_job_row = icc_ctx["job_row"]
-icc_person_type = icc_ctx["person_type"]
-icc_interview_stage = icc_ctx["interview_stage"]
-selection_complete = icc_ctx["selection_complete"]
 selected_card = card_by_job.get(icc_job_id, {})
+
+# ── Sticky context bar ────────────────────────────────────────────────────────
+
+focus_label = icc_scope_label
+sync_status = "Synced"
+st.markdown(
+    f"""
+    <div class="ci-context-bar">
+        <span><strong>Scope:</strong> {focus_label}</span>
+        <span><strong>Company:</strong> {icc_company_name or "—"}</span>
+        <span><strong>Role:</strong> {icc_ctx["job_title"] or "—"}</span>
+        <span><strong>Stage:</strong> {icc_interview_stage}</span>
+        <span><strong>Focus:</strong> {"ON" if icc_focus_mode else "OFF"}</span>
+        <span class="sync-indicator"><span class="sync-dot"></span>{sync_status}</span>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
+if icc_focus_mode and icc_company_id:
+    mc_metrics = mission_control["metrics"]
+    st.markdown(
+        f'<div class="ci-scope-focused">'
+        f'<strong>Focused on {icc_company_name}</strong> — all views filtered · '
+        f'{mc_metrics.get("total_cards", 0)} pipeline cards · '
+        f'{mc_metrics.get("follow_up_due", 0)} follow-ups due'
+        f'</div>',
+        unsafe_allow_html=True,
+    )
+else:
+    st.markdown(
+        f'<div class="ci-scope-portfolio">'
+        f'<strong>Portfolio view</strong> — {total_companies} companies · '
+        f'select a company in the sidebar to focus'
+        f'</div>',
+        unsafe_allow_html=True,
+    )
+
+# ── Selected Target (read-only summary — change in sidebar) ───────────────────
 
 with st.container(border=True):
     st.subheader("Selected Target")
-    count_label = f"{shown_count} of {total_companies} companies"
-    if st.session_state.icc_company_search.strip():
-        count_label += f" matching \"{st.session_state.icc_company_search.strip()}\""
-    st.caption(f"Persistent context synced across all tabs · {count_label}")
+    st.caption("Read-only summary · Change company and role in the sidebar →")
     st.markdown(
-        f'<p class="ci-breadcrumb">Mission Control &rsaquo; '
+        f'<p class="ci-breadcrumb">{icc_scope_label} &rsaquo; '
         f'<strong>{icc_company_name or "Select company"}</strong> &rsaquo; '
         f'{icc_ctx["job_title"] or "Select role"}</p>',
         unsafe_allow_html=True,
     )
-    st.markdown(
-        '<span class="sync-indicator"><span class="sync-dot"></span>Synced across all views</span>',
-        unsafe_allow_html=True,
-    )
-
-    icc_col1, icc_col2, icc_col3, icc_col4 = st.columns(4)
-
-    with icc_col1:
-        st.selectbox(
-            f"Target Company ({total_companies} total)",
-            options=company_options,
-            format_func=lambda cid: format_company_option(cid, companies_df),
-            key="icc_company_id",
-            on_change=_handle_company_change,
-            help="All DFW Top-50 companies sorted by priority score.",
-        )
-    with icc_col2:
-        company_jobs = get_jobs_for_company(icc_company_id, jobs_df)
-        icc_job_options = company_jobs["job_id"].tolist()
-        if not icc_job_options:
-            st.selectbox("Target Role", options=["—"], disabled=True, help="No roles for this company.")
-            icc_job_id = ""
-        else:
-            if icc_job_id not in icc_job_options:
-                st.session_state.icc_job_id = icc_job_options[0]
-                on_job_change(st.session_state, jobs_df)
-                icc_job_id = st.session_state.icc_job_id
-            st.selectbox(
-                f"Target Role ({len(icc_job_options)} roles)",
-                options=icc_job_options,
-                format_func=lambda jid: format_job_option(jid, jobs_df),
-                key="icc_job_id",
-                on_change=_handle_job_change,
-                help="All open roles for the selected company.",
-            )
-            icc_job_id = st.session_state.icc_job_id
-            icc_job_row = jobs_df[jobs_df["job_id"] == icc_job_id].iloc[0]
-    with icc_col3:
-        st.selectbox(
-            "Conversation Type",
-            options=CONVERSATION_TYPES,
-            key="icc_person_type",
-            help="Contact persona for brief and people map ranking.",
-        )
-        icc_person_type = st.session_state.icc_person_type
-    with icc_col4:
-        st.selectbox(
-            "Interview Stage",
-            options=INTERVIEW_STAGES,
-            key="icc_interview_stage",
-            help="Stage-specific talking points and next actions.",
-        )
-        icc_interview_stage = st.session_state.icc_interview_stage
 
     if not selection_complete:
-        st.info("Select a company and role to unlock Company 360, People Map, Role Deep Dive, and Proof Assets.")
+        st.info("Select a company and role in the sidebar to unlock Company 360, People Map, Role Deep Dive, and Proof Assets.")
 
     st.markdown('<div class="mc-panel">', unsafe_allow_html=True)
     st_col1, st_col2, st_col3, st_col4, st_col5 = st.columns(5)
@@ -522,7 +629,7 @@ with st.container(border=True):
 
     panel_a, panel_b = st.columns([2, 1])
     with panel_a:
-        st.write(f"**Next action:** {selected_card.get('next_action', 'Select a role and review Mission Control queue')}")
+        st.write(f"**Next action:** {selected_card.get('next_action', 'Review Mission Control action queue')}")
         proof_title = selected_card.get("proof_asset_title", "")
         if proof_title:
             conf = selected_card.get("data_confidence", "placeholder")
@@ -592,150 +699,193 @@ def tab_mission_control():
     top_target = mc.get("top_target", {})
 
     st.subheader("Mission Control")
-    st.caption(f"Monday-ready execution · {mc['date']}")
+    if icc_focus_mode and icc_company_id:
+        st.caption(
+            f"Focused on: **{icc_company_name}** "
+            f"({metrics.get('total_cards', 0)} pipeline cards, "
+            f"{metrics.get('follow_up_due', 0)} follow-ups due) · {mc['date']}"
+        )
+    else:
+        st.caption(f"Portfolio view — select a company in sidebar to focus · {mc['date']}")
 
-    m1, m2, m3, m4, m5, m6 = st.columns(6)
+    m1, m2, m3, m4 = st.columns(4)
     m1.metric("Monday Readiness", f"{readiness['total']}/100", readiness["label"])
-    m2.metric("Date", mc["date"])
-    m3.metric("Top Target", (top_target.get("company_name", "—")[:18] if top_target else "—"))
-    m4.metric("Briefs Ready", mc.get("briefs_ready", 0))
-    m5.metric("Follow-Ups Due", metrics.get("follow_up_due", 0))
-    m6.metric("Blocked", metrics.get("blocked", 0))
+    m2.metric("Pipeline Cards", metrics.get("total_cards", 0))
+    m3.metric("Follow-Ups Due", metrics.get("follow_up_due", 0))
+    m4.metric("Blocked", metrics.get("blocked", 0))
 
     if mc.get("warnings"):
         with st.expander("Execution warnings", expanded=False):
             for w in mc["warnings"]:
                 st.warning(w)
 
-    st.divider()
-    st.markdown("#### Today's Action Queue")
-    queue_df = pd.DataFrame(mc["action_queue"])
-    if queue_df.empty:
-        st.info("No actions queued — refresh pipeline cards or adjust filters.")
-    else:
-        display_cols = [
-            "priority_score", "company_name", "job_title", "pipeline_stage",
-            "next_action", "contact_type", "data_confidence",
-        ]
-        show = [c for c in display_cols if c in queue_df.columns]
-        st.dataframe(queue_df[show], use_container_width=True, hide_index=True)
-        eq1, eq2 = st.columns(2)
-        with eq1:
-            st.download_button(
-                "Export Queue CSV",
-                queue_df.to_csv(index=False),
-                "action_queue.csv",
-                "text/csv",
-                key="dl_action_queue",
-            )
-        with eq2:
-            md_lines = ["# Today's Action Queue", ""]
-            for _, row in queue_df.iterrows():
-                md_lines.append(f"- **{row.get('company_name')}** — {row.get('job_title')}: {row.get('next_action')}")
-            st.download_button(
-                "Export Queue Markdown",
-                "\n".join(md_lines),
-                "action_queue.md",
-                "text/markdown",
-                key="dl_action_md",
-            )
+    if not icc_focus_mode and not icc_company_id:
+        st.info("Select a company in the sidebar to begin focused execution.")
 
-    st.divider()
-    st.markdown("#### Pipeline Board")
-    board = mc["pipeline_board"]
-    cols = st.columns(len(PIPELINE_STAGES))
-    for col, stage in zip(cols, PIPELINE_STAGES):
-        with col:
-            st.markdown(f"**{stage}**")
-            cards_in_stage = board.get(stage, [])
-            st.caption(f"{len(cards_in_stage)} cards")
-            for card in cards_in_stage[:4]:
-                st.write(f"· {card.get('company_name', '')[:14]}")
-                st.caption(f"{card.get('priority_score', '')} · {card.get('job_title', '')[:20]}")
+    mc_sections = st.tabs([
+        "Action Queue",
+        "Message Queue",
+        "Pipeline",
+        "Blockers & Follow-ups",
+        "Launch Plan",
+    ])
 
-    st.divider()
-    st.markdown("#### Top 10 Targets")
-    targets_df = pd.DataFrame(mc["top_targets"])
-    if not targets_df.empty:
-        tcols = ["priority_score", "company_name", "job_title", "pipeline_stage", "recommendation_action", "data_confidence"]
-        st.dataframe(targets_df[[c for c in tcols if c in targets_df.columns]], use_container_width=True, hide_index=True)
-        st.caption("Set global target from a pipeline card:")
-        for idx, row in targets_df.head(5).iterrows():
-            label = f"{row.get('company_name', '')[:20]} — {row.get('job_title', '')[:24]}"
-            if st.button(label, key=f"mc_target_{row.get('job_id', idx)}"):
-                job_row = jobs_df[jobs_df["job_id"] == row.get("job_id")]
-                if not job_row.empty:
-                    set_target(
-                        st.session_state,
-                        job_row.iloc[0]["company_id"],
-                        row.get("job_id"),
-                        companies_df,
-                        jobs_df,
+    with mc_sections[0]:
+        st.markdown("#### Today's Action Queue")
+        queue_df = pd.DataFrame(mc["action_queue"])
+        if queue_df.empty:
+            st.info("No actions queued for current scope — adjust filters or select a company.")
+        else:
+            display_cols = [
+                "priority_score", "company_name", "job_title", "pipeline_stage",
+                "next_action", "contact_type", "data_confidence",
+            ]
+            show = [c for c in display_cols if c in queue_df.columns]
+            st.dataframe(queue_df[show], use_container_width=True, hide_index=True)
+            if icc_focus_mode and "company_name" in queue_df.columns:
+                other = queue_df[queue_df["company_id"] != icc_company_id] if "company_id" in queue_df.columns else pd.DataFrame()
+                if not other.empty:
+                    st.warning("Mixed company data detected — refresh or re-select company in sidebar.")
+            eq1, eq2 = st.columns(2)
+            with eq1:
+                st.download_button(
+                    "Export Queue CSV",
+                    queue_df.to_csv(index=False),
+                    "action_queue.csv",
+                    "text/csv",
+                    key="dl_action_queue",
+                )
+            with eq2:
+                md_lines = ["# Today's Action Queue", ""]
+                for _, row in queue_df.iterrows():
+                    md_lines.append(f"- **{row.get('company_name')}** — {row.get('job_title')}: {row.get('next_action')}")
+                st.download_button(
+                    "Export Queue Markdown",
+                    "\n".join(md_lines),
+                    "action_queue.md",
+                    "text/markdown",
+                    key="dl_action_md",
+                )
+
+    with mc_sections[1]:
+        st.markdown("#### Message Queue")
+        mq = mc.get("message_queue", [])
+        if not mq:
+            st.info("No messages ready — verify contacts and move cards to Ready to Contact.")
+        else:
+            mq_left, mq_right = st.columns([1, 1])
+            with mq_left:
+                for msg in mq[:5]:
+                    with st.expander(f"{msg.get('company_name')} — {msg.get('job_title')} ({msg.get('status')})"):
+                        st.text_area("Draft", msg.get("message_draft", ""), height=140, key=f"mq_{msg.get('message_id')}")
+                        copy_to_clipboard_button(msg.get("message_draft", ""), msg.get("message_id", "mq"))
+            with mq_right:
+                if mq:
+                    preview = mq[0]
+                    st.markdown(f"**Preview:** {preview.get('company_name')} — {preview.get('job_title')}")
+                    st.text_area(
+                        "Copy-ready draft",
+                        preview.get("message_draft", ""),
+                        height=220,
+                        key="mq_preview_main",
                     )
+            mq_path = export_message_queue_csv(mq, ROOT / "exports" / "message_queue.csv")
+            st.download_button(
+                "Export Message Queue Markdown",
+                export_message_queue_markdown(mq),
+                "message_queue.md",
+                "text/markdown",
+                key="dl_mq_md",
+            )
+            st.caption(f"CSV also saved to {mq_path.relative_to(ROOT)}")
+
+    with mc_sections[2]:
+        st.markdown("#### Pipeline Board")
+        board = mc["pipeline_board"]
+        if icc_focus_mode and icc_company_id:
+            cols = st.columns(min(len(PIPELINE_STAGES), 4))
+            for col, stage in zip(cols, PIPELINE_STAGES):
+                with col:
+                    cards_in_stage = board.get(stage, [])
+                    st.markdown(f"**{stage}**")
+                    st.caption(f"{len(cards_in_stage)} cards")
+                    for card in cards_in_stage[:6]:
+                        st.write(f"· {card.get('job_title', '')[:24]}")
+                        st.caption(f"{card.get('priority_score', '')}")
+        else:
+            cols = st.columns(len(PIPELINE_STAGES))
+            for col, stage in zip(cols, PIPELINE_STAGES):
+                with col:
+                    cards_in_stage = board.get(stage, [])
+                    st.markdown(f"**{stage}**")
+                    st.caption(f"{len(cards_in_stage)} cards")
+                    for card in cards_in_stage[:3]:
+                        st.write(f"· {card.get('company_name', '')[:14]}")
+                        st.caption(f"{card.get('priority_score', '')} · {card.get('job_title', '')[:20]}")
+
+        st.markdown("#### Top Targets")
+        targets_df = pd.DataFrame(mc["top_targets"])
+        if not targets_df.empty:
+            label = "Top roles for this company" if icc_focus_mode else "Top 10 targets"
+            st.caption(label)
+            tcols = ["priority_score", "company_name", "job_title", "pipeline_stage", "recommendation_action", "data_confidence"]
+            st.dataframe(targets_df[[c for c in tcols if c in targets_df.columns]], use_container_width=True, hide_index=True)
+            for idx, row in targets_df.head(5).iterrows():
+                label_btn = f"{row.get('company_name', '')[:20]} — {row.get('job_title', '')[:24]}"
+                if st.button(label_btn, key=f"mc_target_{row.get('job_id', idx)}"):
+                    job_row = jobs_df[jobs_df["job_id"] == row.get("job_id")]
+                    if not job_row.empty:
+                        set_target(
+                            st.session_state,
+                            job_row.iloc[0]["company_id"],
+                            row.get("job_id"),
+                            companies_df,
+                            jobs_df,
+                        )
+                        st.rerun()
+
+    with mc_sections[3]:
+        col_r, col_b = st.columns(2)
+        with col_r:
+            st.markdown("#### Follow-Up Radar")
+            fu = mc.get("follow_up_radar", [])
+            if fu:
+                st.dataframe(pd.DataFrame(fu)[["company_name", "job_title", "follow_up_date", "next_action"]], hide_index=True)
+            else:
+                st.write("No follow-ups due for current scope.")
+        with col_b:
+            st.markdown("#### Blockers")
+            blockers = mc.get("blockers", [])
+            if blockers:
+                for b in blockers[:8]:
+                    st.warning(f"{b.get('company_name')} — {b.get('blocked_reason') or b.get('pipeline_stage')}")
+            else:
+                st.success("No blocked cards.")
+
+    with mc_sections[4]:
+        st.markdown("#### Monday Launch Plan")
+        daily = mc.get("daily_plan")
+        if daily:
+            st.write(f"**Focus:** {daily.get('focus', '')}")
+            st.write(f"**Outputs:** {daily.get('key_outputs', '')}")
+            st.write(f"**Metrics:** {daily.get('success_metrics', '')}")
+        else:
+            st.info("No launch plan entry for today — see monday_launch_plan.csv")
+
+        week = mc.get("week_plan", {})
+        if week.get("entries"):
+            with st.expander("Full week plan"):
+                st.dataframe(pd.DataFrame(week["entries"]), hide_index=True)
+
+        st.markdown("#### Today's Schedule")
+        for act in mc.get("next_activities", []):
+            st.write(f"**{act.get('start_time')}** — {act.get('activity_name')}")
+        for act in mc.get("overdue_activities", []):
+            c1, c2 = st.columns([4, 1])
+            c1.warning(f"Overdue: {act.get('start_time')} — {act.get('activity_name')}")
+            if c2.button("Done", key=f"done_{act.get('activity_id')}"):
+                if mark_activity_done(act.get("activity_id", "")):
                     st.rerun()
-
-    st.divider()
-    col_r, col_b = st.columns(2)
-    with col_r:
-        st.markdown("#### Follow-Up Radar")
-        fu = mc.get("follow_up_radar", [])
-        if fu:
-            st.dataframe(pd.DataFrame(fu)[["company_name", "job_title", "follow_up_date", "next_action"]], hide_index=True)
-        else:
-            st.write("No follow-ups due.")
-    with col_b:
-        st.markdown("#### Blockers")
-        blockers = mc.get("blockers", [])
-        if blockers:
-            for b in blockers[:8]:
-                st.warning(f"{b.get('company_name')} — {b.get('blocked_reason') or b.get('pipeline_stage')}")
-        else:
-            st.success("No blocked cards.")
-
-    st.divider()
-    st.markdown("#### Monday Launch Plan")
-    daily = mc.get("daily_plan")
-    if daily:
-        st.write(f"**Focus:** {daily.get('focus', '')}")
-        st.write(f"**Outputs:** {daily.get('key_outputs', '')}")
-        st.write(f"**Metrics:** {daily.get('success_metrics', '')}")
-    else:
-        st.info("No launch plan entry for today — see monday_launch_plan.csv")
-
-    week = mc.get("week_plan", {})
-    if week.get("entries"):
-        with st.expander("Full week plan"):
-            st.dataframe(pd.DataFrame(week["entries"]), hide_index=True)
-
-    st.markdown("#### Today's Schedule")
-    for act in mc.get("next_activities", []):
-        st.write(f"**{act.get('start_time')}** — {act.get('activity_name')}")
-    for act in mc.get("overdue_activities", []):
-        c1, c2 = st.columns([4, 1])
-        c1.warning(f"Overdue: {act.get('start_time')} — {act.get('activity_name')}")
-        if c2.button("Done", key=f"done_{act.get('activity_id')}"):
-            if mark_activity_done(act.get("activity_id", "")):
-                st.rerun()
-
-    st.divider()
-    st.markdown("#### Message Queue Preview")
-    mq = mc.get("message_queue", [])
-    if not mq:
-        st.info("No messages ready — verify contacts and move cards to Ready to Contact.")
-    else:
-        for msg in mq[:5]:
-            with st.expander(f"{msg.get('company_name')} — {msg.get('job_title')} ({msg.get('status')})"):
-                st.text_area("Draft", msg.get("message_draft", ""), height=140, key=f"mq_{msg.get('message_id')}")
-                copy_to_clipboard_button(msg.get("message_draft", ""), msg.get("message_id", "mq"))
-        mq_path = export_message_queue_csv(mq, ROOT / "exports" / "message_queue.csv")
-        st.download_button(
-            "Export Message Queue CSV",
-            export_message_queue_markdown(mq),
-            "message_queue.md",
-            "text/markdown",
-            key="dl_mq_md",
-        )
-        st.caption(f"CSV also saved to {mq_path.relative_to(ROOT)}")
 
 
 def tab_command_center():
@@ -771,7 +921,7 @@ def tab_command_center():
     brief = st.session_state.current_brief
     if not brief:
         if not selection_complete:
-            st.info("Select a company and role in **Selected Target** above to enable brief generation.")
+            st.info("Select a company and role in the **sidebar** to enable brief generation.")
         else:
             st.info("Click **Generate Brief** to build a seven-section conversation package.")
         return
@@ -955,7 +1105,7 @@ def tab_role_deep_dive():
     title = icc_job_row["title"] if icc_job_row is not None else ""
     st.subheader(f"Role Deep Dive — {title}")
     if not icc_job_id:
-        st.info("Select a target role in the global selectors above.")
+        st.info("Select a target role in the sidebar.")
         return
 
     dive = build_role_deep_dive(icc_job_id, jobs_df, reasoning_df)
@@ -1044,9 +1194,13 @@ def tab_overview():
 
 def tab_company_ranking():
     st.subheader("Company Priority Ranking")
-    st.caption(f"Global target: **{icc_company_name}** · Click a row context in Mission Control to sync selection.")
+    st.caption(f"Scope: **{icc_scope_label}** · Change target in sidebar")
     display_rank = company_rank_df.copy()
     display_rank["selected"] = display_rank["company"] == icc_company_name
+    if icc_focus_mode and icc_company_name:
+        selected_row = display_rank[display_rank["selected"]]
+        other_rows = display_rank[~display_rank["selected"]].head(10)
+        display_rank = pd.concat([selected_row, other_rows]).drop_duplicates(subset=["company"])
     st.dataframe(
         display_rank[["company", "industry", "location", "priority_score", "priority_label", "job_count", "contact_count", "selected"]],
         use_container_width=True,
@@ -1091,6 +1245,8 @@ def tab_sponsorship():
     st.warning("Signals are indicative only — not legal certainty. Verify via DOL/USCIS.")
     sponsor_rows = []
     for s in scores:
+        if icc_focus_mode and icc_company_name and s["company_name"] != icc_company_name:
+            continue
         sd = s.get("sponsorship_detail", {})
         sponsor_rows.append({
             "company": s["company_name"], "title": s["title"],
@@ -1102,13 +1258,15 @@ def tab_sponsorship():
 
 def tab_networking():
     st.subheader("Networking Map")
+    if icc_focus_mode and icc_company_name:
+        st.caption(f"Showing contacts for **{icc_company_name}**")
     contact_type_filter = st.multiselect(
         "Contact Type", options=["recruiter", "hiring_manager", "peer", "alumni"],
         default=["recruiter", "hiring_manager"], key="net_filter",
     )
     filtered_outreach = [o for o in outreach if o["contact_type"] in contact_type_filter]
-    if company_filter != "All":
-        filtered_outreach = [o for o in filtered_outreach if o["company_name"] == company_filter]
+    if icc_focus_mode and icc_company_name:
+        filtered_outreach = [o for o in filtered_outreach if o["company_name"] == icc_company_name]
     if not filtered_outreach:
         st.info("No outreach angles match current filters.")
         return
@@ -1143,16 +1301,26 @@ def tab_interview_prep():
 
 def tab_recommendations():
     st.subheader("Action Recommendations")
+    rec_display = rec_df.copy()
+    if icc_focus_mode and icc_company_name:
+        rec_display = rec_display[rec_display["company_name"] == icc_company_name]
+        st.caption(f"Scoped to **{icc_company_name}**")
     st.dataframe(
-        rec_df[["company_name", "title", "fit_score", "action", "composite_score", "rationale"]].sort_values("composite_score", ascending=False),
+        rec_display[["company_name", "title", "fit_score", "action", "composite_score", "rationale"]].sort_values("composite_score", ascending=False),
         use_container_width=True, hide_index=True,
     )
 
 
 def tab_export():
     st.subheader("Export & SQL Analytics")
-    st.download_button("Download Scores CSV", scores_df.to_csv(index=False), "role_fit_scores.csv", "text/csv")
-    st.download_button("Download Recommendations CSV", rec_df.to_csv(index=False), "recommendations.csv", "text/csv")
+    export_scores = scores_df.copy()
+    export_recs = rec_df.copy()
+    if icc_focus_mode and icc_company_name:
+        export_scores = export_scores[export_scores["company"] == icc_company_name]
+        export_recs = export_recs[export_recs["company_name"] == icc_company_name]
+        st.caption(f"Exports scoped to **{icc_company_name}**")
+    st.download_button("Download Scores CSV", export_scores.to_csv(index=False), "role_fit_scores.csv", "text/csv")
+    st.download_button("Download Recommendations CSV", export_recs.to_csv(index=False), "recommendations.csv", "text/csv")
 
     st.divider()
     st.subheader("SQL Demo")
