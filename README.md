@@ -58,14 +58,7 @@ The ICC upgrade transforms CI OS from a portfolio dashboard into an **end-to-end
 
 **Acceptance test:** JPMorgan Chase + any role + hiring manager + hiring manager screen → full brief + markdown export.
 
-| # | Tab | Screenshot |
-|---|-----|------------|
-| 0 | Interview Command Center | ![ICC](screenshots/09-interview-command-center.png) |
-| 1 | Company 360 | ![Company 360](screenshots/10-company-360.png) |
-| 2 | People Map | ![People Map](screenshots/11-people-map.png) |
-| 3 | Role Deep Dive | ![Role Deep Dive](screenshots/12-role-deep-dive.png) |
-| 4 | Proof Assets | ![Proof Assets](screenshots/13-proof-assets.png) |
-
+### Quick Start: First Brief in 5 Minutes
 
 ```bash
 git clone https://github.com/abhishekyadav2000/career-intelligence-os.git
@@ -75,7 +68,12 @@ pip install -r requirements.txt
 streamlit run dashboard/app.py
 ```
 
-Open `http://localhost:8501`.
+1. Open `http://localhost:8501` → set **Company** to JPMorgan Chase, pick any role
+2. **Interview Command Center** tab → **Generate Brief** → review 7 sections
+3. **Export Brief as Markdown** or open a pre-generated sample in [`exports/`](exports/) (e.g. [`brief-jpmorgan-chase-sample.md`](exports/brief-jpmorgan-chase-sample.md))
+4. Follow the step-by-step playbook: [docs/first-conversation-playbook.md](docs/first-conversation-playbook.md)
+
+**Pre-generated sample briefs:** [`exports/brief-jpmorgan-chase-sample.md`](exports/brief-jpmorgan-chase-sample.md) · [`exports/brief-citi-sample.md`](exports/brief-citi-sample.md) · [`exports/brief-capital-one-sample.md`](exports/brief-capital-one-sample.md) · [`exports/brief-toyota-sample.md`](exports/brief-toyota-sample.md) · [`exports/brief-att-sample.md`](exports/brief-att-sample.md)
 
 ## Demo Flow
 
@@ -96,14 +94,19 @@ See [docs/demo-guide.md](docs/demo-guide.md) for 2-min and 5-min demo scripts.
 
 | # | Tab | Screenshot |
 |---|-----|------------|
-| 1 | Overview | ![Overview](screenshots/01-overview-dashboard.png) |
-| 2 | Company Ranking | ![Company Ranking](screenshots/02-company-ranking.png) |
-| 3 | Role Fit | ![Role Fit](screenshots/03-role-fit.png) |
-| 4 | Sponsorship Signal | ![Sponsorship Signal](screenshots/04-sponsorship-signal.png) |
-| 5 | Networking Map | ![Networking Map](screenshots/05-networking-map.png) |
-| 6 | Interview Prep | ![Interview Prep](screenshots/06-interview-prep.png) |
-| 7 | Recommendations | ![Recommendations](screenshots/07-recommendations.png) |
-| 8 | Export & SQL | ![Export](screenshots/08-export-sql-demo.png) |
+| 0 | Interview Command Center | ![ICC](screenshots/09-interview-command-center.png) |
+| 1 | Company 360 | ![Company 360](screenshots/10-company-360.png) |
+| 2 | People Map | ![People Map](screenshots/11-people-map.png) |
+| 3 | Role Deep Dive | ![Role Deep Dive](screenshots/12-role-deep-dive.png) |
+| 4 | Proof Assets | ![Proof Assets](screenshots/13-proof-assets.png) |
+| 5 | Overview | ![Overview](screenshots/01-overview-dashboard.png) |
+| 6 | Company Ranking | ![Company Ranking](screenshots/02-company-ranking.png) |
+| 7 | Role Fit | ![Role Fit](screenshots/03-role-fit.png) |
+| 8 | Sponsorship Signal | ![Sponsorship Signal](screenshots/04-sponsorship-signal.png) |
+| 9 | Networking Map | ![Networking Map](screenshots/05-networking-map.png) |
+| 10 | Interview Prep | ![Interview Prep](screenshots/06-interview-prep.png) |
+| 11 | Recommendations | ![Recommendations](screenshots/07-recommendations.png) |
+| 12 | Export & SQL | ![Export](screenshots/08-export-sql-demo.png) |
 
 To recapture screenshots: `python scripts/capture_screenshots.py` (requires Playwright + running dashboard).
 
@@ -130,8 +133,9 @@ career-intelligence-os/
 ├── dashboard/              # Streamlit app
 ├── docs/                   # Architecture, vision, demo guide, job search loop
 ├── case-studies/           # Portfolio case studies (3)
-├── company-packets/        # Target company briefs (5 + template)
+├── company-packets/        # Target company briefs (12 + template)
 ├── conversation-playbooks/ # Outreach scripts (6 playbooks)
+├── exports/                # Pre-generated conversation brief samples
 ├── interview-packets/      # Role family prep (6 packets)
 ├── prompts/                # AI agent prompt templates
 ├── presentation/           # Demo scripts, LinkedIn copy, walkthrough

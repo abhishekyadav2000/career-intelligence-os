@@ -155,3 +155,19 @@ def test_conversation_script_no_fake_names():
 def test_next_action_for_hm_screen():
     actions = generate_next_action("hiring manager", "hiring manager screen", [], [])
     assert any("demo" in a.lower() or "30/60/90" in a for a in actions)
+
+
+def test_role_reasoning_coverage():
+    """Every loaded job should have a seeded role_reasoning row."""
+    data = load_all()
+    jobs = data["jobs"]
+    reasoning = data["role_reasoning"]
+    assert len(reasoning) >= len(jobs) - 1, (
+        f"Expected at least {len(jobs)} role_reasoning rows, got {len(reasoning)}"
+    )
+    job_ids = set(jobs["job_id"])
+    reasoning_ids = set(reasoning["job_id"])
+    missing = job_ids - reasoning_ids
+    assert not missing, f"Missing role_reasoning for: {sorted(missing)[:5]}"
+    assert all(reasoning["why_role_exists"].notna())
+    assert all(reasoning["business_problem"].notna())

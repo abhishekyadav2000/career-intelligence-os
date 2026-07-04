@@ -1,0 +1,130 @@
+# Conversation Brief: Cybersecurity Analyst @ Toyota Motor North America
+
+**Brief ID:** BR-9F270377  
+**Conversation Type:** hiring manager  
+**Interview Stage:** hiring manager screen  
+**Generated:** 2026-07-04T18:06:25
+
+---
+
+## 1. Company 360
+
+**Industry:** Automotive + Data/Cloud/Security  
+**DFW Presence:** Plano HQ  
+**Priority Tier:** Tier 1 - attack first
+
+Automotive enterprise with growing demand for connected vehicle data cloud security and enterprise systems.
+
+### Tech Stack Themes
+
+- Connected vehicle data
+- cloud platforms
+- cybersecurity
+- enterprise ERP
+
+### Active Project Themes
+
+- **Cybersecurity** (high confidence)
+- **Cloud migration** (medium confidence)
+- **Connected vehicle data** (medium confidence)
+- **AI automation** (low confidence)
+
+### Research Gaps
+
+- All contacts are TBD placeholders — verify hiring manager and recruiter before outreach
+- 1 source(s) need browser verification
+
+---
+
+## 2. Role Intelligence
+
+**Why this role exists:** Cybersecurity Analyst hiring supports auto platforms generate demand for data, cloud, cybersecurity, and enterprise systems. within automotive + data/cloud/security organization.
+
+**Business problem:** Auto platforms generate demand for data, cloud, cybersecurity, and enterprise systems.
+
+**Likely team:** Security Engineering / Cloud Security
+
+### 30/60/90 Day Plan
+
+- **30 days:** Complete security tooling onboarding; review IAM baselines.
+- **60 days:** Tune SIEM detections; contribute to incident drill.
+- **90 days:** Deliver control improvement with measurable risk reduction.
+
+### How I Would Help
+
+- Show Secure Cloud Evidence Lab IAM/SIEM work
+- map controls to role requirements.
+- Connect cybersecurity case study and IAM work to enterprise security context.
+- Demonstrate cloud architecture patterns from Secure Cloud Evidence Lab.
+
+---
+
+## 3. People / Power Map
+
+- **TBD Hiring Manager** (hiring_manager) — priority 82.8, status: placeholder
+- **TBD Recruiter** (recruiter) — priority 34.3, status: placeholder
+- **TBD Peer** (peer) — priority 16.1, status: placeholder
+
+---
+
+## 4. Proof-of-Work Match
+
+- **Secure Cloud Evidence Lab** (score: 72.34) — `case-studies/secure-cloud-evidence-lab.md`
+- **AI Agent Risk Scoring Framework** (score: 59.66) — `case-studies/ai-agent-risk-scoring.md`
+- **Interview Packet — Cloud Security Analyst** (score: 59.099999999999994) — `interview-packets/cloud-security-analyst.md`
+
+### Missing Proof
+
+- No company packet for Toyota Motor North America — create in company-packets/
+
+---
+
+## 5. Conversation Script
+
+Thank you for the time. I'm excited about the Cybersecurity Analyst role at Toyota Motor North America because it addresses auto platforms generate demand for data, cloud, cybersecurity, and enterprise systems.. In my portfolio, Secure Cloud Evidence Lab shows how I approach structured decision-making with measurable outcomes. I'd love to learn what success looks like in the first 90 days and where I could contribute immediately.
+
+---
+
+## 6. Optional Sponsorship Disclosure
+
+I want to be transparent: I will require employer sponsorship for work authorization now or in the future. I understand this may affect timing and role eligibility. I'm happy to discuss how my skills align with your team's needs regardless — and I appreciate your guidance on roles where sponsorship is feasible.
+
+---
+
+## 7. Interview Prep
+
+### Technical Topics
+
+- [High] Describe a Python automation script you built. How did you handle errors and logging?
+- [High] How would you design a data cleaning pipeline using pandas?
+- [High] Write a query to find top-performing teams using window functions.
+
+### Business Topics
+
+- [High] How would you approach solving: Auto platforms generate demand for data, cloud, cybersecurity, and enterprise systems.?
+- [Medium] What metrics would you track to show progress on Auto platforms generate demand for data, cloud, cybersecurity, and enterprise systems.?
+
+### Behavioral Topics
+
+- [High] Tell me about a time you automated a manual workflow and measured the impact.
+- [High] Describe a situation where you had to explain a technical risk to a non-technical stakeholder.
+- [High] How do you stay current on cloud security and AI automation trends?
+
+---
+
+## 8. Action Plan
+
+### Follow-Up Template
+
+Hi — thank you again for our conversation about the Cybersecurity Analyst role at Toyota Motor North America. As discussed, I'm sharing my portfolio link and the Career Intelligence OS walkthrough. Please let me know if there's anything else I can provide for the next step.
+
+### Next Actions
+
+- [ ] Lead with business problem alignment and proof-of-work demo
+- [ ] Research gap: All contacts are TBD placeholders — verify hiring manager and recruiter before outreach
+- [ ] Proof gap: No company packet for Toyota Motor North America — create in company-packets/
+- [ ] Demo Career Intelligence OS dashboard live or via walkthrough
+- [ ] Prepare 30/60/90 day plan talking points
+
+---
+*Generated by Career Intelligence OS — Interview Command Center*
