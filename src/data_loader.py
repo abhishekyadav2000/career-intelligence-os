@@ -16,6 +16,16 @@ FILE_MAP = {
     "profile_keywords": "profile_keywords.csv",
 }
 
+INTERVIEW_COMMAND_CENTER_FILES = {
+    "company_profiles": "company_profiles.csv",
+    "people_map": "people_map.csv",
+    "company_projects": "company_projects.csv",
+    "role_reasoning": "role_reasoning.csv",
+    "proof_assets": "proof_assets.csv",
+    "conversation_briefs": "conversation_briefs.csv",
+    "research_sources": "research_sources.csv",
+}
+
 
 def _add_ids(companies: pd.DataFrame, jobs: pd.DataFrame, contacts: pd.DataFrame):
     """Add stable IDs and legacy column aliases for downstream modules."""
@@ -74,10 +84,17 @@ def load_all(data_dir: Path | None = None, validate: bool = True) -> dict[str, p
     gap_path = (data_dir or DATA_DIR) / "gap_matrix.csv"
     gap_matrix = pd.read_csv(gap_path) if gap_path.exists() else pd.DataFrame()
 
+    base = data_dir or DATA_DIR
+    icc_data = {}
+    for key, fname in INTERVIEW_COMMAND_CENTER_FILES.items():
+        fpath = base / fname
+        icc_data[key] = pd.read_csv(fpath) if fpath.exists() else pd.DataFrame()
+
     return {
         "companies": companies,
         "jobs": jobs,
         "contacts": contacts,
         "profile_keywords": cleaned["profile_keywords"],
         "gap_matrix": gap_matrix,
+        **icc_data,
     }

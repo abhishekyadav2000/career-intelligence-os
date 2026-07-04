@@ -1,0 +1,16 @@
+asset_id,asset_type,title,description,tags,url_or_path,relevance_score,display_order
+PA001,dashboard,Career Intelligence OS Dashboard,Working Streamlit dashboard with role-fit scoring company ranking sponsorship signals and recommendations.,"python;streamlit;data-analytics;enterprise;decision-system",dashboard/app.py,95,1
+PA002,case_study,Career Intelligence OS Case Study,Full business case covering problem stakeholders architecture metrics and outcomes.,"business-analysis;portfolio;enterprise;storytelling",case-studies/career-intelligence-os.md,90,2
+PA003,case_study,AI Agent Risk Scoring Framework,Case study on AI agent guardrails risk scoring and responsible automation controls.,"ai-automation;risk-controls;governance",case-studies/ai-agent-risk-scoring.md,88,3
+PA004,case_study,Secure Cloud Evidence Lab,IAM policy review SIEM alert tuning and cloud security evidence collection with synthetic artifacts.,"cloud-security;iam;siem;cybersecurity",case-studies/secure-cloud-evidence-lab.md,92,4
+PA005,walkthrough,5-Minute Walkthrough Script,Structured demo script for portfolio presentation in interviews.,"presentation;demo;interview-prep",presentation/5-minute-walkthrough.md,85,5
+PA006,packet,Interview Packet — Data Analyst,Role-specific talking points and proof mapping for data analyst interviews.,"data-analyst;interview;talking-points",interview-packets/data-analyst.md,80,6
+PA007,packet,Interview Packet — Cloud Security Analyst,Role-specific security topics and artifact references.,"cloud-security;interview;cybersecurity",interview-packets/cloud-security-analyst.md,87,7
+PA008,packet,Interview Packet — AI Automation Analyst,Automation governance and ROI framing for AI automation roles.,"ai-automation;interview;governance",interview-packets/ai-automation-analyst.md,86,8
+PA009,playbook,Recruiter Conversation Playbook,Outreach templates and angle guidance for recruiter conversations.,"outreach;recruiter;networking",conversation-playbooks/recruiter.md,75,9
+PA010,playbook,Hiring Manager Conversation Playbook,Structured approach for hiring manager screens with proof-of-work framing.,"hiring-manager;interview;strategy",conversation-playbooks/hiring-manager.md,82,10
+PA011,playbook,Sponsorship Disclosure Script,Optional transparent work-authorization disclosure templates.,"sponsorship;disclosure;compliance",conversation-playbooks/sponsorship-disclosure.md,70,11
+PA012,screenshot,Overview Dashboard Screenshot,Visual proof of KPI overview and fit distribution.,"screenshot;dashboard;visual",screenshots/01-overview-dashboard.png,78,12
+PA013,company_packet,JPMorgan Chase Company Packet,Company-specific talking points outreach angles and interview prep.,"jpmorgan;company-intel;packet",company-packets/jpmorgan-chase.md,83,13
+PA014,company_packet,Citi Company Packet,Company-specific intelligence for Irving campus roles.,"citi;company-intel;packet",company-packets/citi.md,80,14
+PA015,company_packet,Capital One Company Packet,Plano-focused company intelligence and role alignment.,"capital-one;company-intel;packet",company-packets/capital-one.md,81,15

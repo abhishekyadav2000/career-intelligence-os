@@ -1,0 +1,13 @@
+source_id,company_id,company_name,source_type,source_title,source_url,verified,notes
+RS001,C001,JPMorgan Chase,careers_portal,JPMorgan Chase Careers,https://careers.jpmorgan.com,yes,Primary job listing and culture information
+RS002,C001,JPMorgan Chase,public_news,DFW tech center expansion coverage,https://www.dallasnews.com,browser_verify,Search for JPMorgan Plano technology center reporting
+RS003,C001,JPMorgan Chase,government_data,DOL H-1B LCA search,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation — not legal certainty
+RS004,C004,Citi,careers_portal,Citi Careers,https://jobs.citi.com,yes,Irving campus and global roles
+RS005,C004,Citi,public_news,Citi Irving campus technology news,https://www.dallasnews.com,browser_verify,Verify current campus initiatives
+RS006,C006,Capital One,careers_portal,Capital One Careers,https://www.capitalonecareers.com,yes,Plano and remote technology roles
+RS007,C006,Capital One,engineering_blog,Capital One Tech Blog,https://www.capitalone.com/tech,browser_verify,Cloud and engineering culture signals
+RS008,C007,Toyota Motor North America,careers_portal,Toyota Careers,https://careers.toyota.com,yes,Plano HQ roles
+RS009,C007,Toyota Motor North America,industry_report,Automotive connected vehicle trends,https://www.mckinsey.com,browser_verify,Broad industry context only
+RS010,C008,AT&T,careers_portal,AT&T Jobs,https://www.att.jobs,yes,Dallas Plano Irving technology roles
+RS011,C008,AT&T,public_company_profile,AT&T Investor Relations,https://investors.att.com,yes,Network modernization and strategy themes
+RS012,C008,AT&T,government_data,DOL H-1B LCA search,https://www.dol.gov/agencies/eta/foreign-labor,yes,Texas top H-1B employer validation

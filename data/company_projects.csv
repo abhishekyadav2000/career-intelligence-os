@@ -1,0 +1,21 @@
+project_id,company_id,company_name,theme,description,confidence_level,source_type
+PR001,C001,JPMorgan Chase,Digital banking modernization,Public reporting on consumer and commercial digital platform upgrades across mobile and web channels.,high,earnings_call_theme
+PR002,C001,JPMorgan Chase,Cloud migration,Enterprise cloud adoption and hybrid infrastructure programs widely cited in industry coverage.,high,industry_report
+PR003,C001,JPMorgan Chase,AI automation governance,AI productivity initiatives with emphasis on controls audit trails and responsible automation.,medium,public_news
+PR004,C001,JPMorgan Chase,Cybersecurity operations,SIEM IAM and incident response capabilities for regulated financial services environment.,high,job_posting_themes
+PR005,C004,Citi,Platform modernization,Technology operations modernization across Irving campus and global functions.,high,careers_site_theme
+PR006,C004,Citi,Cloud migration,Hybrid cloud and data platform consolidation programs in financial services.,medium,industry_report
+PR007,C004,Citi,AI automation,Workflow automation and analytics for operations and risk functions.,medium,public_news
+PR008,C004,Citi,Cybersecurity,Risk controls IAM and security monitoring for banking operations.,high,job_posting_themes
+PR009,C006,Capital One,Digital banking,Cloud-native banking products and customer-facing digital experiences.,high,public_company_profile
+PR010,C006,Capital One,Cloud migration,AWS-first architecture and internal developer platform initiatives.,high,engineering_blog_theme
+PR011,C006,Capital One,AI automation,ML-driven fraud detection and customer analytics automation.,medium,public_news
+PR012,C006,Capital One,Cybersecurity,Cloud security monitoring and compliance for regulated financial data.,high,job_posting_themes
+PR013,C007,Toyota Motor North America,Connected vehicle data,Data platforms for telematics vehicle connectivity and analytics.,medium,industry_report
+PR014,C007,Toyota Motor North America,Cloud migration,Enterprise cloud adoption for manufacturing and connected services.,medium,public_news
+PR015,C007,Toyota Motor North America,Cybersecurity,Vehicle and enterprise security programs for automotive technology stack.,high,job_posting_themes
+PR016,C007,Toyota Motor North America,AI automation,Manufacturing and supply chain analytics automation initiatives.,low,speculative_theme
+PR017,C008,AT&T,Network modernization,5G fiber and core network transformation programs.,high,public_company_profile
+PR018,C008,AT&T,Cloud migration,Network function virtualization and cloud-native operations.,medium,industry_report
+PR019,C008,AT&T,AI automation,AI-driven network operations and customer service automation.,medium,public_news
+PR020,C008,AT&T,Cybersecurity,Network security IAM and zero-trust implementation for telecom infrastructure.,high,job_posting_themes

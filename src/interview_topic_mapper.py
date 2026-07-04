@@ -93,6 +93,23 @@ def generate_interview_topics(
     }
 
 
+def generate_interview_topics_for_job(job_id: str, jobs_df) -> dict:
+    """Generate interview topics for a single job by ID."""
+    job_rows = jobs_df[jobs_df["job_id"] == job_id]
+    if job_rows.empty:
+        return {"technical_topics": [], "business_topics": [], "behavioral_topics": [], "total_topics": 0}
+    job = job_rows.iloc[0]
+    topics = generate_interview_topics(
+        description=job.get("description", ""),
+        title=job.get("title", ""),
+        business_problem=job.get("business_problem", ""),
+    )
+    topics["job_id"] = job_id
+    topics["company_name"] = job.get("company_name", job.get("company", ""))
+    topics["title"] = job.get("title", "")
+    return topics
+
+
 def generate_interview_batch(jobs_df, scores: list[dict]) -> list[dict]:
     score_map = {s["job_id"]: s for s in scores}
     results = []

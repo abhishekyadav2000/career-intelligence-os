@@ -28,8 +28,44 @@ Career Intelligence OS ingests structured company, job, and contact data; scores
 | Interview prep | `src/interview_topic_mapper.py` | Domain knowledge mapping |
 | Gap analysis | `src/profile_gap_analyzer.py` | Skills gap identification |
 | Dashboard | `dashboard/app.py` | KPI storytelling, Streamlit |
+| **Interview Command Center** | `src/company_profile_engine.py`, `src/conversation_brief_generator.py`, etc. | End-to-end interview prep with company 360, people map, role reasoning, proof matching |
 
-## Quick Start
+## Interview Command Center
+
+The ICC upgrade transforms CI OS from a portfolio dashboard into an **end-to-end interview preparation system**:
+
+| Capability | Module | Data File |
+|------------|--------|-----------|
+| Company 360 profiles | `src/company_profile_engine.py` | `data/company_profiles.csv` |
+| People / power mapping | `src/people_power_mapper.py` | `data/people_map.csv` |
+| Role reasoning (30/60/90) | `src/role_reasoning_engine.py` | `data/role_reasoning.csv` |
+| Proof-of-work matching | `src/proof_asset_mapper.py` | `data/proof_assets.csv` |
+| Conversation briefs | `src/conversation_brief_generator.py` | `data/conversation_briefs.csv` |
+| Research prompts | `src/research_prompt_generator.py` | `prompts/*.md` |
+
+**Seed companies:** JPMorgan Chase, Citi, Capital One, Toyota Motor North America, AT&T
+
+**Rules:** CSV-first, TBD placeholders with `verification_status`, no scraping/automation, no fake names.
+
+### ICC Demo Flow
+
+1. Open dashboard → global selectors at top: company, role, conversation type, stage
+2. **Interview Command Center** tab → click **Generate Brief**
+3. Review 7 sections: Company 360, Role Intelligence, People Map, Proof Match, Script, Interview Prep, Action Plan
+4. **Export Brief as Markdown** or **Save Brief** (appends to CSV + `exports/`)
+5. Explore **Company 360**, **People Map**, **Role Deep Dive**, **Proof Assets** tabs
+6. Use research prompt expanders to enrich CSVs manually (see [docs/research-enrichment-workflow.md](docs/research-enrichment-workflow.md))
+
+**Acceptance test:** JPMorgan Chase + any role + hiring manager + hiring manager screen → full brief + markdown export.
+
+| # | Tab | Screenshot |
+|---|-----|------------|
+| 0 | Interview Command Center | ![ICC](screenshots/09-interview-command-center.png) |
+| 1 | Company 360 | ![Company 360](screenshots/10-company-360.png) |
+| 2 | People Map | ![People Map](screenshots/11-people-map.png) |
+| 3 | Role Deep Dive | ![Role Deep Dive](screenshots/12-role-deep-dive.png) |
+| 4 | Proof Assets | ![Proof Assets](screenshots/13-proof-assets.png) |
+
 
 ```bash
 git clone https://github.com/abhishekyadav2000/career-intelligence-os.git
@@ -43,7 +79,8 @@ Open `http://localhost:8501`.
 
 ## Demo Flow
 
-1. **Overview** — KPIs, gap matrix, fit distribution
+1. **Interview Command Center** — generate full conversation brief (start here)
+2. **Overview** — KPIs, gap matrix, fit distribution
 2. **Company Ranking** — priority scores across 50 DFW targets
 3. **Role Fit** — six-category scoring with drill-down
 4. **Sponsorship Signal** — H-1B/PERM indicators (signal only)
@@ -88,8 +125,8 @@ See [docs/architecture.md](docs/architecture.md) for full system design.
 
 ```
 career-intelligence-os/
-├── src/                    # Python modules
-├── data/                   # Sample datasets + conversation log
+├── src/                    # Python modules (scoring + ICC engines)
+├── data/                   # Sample datasets + ICC CSVs + conversation log
 ├── dashboard/              # Streamlit app
 ├── docs/                   # Architecture, vision, demo guide, job search loop
 ├── case-studies/           # Portfolio case studies (3)
@@ -98,7 +135,7 @@ career-intelligence-os/
 ├── interview-packets/      # Role family prep (6 packets)
 ├── prompts/                # AI agent prompt templates
 ├── presentation/           # Demo scripts, LinkedIn copy, walkthrough
-├── tests/                  # Scoring + conversation feedback tests
+├── tests/                  # Scoring + ICC + conversation feedback tests
 ├── screenshots/            # Dashboard captures
 ├── scripts/                # Screenshot capture utility
 ├── README.md
