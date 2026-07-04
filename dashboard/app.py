@@ -14,6 +14,7 @@ import pandas as pd
 import streamlit as st
 
 from src.company_priority_scorer import score_companies
+from src.conversation_feedback_analyzer import get_dashboard_stats
 from src.data_loader import load_all
 from src.db import DEMO_QUERIES, init_db, run_query
 from src.interview_topic_mapper import generate_interview_batch
@@ -92,6 +93,7 @@ filtered_scores = filtered_scores[filtered_scores["job_id"].isin(
 tabs = st.tabs([
     "Overview", "Company Ranking", "Role Fit", "Sponsorship Signal",
     "Networking Map", "Interview Prep", "Recommendations", "Export",
+    "Conversation Feedback",
 ])
 
 with tabs[0]:
@@ -195,3 +197,52 @@ with tabs[7]:
     st.code(DEMO_QUERIES[query_name], language="sql")
     if st.button("Run Query"):
         st.dataframe(pd.DataFrame(run_query(DEMO_QUERIES[query_name])), use_container_width=True, hide_index=True)
+
+with tabs[8]:
+    st.subheader("Conversation Feedback Loop")
+    st.caption("Rule-based analysis of outreach and interview conversations — no LLM required.")
+    feedback = get_dashboard_stats()
+
+    if feedback["total_conversations"] == 0:
+        st.info(feedback["summary"])
+        st.markdown(
+            "Log conversations in `data/conversation_log_template.csv` with fields: "
+            "date, company, person_type, role_discussed, source, outreach_status, "
+            "response, insight_gained, portfolio_gap, next_action, follow_up_date."
+        )
+    else:
+        c1, c2, c3 = st.columns(3)
+        c1.metric("Conversations Logged", feedback["total_conversations"])
+        c2.metric("Warm Companies", len(feedback["warm_companies"]))
+        c3.metric("Objection Themes", len(feedback["repeated_objections"]))
+        st.write(f"**Summary:** {feedback['summary']}")
+
+        col_a, col_b = st.columns(2)
+        with col_a:
+            st.write("**Warm Companies**")
+            if feedback["warm_companies"]:
+                st.dataframe(pd.DataFrame({"company": feedback["warm_companies"]}), hide_index=True)
+            else:
+                st.write("None yet — keep networking.")
+        with col_b:
+            st.write("**Repeated Objections**")
+            if feedback["repeated_objections"]:
+                st.dataframe(pd.DataFrame(feedback["repeated_objections"]), hide_index=True)
+            else:
+                st.write("No objection patterns detected.")
+
+        st.write("**Skill / Portfolio Gaps**")
+        if feedback["skill_gaps"]:
+            st.dataframe(pd.DataFrame(feedback["skill_gaps"]), hide_index=True)
+        else:
+            st.write("No gaps logged yet.")
+
+        st.write("**Next Actions**")
+        if feedback["next_actions"]:
+            st.dataframe(pd.DataFrame(feedback["next_actions"]), hide_index=True)
+        else:
+            st.write("No pending actions.")
+
+        if feedback["portfolio_improvements"]:
+            st.write("**Portfolio Improvements Suggested**")
+            st.dataframe(pd.DataFrame(feedback["portfolio_improvements"]), hide_index=True)

@@ -51,6 +51,24 @@ Open `http://localhost:8501`.
 6. **Interview Prep** — technical, business, behavioral topics
 7. **Recommendations** — apply / network / research / skip
 8. **Export** — CSV download + SQL analytics demo
+9. **Conversation Feedback** — outreach insights, warm companies, portfolio gaps
+
+See [docs/demo-guide.md](docs/demo-guide.md) for 2-min and 5-min demo scripts.
+
+## Dashboard Walkthrough
+
+| # | Tab | Screenshot |
+|---|-----|------------|
+| 1 | Overview | ![Overview](screenshots/01-overview-dashboard.png) |
+| 2 | Company Ranking | ![Company Ranking](screenshots/02-company-ranking.png) |
+| 3 | Role Fit | ![Role Fit](screenshots/03-role-fit.png) |
+| 4 | Sponsorship Signal | ![Sponsorship Signal](screenshots/04-sponsorship-signal.png) |
+| 5 | Networking Map | ![Networking Map](screenshots/05-networking-map.png) |
+| 6 | Interview Prep | ![Interview Prep](screenshots/06-interview-prep.png) |
+| 7 | Recommendations | ![Recommendations](screenshots/07-recommendations.png) |
+| 8 | Export & SQL | ![Export](screenshots/08-export-sql-demo.png) |
+
+To recapture screenshots: `python scripts/capture_screenshots.py` (requires Playwright + running dashboard).
 
 ## Architecture
 
@@ -71,14 +89,18 @@ See [docs/architecture.md](docs/architecture.md) for full system design.
 ```
 career-intelligence-os/
 ├── src/                    # Python modules
-├── data/                   # Sample datasets
+├── data/                   # Sample datasets + conversation log
 ├── dashboard/              # Streamlit app
-├── docs/                   # Architecture, vision, risk register
-├── case-studies/           # Portfolio case studies
+├── docs/                   # Architecture, vision, demo guide, job search loop
+├── case-studies/           # Portfolio case studies (3)
+├── company-packets/        # Target company briefs (5 + template)
+├── conversation-playbooks/ # Outreach scripts (6 playbooks)
+├── interview-packets/      # Role family prep (6 packets)
 ├── prompts/                # AI agent prompt templates
-├── presentation/           # Demo scripts, recruiter copy
-├── tests/                  # Scoring engine tests
-├── screenshots/            # Dashboard captures (placeholder)
+├── presentation/           # Demo scripts, LinkedIn copy, walkthrough
+├── tests/                  # Scoring + conversation feedback tests
+├── screenshots/            # Dashboard captures
+├── scripts/                # Screenshot capture utility
 ├── README.md
 ├── requirements.txt
 └── .env.example
