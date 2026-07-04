@@ -29,6 +29,37 @@ Career Intelligence OS ingests structured company, job, and contact data; scores
 | Gap analysis | `src/profile_gap_analyzer.py` | Skills gap identification |
 | Dashboard | `dashboard/app.py` | KPI storytelling, Streamlit |
 | **Interview Command Center** | `src/company_profile_engine.py`, `src/conversation_brief_generator.py`, etc. | End-to-end interview prep with company 360, people map, role reasoning, proof matching |
+| **Mission Control** | `src/mission_control_engine.py`, `src/pipeline_engine.py`, etc. | Monday-ready execution: action queue, pipeline board, message queue, readiness score |
+
+## Mission Control
+
+Mission Control is the **default tab** — it answers Monday morning questions in one view without clicking through 10 tabs.
+
+| Question | Where |
+|----------|-------|
+| What do I do today? | Today's Action Queue + activity schedule |
+| Who to contact? | Top 10 Targets + message queue |
+| What proof to show? | Selected Target panel + proof asset on each card |
+| What follow-up is due? | Follow-Up Radar |
+
+| Module | Purpose |
+|--------|---------|
+| `src/pipeline_engine.py` | Build/score pipeline cards from jobs, people, proof, recommendations |
+| `src/schedule_engine.py` | Monday launch plan + daily activity schedule |
+| `src/mission_control_engine.py` | Readiness score (5×20 pts), warnings, orchestration |
+| `src/message_queue_engine.py` | Copy-ready outreach drafts (no auto-send) |
+
+**Data files:** `pipeline_cards.csv`, `monday_launch_plan.csv`, `activity_schedule.csv`
+
+### Monday Launch Workflow
+
+1. **Saturday/Sunday** — run `python scripts/seed_pipeline_cards.py`; enrich research_sources and verify contacts
+2. **Monday 9:00 AM** — open **Mission Control** → check **Monday Readiness Score**
+3. **9:30** — verify top contacts (People Map tab)
+4. **10:30–11:30** — copy messages from Message Queue; log in `conversation_log_template.csv`
+5. **End of day** — update pipeline stages; mark activities done in schedule
+
+Real conversation samples live in `data/sample_conversation_log.csv` — the template CSV is header-only for your real logs.
 
 ## Interview Command Center
 
@@ -77,16 +108,17 @@ streamlit run dashboard/app.py
 
 ## Demo Flow
 
-1. **Interview Command Center** — generate full conversation brief (start here)
-2. **Overview** — KPIs, gap matrix, fit distribution
-2. **Company Ranking** — priority scores across 50 DFW targets
-3. **Role Fit** — six-category scoring with drill-down
-4. **Sponsorship Signal** — H-1B/PERM indicators (signal only)
-5. **Networking Map** — outreach angles by contact type
-6. **Interview Prep** — technical, business, behavioral topics
-7. **Recommendations** — apply / network / research / skip
-8. **Export** — CSV download + SQL analytics demo
-9. **Conversation Feedback** — outreach insights, warm companies, portfolio gaps
+1. **Mission Control** — readiness score, action queue, pipeline board (start here Monday morning)
+2. **Interview Command Center** — generate full conversation brief
+3. **Overview** — KPIs, gap matrix, fit distribution
+4. **Company Ranking** — priority scores across 50 DFW targets
+5. **Role Fit** — six-category scoring with drill-down
+6. **Sponsorship Signal** — H-1B/PERM indicators (signal only)
+7. **Networking Map** — outreach angles by contact type
+8. **Interview Prep** — technical, business, behavioral topics
+9. **Recommendations** — apply / network / research / skip
+10. **Export** — CSV download + SQL analytics demo
+11. **Conversation Feedback** — outreach insights, warm companies, portfolio gaps
 
 See [docs/demo-guide.md](docs/demo-guide.md) for 2-min and 5-min demo scripts.
 
@@ -94,19 +126,20 @@ See [docs/demo-guide.md](docs/demo-guide.md) for 2-min and 5-min demo scripts.
 
 | # | Tab | Screenshot |
 |---|-----|------------|
-| 0 | Interview Command Center | ![ICC](screenshots/09-interview-command-center.png) |
-| 1 | Company 360 | ![Company 360](screenshots/10-company-360.png) |
-| 2 | People Map | ![People Map](screenshots/11-people-map.png) |
-| 3 | Role Deep Dive | ![Role Deep Dive](screenshots/12-role-deep-dive.png) |
-| 4 | Proof Assets | ![Proof Assets](screenshots/13-proof-assets.png) |
-| 5 | Overview | ![Overview](screenshots/01-overview-dashboard.png) |
-| 6 | Company Ranking | ![Company Ranking](screenshots/02-company-ranking.png) |
-| 7 | Role Fit | ![Role Fit](screenshots/03-role-fit.png) |
-| 8 | Sponsorship Signal | ![Sponsorship Signal](screenshots/04-sponsorship-signal.png) |
-| 9 | Networking Map | ![Networking Map](screenshots/05-networking-map.png) |
-| 10 | Interview Prep | ![Interview Prep](screenshots/06-interview-prep.png) |
-| 11 | Recommendations | ![Recommendations](screenshots/07-recommendations.png) |
-| 12 | Export & SQL | ![Export](screenshots/08-export-sql-demo.png) |
+| 0 | Mission Control | ![Mission Control](screenshots/00-mission-control.png) |
+| 1 | Interview Command Center | ![ICC](screenshots/09-interview-command-center.png) |
+| 2 | Company 360 | ![Company 360](screenshots/10-company-360.png) |
+| 3 | People Map | ![People Map](screenshots/11-people-map.png) |
+| 4 | Role Deep Dive | ![Role Deep Dive](screenshots/12-role-deep-dive.png) |
+| 5 | Proof Assets | ![Proof Assets](screenshots/13-proof-assets.png) |
+| 6 | Overview | ![Overview](screenshots/01-overview-dashboard.png) |
+| 7 | Company Ranking | ![Company Ranking](screenshots/02-company-ranking.png) |
+| 8 | Role Fit | ![Role Fit](screenshots/03-role-fit.png) |
+| 9 | Sponsorship Signal | ![Sponsorship Signal](screenshots/04-sponsorship-signal.png) |
+| 10 | Networking Map | ![Networking Map](screenshots/05-networking-map.png) |
+| 11 | Interview Prep | ![Interview Prep](screenshots/06-interview-prep.png) |
+| 12 | Recommendations | ![Recommendations](screenshots/07-recommendations.png) |
+| 13 | Export & SQL | ![Export](screenshots/08-export-sql-demo.png) |
 
 To recapture screenshots: `python scripts/capture_screenshots.py` (requires Playwright + running dashboard).
 

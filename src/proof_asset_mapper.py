@@ -106,11 +106,12 @@ def match_assets_to_company(
         target_tags.update(THEME_TAG_MAP.get(theme, []))
 
     slug = company_name.replace(" ", "-").split("/")[0].strip()
+    slug_token = slug.split()[0] if slug.split() else ""
     results = []
     for _, asset in proof_assets_df.iterrows():
         overlap = _tag_overlap(asset["tags"], target_tags)
         company_bonus = 15.0 if slug.replace(" ", "") in str(asset["tags"]).lower().replace("-", "") else 0.0
-        packet_bonus = 20.0 if slug.split()[0] in str(asset.get("url_or_path", "")).lower() else 0.0
+        packet_bonus = 20.0 if slug_token and slug_token in str(asset.get("url_or_path", "")).lower() else 0.0
         base_score = float(asset.get("relevance_score", 50))
         combined = round(base_score * 0.5 + overlap * 100 * 0.3 + company_bonus + packet_bonus * 0.2, 1)
         results.append({

@@ -1,0 +1,6 @@
+plan_date,day_name,focus,key_outputs,success_metrics,status,notes
+2026-07-04,Saturday,Pipeline prep and research enrichment,"Refresh top 10 pipeline cards; add research_sources for ICC companies; verify 2 contacts","10 cards scored; 3 sources added; 2 contacts verified",planned,Weekend prep before Monday launch
+2026-07-05,Sunday,Brief generation and proof alignment,"Generate 3 conversation briefs; map proof assets to top roles; export message queue CSV","3 briefs saved; message queue exported; proof gaps documented",planned,Light review day — no outreach
+2026-07-06,Monday,Execute outreach and applications,"Mission Control review 9AM; verify contacts 9:30; send 3 recruiter messages; apply to 2 roles; log all activity","3 messages sent; 2 applications submitted; activity log complete",active,Primary launch day — follow activity_schedule.csv
+2026-07-07,Tuesday,Follow-ups and hiring manager outreach,"Follow up on Monday messages; draft 2 HM messages; update pipeline stages","2 follow-ups sent; 2 HM drafts ready; pipeline board updated",planned,Shift to HM after recruiter responses
+2026-07-08,Wednesday,Interview prep and portfolio fixes,"Prepare interview packets for warm companies; fix portfolio gaps from feedback tab","1 interview packet complete; 1 portfolio gap closed",planned,Mid-week review against launch metrics

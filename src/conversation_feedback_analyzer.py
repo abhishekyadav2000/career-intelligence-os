@@ -8,22 +8,50 @@ from datetime import datetime
 from pathlib import Path
 
 DEFAULT_LOG_PATH = Path(__file__).resolve().parent.parent / "data" / "conversation_log_template.csv"
+SAMPLE_LOG_PATH = Path(__file__).resolve().parent.parent / "data" / "sample_conversation_log.csv"
 
 RESPONSE_WARM = {"replied", "interested", "scheduled", "positive", "warm", "follow-up scheduled"}
 RESPONSE_COLD = {"no reply", "declined", "not interested", "rejected", "ghosted", "closed"}
 
 
 def load_conversation_log(path: Path | str | None = None) -> list[dict[str, str]]:
-    """Load conversation log CSV; returns empty list if missing or header-only."""
+    """Load conversation log CSV; returns empty list if missing or header-only.
+
+    Sample/demo rows live in sample_conversation_log.csv and are never loaded by default.
+    """
     log_path = Path(path) if path else DEFAULT_LOG_PATH
     if not log_path.exists():
         return []
 
+    resolved = log_path.resolve()
+    if resolved == SAMPLE_LOG_PATH.resolve():
+        return []
+
     with log_path.open(newline="", encoding="utf-8") as handle:
         reader = csv.DictReader(handle)
-        rows = [dict(row) for row in reader if any(v.strip() for v in row.values() if v)]
+        rows = [
+            dict(row) for row in reader
+            if any(v.strip() for v in row.values() if v)
+            and not _is_sample_row(dict(row))
+        ]
 
     return rows
+
+
+def _is_sample_row(row: dict[str, str]) -> bool:
+    """Detect legacy sample rows that may remain in user logs."""
+    source = (row.get("source") or "").lower()
+    if "sample" in source or "demo" in source:
+        return True
+    company = row.get("company", "")
+    sample_companies = {
+        "JPMorgan Chase", "Capital One", "Citi",
+        "Toyota Motor North America", "AT&T",
+    }
+    sample_dates = {"2026-03-15", "2026-03-18", "2026-03-20", "2026-03-22", "2026-03-25"}
+    if company in sample_companies and row.get("date", "") in sample_dates:
+        return True
+    return False
 
 
 def _normalize(text: str) -> str:

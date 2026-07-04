@@ -9,6 +9,7 @@ SCREENSHOTS = ROOT / "screenshots"
 SCREENSHOTS.mkdir(exist_ok=True)
 
 TABS = [
+    ("00-mission-control.png", "Mission Control"),
     ("09-interview-command-center.png", "Interview Command Center"),
     ("10-company-360.png", "Company 360"),
     ("11-people-map.png", "People Map"),

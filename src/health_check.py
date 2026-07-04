@@ -30,6 +30,11 @@ CORE_MODULES = [
     "src.role_reasoning_engine",
     "src.schema_validator",
     "src.sponsorship_signal",
+    "src.mission_control_engine",
+    "src.message_queue_engine",
+    "src.pipeline_engine",
+    "src.schedule_engine",
+    "src.data_confidence",
 ]
 
 COMPAT_MODULES = [
@@ -56,6 +61,10 @@ REQUIRED_CSVS = [
 OPTIONAL_CSVS = [
     "gap_matrix.csv",
     "conversation_briefs.csv",
+    "pipeline_cards.csv",
+    "monday_launch_plan.csv",
+    "activity_schedule.csv",
+    "sample_conversation_log.csv",
 ]
 
 

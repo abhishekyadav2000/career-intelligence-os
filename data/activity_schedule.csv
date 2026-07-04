@@ -1,0 +1,9 @@
+activity_id,day_of_week,start_time,activity_name,description,category,duration_minutes,status,linked_pipeline_stage
+ACT001,Monday,9:00 AM,Mission Control review,Open Mission Control tab — review readiness score action queue and blockers,planning,30,pending,
+ACT002,Monday,9:30 AM,Verify contacts,Verify top 3 pipeline contacts via public sources; update people_map.csv,verification,45,pending,Person Verification
+ACT003,Monday,10:30 AM,Recruiter messages,Send copy-ready recruiter messages from message queue — log in conversation log,no outreach,60,pending,Ready to Contact
+ACT004,Monday,11:30 AM,Apply to roles,Submit applications for top Ready to Contact / apply now cards,execution,45,pending,Applied
+ACT005,Monday,1:30 PM,Hiring manager messages,Draft HM outreach for network-first targets using proof assets,no outreach,45,pending,Ready to Contact
+ACT006,Monday,3:00 PM,Log conversations,Update conversation_log_template.csv with outcomes and follow-up dates,logging,30,pending,Message Sent
+ACT007,Monday,4:00 PM,Portfolio fix,Address top portfolio gap from feedback tab or proof asset mapper,portfolio,45,pending,
+ACT008,Monday,5:00 PM,End-of-day review,Update pipeline stages; mark activities done; set Tuesday follow-ups,review,30,pending,

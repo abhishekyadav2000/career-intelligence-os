@@ -47,6 +47,11 @@ CORE_MODULES = [
     "src.role_reasoning_engine",
     "src.schema_validator",
     "src.sponsorship_signal",
+    "src.pipeline_engine",
+    "src.schedule_engine",
+    "src.mission_control_engine",
+    "src.message_queue_engine",
+    "src.data_confidence",
 ]
 
 COMPAT_MODULES = [
@@ -58,6 +63,7 @@ COMPAT_MODULES = [
 ]
 
 TAB_TESTS = [
+    "Mission Control",
     "Interview Command Center",
     "Company 360",
     "People Map",
@@ -152,6 +158,9 @@ def test_tabs(report: TestReport, data: dict) -> None:
         generate_people_research_prompt,
         generate_role_research_prompt,
     )
+    from src.mission_control_engine import build_mission_control
+    from src.message_queue_engine import build_message_queue
+    from src.pipeline_engine import build_pipeline_cards, get_pipeline_metrics
     from src.role_fit_scorer import score_jobs_dataframe
     from src.role_reasoning_engine import build_role_deep_dive, load_role_reasoning
 
@@ -184,6 +193,12 @@ def test_tabs(report: TestReport, data: dict) -> None:
     init_db(companies_df, jobs_df, contacts_df)
 
     tab_ops = {
+        "Mission Control": lambda: (
+            build_mission_control(data),
+            build_pipeline_cards(data),
+            get_pipeline_metrics(build_pipeline_cards(data)),
+            build_message_queue(build_pipeline_cards(data), data),
+        ),
         "Interview Command Center": lambda: (
             generate_conversation_brief(company_id, job_id, jobs_df, "hiring manager", "hiring manager screen"),
             export_brief_markdown(
@@ -265,7 +280,7 @@ def main() -> int:
         data = {}
 
     if data:
-        print("\n[3/4] Tab simulations (14 tabs)...")
+        print("\n[3/4] Tab simulations (15 tabs)...")
         test_tabs(report, data)
 
     print("\n[4/4] Health check...")

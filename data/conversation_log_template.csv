@@ -1,6 +1,1 @@
 date,company,person_type,role_discussed,source,outreach_status,response,insight_gained,portfolio_gap,next_action,follow_up_date
-2026-03-15,JPMorgan Chase,recruiter,Technology Analyst,LinkedIn,sent,replied,"Asked about Python/SQL depth and cloud security exposure; sponsorship possible but role-specific","Cloud / IAM / SIEM lab artifact","Send portfolio link + Career Intelligence OS demo",2026-03-22
-2026-03-18,Capital One,alumni,Data Analyst,Alumni network,sent,interested,"Warm intro to hiring manager; emphasized data pipeline + risk controls storytelling","SQL analytics case study depth","Request 15-min informational chat",2026-03-25
-2026-03-20,Citi,hiring_manager,Cloud Security Analyst,Referral,scheduled,positive,"Wants evidence of IAM policy review and SIEM tuning — not just keyword match","Secure Cloud Evidence Lab module","Prepare IAM least-privilege walkthrough",2026-04-01
-2026-03-22,Toyota Motor North America,peer,Cybersecurity Analyst,Meetup,sent,no reply,"No response after 5 days — try alternate contact type","Networking map diversification","Message second contact at Toyota",2026-03-29
-2026-03-25,AT&T,recruiter,Technology Analyst,Company career site,applied,replied,"Requested clarification on OPT/EAD timeline; transparent disclosure appreciated","Sponsorship disclosure playbook","Follow up with technical portfolio examples",2026-04-02

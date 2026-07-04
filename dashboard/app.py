@@ -5,6 +5,7 @@ Run: streamlit run dashboard/app.py
 """
 
 import sys
+from datetime import datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -24,6 +25,7 @@ from src.conversation_brief_generator import (
     score_brief_completeness,
 )
 from src.conversation_feedback_analyzer import get_dashboard_stats
+from src.data_confidence import compute_confidence, confidence_badge_label, get_confidence_warnings, is_stale
 from src.data_loader import load_all
 from src.db import DEMO_QUERIES, init_db, run_query
 from src.health_check import run_health_check
@@ -46,7 +48,15 @@ from src.research_prompt_generator import (
     generate_role_research_prompt,
 )
 from src.role_fit_scorer import UNIVERSAL_PROFILE, score_jobs_dataframe
+from src.message_queue_engine import (
+    build_message_queue,
+    export_message_queue_csv,
+    export_message_queue_markdown,
+)
+from src.mission_control_engine import build_mission_control
+from src.pipeline_engine import PIPELINE_STAGES, load_pipeline_cards, save_pipeline_cards
 from src.role_reasoning_engine import build_role_deep_dive, load_role_reasoning
+from src.schedule_engine import get_daily_plan, get_next_activities, load_launch_plan, mark_activity_done
 
 # ── Page config ───────────────────────────────────────────────────────────────
 
@@ -91,6 +101,19 @@ PROFESSIONAL_CSS = """
     .status-partial { background: #3a3520; color: #fcd34d; }
     .status-placeholder { background: #2a2a2a; color: #9ca3af; }
     .status-needs_verification { background: #3a2020; color: #fca5a5; }
+    .confidence-verified_public { background: #1e3a2f; color: #6ee7b7; }
+    .confidence-user_verified { background: #1a3348; color: #7dd3fc; }
+    .confidence-source_backed { background: #2a3520; color: #bef264; }
+    .confidence-hypothesis { background: #3a3520; color: #fcd34d; }
+    .confidence-placeholder { background: #2a2a2a; color: #9ca3af; }
+    .confidence-stale { background: #3a2020; color: #fca5a5; }
+    .mc-panel {
+        background: #1a2332;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        border: 1px solid #333;
+        margin-bottom: 1rem;
+    }
     .health-green { color: #34d399; font-weight: 600; }
     .health-yellow { color: #fbbf24; font-weight: 600; }
     .health-red { color: #f87171; font-weight: 600; }
@@ -124,6 +147,21 @@ STATUS_LABELS = {
     "placeholder": ("Placeholder", "status-placeholder"),
     "needs_verification": ("Needs Verification", "status-needs_verification"),
 }
+
+CONFIDENCE_CSS = {
+    "verified_public": "confidence-verified_public",
+    "user_verified": "confidence-user_verified",
+    "source_backed": "confidence-source_backed",
+    "hypothesis": "confidence-hypothesis",
+    "placeholder": "confidence-placeholder",
+    "stale": "confidence-stale",
+}
+
+
+def render_confidence_badge(confidence: str) -> str:
+    label = confidence_badge_label(confidence)
+    css = CONFIDENCE_CSS.get(confidence, "confidence-placeholder")
+    return f'<span class="status-badge {css}">{label}</span>'
 
 
 def render_status_badge(status: str) -> str:
@@ -237,6 +275,13 @@ scores_df = pd.DataFrame([
 rec_df = pd.DataFrame(recommendations)
 company_rank_df = pd.DataFrame(company_scores)
 
+# ── Mission Control data ───────────────────────────────────────────────────────
+
+mission_control = build_mission_control(data, date=datetime.now())
+mc_cards = mission_control["cards"]
+message_queue = mission_control["message_queue"]
+card_by_job = {c["job_id"]: c for c in mc_cards}
+
 # ── Sidebar ───────────────────────────────────────────────────────────────────
 
 st.sidebar.header("Filters")
@@ -289,8 +334,8 @@ if "current_brief" not in st.session_state:
 if "brief_markdown" not in st.session_state:
     st.session_state.brief_markdown = ""
 
-st.subheader("Interview Command Center")
-st.caption("Select target company and role for brief generation across all intelligence tabs.")
+st.subheader("Selected Target")
+st.caption("Persistent context for Mission Control and Interview Command Center tabs.")
 
 icc_col1, icc_col2, icc_col3, icc_col4 = st.columns(4)
 
@@ -315,12 +360,50 @@ with icc_col4:
 icc_company_row = companies_df[companies_df["company_name"] == icc_company_name]
 icc_company_id = icc_company_row.iloc[0]["company_id"] if not icc_company_row.empty else ""
 icc_job_row = jobs_df[jobs_df["job_id"] == icc_job_id].iloc[0] if icc_job_id else None
+selected_card = card_by_job.get(icc_job_id, {})
 
+st.markdown('<div class="mc-panel">', unsafe_allow_html=True)
+st_col1, st_col2, st_col3, st_col4, st_col5 = st.columns(5)
+job_title = icc_job_row["title"] if icc_job_row is not None else "N/A"
+st_col1.metric("Company", icc_company_name)
+st_col2.metric("Role", job_title[:28] + ("…" if len(job_title) > 28 else ""))
+st_col3.metric("Contact Type", selected_card.get("contact_type", icc_conversation_type))
+st_col4.metric("Pipeline Stage", selected_card.get("pipeline_stage", "—"))
+st_col5.metric("Priority", selected_card.get("priority_score", "—"))
+
+panel_a, panel_b = st.columns([2, 1])
+with panel_a:
+    st.write(f"**Next action:** {selected_card.get('next_action', 'Select a role and review Mission Control queue')}")
+    proof_title = selected_card.get("proof_asset_title", "")
+    if proof_title:
+        conf = selected_card.get("data_confidence", "placeholder")
+        st.markdown(
+            f"**Proof asset:** {proof_title} {render_confidence_badge(conf)}",
+            unsafe_allow_html=True,
+        )
+with panel_b:
+    if st.button("Export Brief", key="panel_export_brief", type="primary"):
+        if icc_company_id and icc_job_id:
+            st.session_state.current_brief = generate_conversation_brief(
+                icc_company_id, icc_job_id, jobs_df,
+                icc_conversation_type, icc_interview_stage,
+            )
+            st.session_state.brief_markdown = export_brief_markdown(st.session_state.current_brief)
+            st.success("Brief generated — see Command Center tab.")
+
+with st.expander("Quick links to related views"):
+    ql1, ql2, ql3 = st.columns(3)
+    ql1.caption("Company 360 · People Map · Proof Assets tabs")
+    ql2.caption(f"Stage: {icc_interview_stage} · Type: {icc_conversation_type}")
+    ql3.caption(f"Recommendation: {selected_card.get('recommendation_action', '—')}")
+
+st.markdown("</div>", unsafe_allow_html=True)
 st.divider()
 
 # ── Tabs ──────────────────────────────────────────────────────────────────────
 
 tabs = st.tabs([
+    "Mission Control",
     "Command Center",
     "Company 360",
     "People Map",
@@ -336,6 +419,145 @@ tabs = st.tabs([
     "Export",
     "Feedback",
 ])
+
+
+def tab_mission_control():
+    mc = mission_control
+    readiness = mc["readiness"]
+    metrics = mc["metrics"]
+    top_target = mc.get("top_target", {})
+
+    st.subheader("Mission Control")
+    st.caption(f"Monday-ready execution · {mc['date']}")
+
+    m1, m2, m3, m4, m5, m6 = st.columns(6)
+    m1.metric("Monday Readiness", f"{readiness['total']}/100", readiness["label"])
+    m2.metric("Date", mc["date"])
+    m3.metric("Top Target", (top_target.get("company_name", "—")[:18] if top_target else "—"))
+    m4.metric("Briefs Ready", mc.get("briefs_ready", 0))
+    m5.metric("Follow-Ups Due", metrics.get("follow_up_due", 0))
+    m6.metric("Blocked", metrics.get("blocked", 0))
+
+    if mc.get("warnings"):
+        with st.expander("Execution warnings", expanded=False):
+            for w in mc["warnings"]:
+                st.warning(w)
+
+    st.divider()
+    st.markdown("#### Today's Action Queue")
+    queue_df = pd.DataFrame(mc["action_queue"])
+    if queue_df.empty:
+        st.info("No actions queued — refresh pipeline cards or adjust filters.")
+    else:
+        display_cols = [
+            "priority_score", "company_name", "job_title", "pipeline_stage",
+            "next_action", "contact_type", "data_confidence",
+        ]
+        show = [c for c in display_cols if c in queue_df.columns]
+        st.dataframe(queue_df[show], use_container_width=True, hide_index=True)
+        eq1, eq2 = st.columns(2)
+        with eq1:
+            st.download_button(
+                "Export Queue CSV",
+                queue_df.to_csv(index=False),
+                "action_queue.csv",
+                "text/csv",
+                key="dl_action_queue",
+            )
+        with eq2:
+            md_lines = ["# Today's Action Queue", ""]
+            for _, row in queue_df.iterrows():
+                md_lines.append(f"- **{row.get('company_name')}** — {row.get('job_title')}: {row.get('next_action')}")
+            st.download_button(
+                "Export Queue Markdown",
+                "\n".join(md_lines),
+                "action_queue.md",
+                "text/markdown",
+                key="dl_action_md",
+            )
+
+    st.divider()
+    st.markdown("#### Pipeline Board")
+    board = mc["pipeline_board"]
+    cols = st.columns(len(PIPELINE_STAGES))
+    for col, stage in zip(cols, PIPELINE_STAGES):
+        with col:
+            st.markdown(f"**{stage}**")
+            cards_in_stage = board.get(stage, [])
+            st.caption(f"{len(cards_in_stage)} cards")
+            for card in cards_in_stage[:4]:
+                st.write(f"· {card.get('company_name', '')[:14]}")
+                st.caption(f"{card.get('priority_score', '')} · {card.get('job_title', '')[:20]}")
+
+    st.divider()
+    st.markdown("#### Top 10 Targets")
+    targets_df = pd.DataFrame(mc["top_targets"])
+    if not targets_df.empty:
+        tcols = ["priority_score", "company_name", "job_title", "pipeline_stage", "recommendation_action", "data_confidence"]
+        st.dataframe(targets_df[[c for c in tcols if c in targets_df.columns]], use_container_width=True, hide_index=True)
+
+    st.divider()
+    col_r, col_b = st.columns(2)
+    with col_r:
+        st.markdown("#### Follow-Up Radar")
+        fu = mc.get("follow_up_radar", [])
+        if fu:
+            st.dataframe(pd.DataFrame(fu)[["company_name", "job_title", "follow_up_date", "next_action"]], hide_index=True)
+        else:
+            st.write("No follow-ups due.")
+    with col_b:
+        st.markdown("#### Blockers")
+        blockers = mc.get("blockers", [])
+        if blockers:
+            for b in blockers[:8]:
+                st.warning(f"{b.get('company_name')} — {b.get('blocked_reason') or b.get('pipeline_stage')}")
+        else:
+            st.success("No blocked cards.")
+
+    st.divider()
+    st.markdown("#### Monday Launch Plan")
+    daily = mc.get("daily_plan")
+    if daily:
+        st.write(f"**Focus:** {daily.get('focus', '')}")
+        st.write(f"**Outputs:** {daily.get('key_outputs', '')}")
+        st.write(f"**Metrics:** {daily.get('success_metrics', '')}")
+    else:
+        st.info("No launch plan entry for today — see monday_launch_plan.csv")
+
+    week = mc.get("week_plan", {})
+    if week.get("entries"):
+        with st.expander("Full week plan"):
+            st.dataframe(pd.DataFrame(week["entries"]), hide_index=True)
+
+    st.markdown("#### Today's Schedule")
+    for act in mc.get("next_activities", []):
+        st.write(f"**{act.get('start_time')}** — {act.get('activity_name')}")
+    for act in mc.get("overdue_activities", []):
+        c1, c2 = st.columns([4, 1])
+        c1.warning(f"Overdue: {act.get('start_time')} — {act.get('activity_name')}")
+        if c2.button("Done", key=f"done_{act.get('activity_id')}"):
+            if mark_activity_done(act.get("activity_id", "")):
+                st.rerun()
+
+    st.divider()
+    st.markdown("#### Message Queue Preview")
+    mq = mc.get("message_queue", [])
+    if not mq:
+        st.info("No messages ready — verify contacts and move cards to Ready to Contact.")
+    else:
+        for msg in mq[:5]:
+            with st.expander(f"{msg.get('company_name')} — {msg.get('job_title')} ({msg.get('status')})"):
+                st.text_area("Draft", msg.get("message_draft", ""), height=140, key=f"mq_{msg.get('message_id')}")
+                copy_to_clipboard_button(msg.get("message_draft", ""), msg.get("message_id", "mq"))
+        mq_path = export_message_queue_csv(mq, ROOT / "exports" / "message_queue.csv")
+        st.download_button(
+            "Export Message Queue CSV",
+            export_message_queue_markdown(mq),
+            "message_queue.md",
+            "text/markdown",
+            key="dl_mq_md",
+        )
+        st.caption(f"CSV also saved to {mq_path.relative_to(ROOT)}")
 
 
 def tab_command_center():
@@ -453,6 +675,16 @@ def tab_company_360():
         st.warning("Company profile not found. Add an entry to company_profiles.csv for this company.")
         return
 
+    prof_row = profiles_df[profiles_df["company_id"] == icc_company_id]
+    lu = prof_row.iloc[0]["last_updated"] if not prof_row.empty else ""
+    src_count = len(sources_df[sources_df["company_id"] == icc_company_id]) if not sources_df.empty else 0
+    conf = compute_confidence("partial", lu, src_count > 0)
+    st.markdown(render_confidence_badge(conf), unsafe_allow_html=True)
+    if is_stale(lu):
+        st.warning(f"Profile last updated {lu} — data may be stale (>30 days).")
+    for w in get_confidence_warnings(icc_company_id, profiles_df, people_df, sources_df):
+        st.caption(w)
+
     st.write(f"**Strategic Summary:** {c360['strategic_summary']}")
     st.write(f"**Growth Signals:** {c360['growth_signals']}")
     st.write(f"**Risk Factors:** {c360['risk_factors']}")
@@ -507,7 +739,9 @@ def tab_people_map():
         display_rows = []
         for p in ranked:
             label, _ = STATUS_LABELS.get(p.get("verification_status", "placeholder"), ("Unknown", ""))
+            conf = compute_confidence(p.get("verification_status", "placeholder"))
             display_rows.append({
+                "Confidence": confidence_badge_label(conf),
                 "Status": label,
                 "Name": p.get("person_name"),
                 "Type": p.get("contact_type"),
@@ -778,6 +1012,7 @@ def tab_feedback():
 # ── Render tabs with error boundaries ─────────────────────────────────────────
 
 TAB_RENDERERS = [
+    ("Mission Control", "mission_control_engine", "Run scripts/seed_pipeline_cards.py and check pipeline CSVs", tab_mission_control),
     ("Command Center", "conversation_brief_generator", "Check ICC CSV files and brief generator imports", tab_command_center),
     ("Company 360", "company_profile_engine", "Verify company_profiles.csv and company_projects.csv", tab_company_360),
     ("People Map", "people_power_mapper", "Verify people_map.csv schema and contact types", tab_people_map),

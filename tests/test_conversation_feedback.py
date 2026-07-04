@@ -58,6 +58,14 @@ def test_skill_gaps_and_objections():
     assert any("Sponsorship" in o["objection"] for o in result["repeated_objections"])
 
 
-def test_load_template_has_sample_rows():
+def test_load_template_empty_by_default():
     rows = load_conversation_log()
-    assert len(rows) >= 3
+    assert len(rows) == 0
+
+
+def test_sample_log_loads_when_explicit():
+    from src.conversation_feedback_analyzer import SAMPLE_LOG_PATH
+    import csv
+    with SAMPLE_LOG_PATH.open(newline="", encoding="utf-8") as handle:
+        sample_rows = list(csv.DictReader(handle))
+    assert len(sample_rows) >= 3

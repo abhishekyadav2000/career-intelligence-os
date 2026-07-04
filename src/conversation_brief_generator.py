@@ -61,9 +61,9 @@ def generate_opt_disclosure(include: bool = True) -> str:
     if not include:
         return "[Optional — not included] Work authorization disclosure omitted per user preference."
     return (
-        "I want to be transparent: I will require employer sponsorship for work authorization now or in the future. "
-        "I understand this may affect timing and role eligibility. I'm happy to discuss how my skills align "
-        "with your team's needs regardless — and I appreciate your guidance on roles where sponsorship is feasible."
+        "I'm currently authorized to work in the U.S. on OPT/EAD and targeting roles aligned with my STEM OPT "
+        "pathway. I'm being transparent early about future sponsorship compatibility where relevant, and I'm "
+        "happy to follow the company's process for roles that support that pathway."
     )
 
 
