@@ -1,47 +1,48 @@
 # Company Packet: McKesson
 
-**Industry:** Healthcare Distribution + Technology  
+**Industry:** Healthcare Distribution + Tech  
 **Location:** Irving  
 **Career URL:** https://careers.mckesson.com  
-**CI OS Priority Rank:** 24 (Tier 1 — attack first)  
-**Sponsorship Signal:** DFW Fortune/HQ; healthcare tech demand; DOL/USCIS validation needed
+**CI OS Priority Rank:** 24 (Tier 1 - attack first)  
+**Sponsorship Signal:** DFW Fortune/HQ; sponsor verification needed H-1B employer signal confidence 4/5 from sample research — validate per role via DOL LCA data; not legal advice.
 
 ---
 
 ## Why This Company
 
-McKesson is a Fortune 15 healthcare distribution and technology company with major Irving presence. Healthcare supply chain modernization, data analytics, and cybersecurity create steady demand for enterprise technology analysts who bridge data pipelines, security controls, and operational KPIs — matching the universal profile's cross-domain positioning.
+McKesson (Irving): Health IT modernization; data interoperability; cybersecurity; AI-assisted research. DFW presence supports technology hiring in target role families.
+
+**Why they hire tech roles:** Secure patient data, automate supply chain, and enable research and clinical analytics.
+
+**Business model:** Healthcare delivery, distribution, or research revenue with increasing investment in clinical and operational technology.
 
 ---
 
-## Target Roles (from sample data)
+## Target Roles (from job data)
 
-| Title | Location | Role Family | Notes |
-|-------|----------|-------------|-------|
-| Data Analyst | Irving | Cloud / Security / Data / AI / Analyst | Healthcare supply chain analytics |
-| Cloud Security Analyst | Irving | Cloud / Security / Data / AI / Analyst | Enterprise security for regulated healthcare data |
-| Technology Analyst | Irving | Cloud / Security / Data / AI / Analyst | Platform modernization and automation |
+| Title | Location | Role Family | Fit Score |
+|-------|----------|-------------|-----------|
+| Data Analyst | Irving | Cloud / Security / Data / AI / Analyst | — |
+| Security Engineer | Irving | Cloud / Security / Data / AI / Analyst | — |
+| Cybersecurity Analyst | Irving | Cloud / Security / Data / AI / Analyst | — |
 
 ---
 
 ## Talking Points
 
-1. **Healthcare Data at Scale:** McKesson's distribution network generates massive operational data — my Career Intelligence OS demonstrates structured data ingestion, scoring, and KPI storytelling at enterprise scale.
-2. **Regulated Environment:** Healthcare and pharma supply chain roles require audit-ready controls — my Secure Cloud Evidence Lab covers IAM policy review and SIEM alert tuning with synthetic artifacts.
-3. **Cross-Industry Adaptability:** Targeting healthcare distribution alongside finance-tech shows breadth — the universal profile and scoring taxonomy transfer across regulated industries.
+1. **Strategic themes:** Health IT modernization; data interoperability; cybersecurity; AI-assisted research
+2. **Technology stack:** EHR integration; cloud; data warehouses; identity management
+3. **AI / cloud / security:** HIPAA-aligned security; clinical analytics; AI governance; IAM
 
 ---
 
 ## Outreach Angles
 
-### Recruiter
-> Hi [Name], I'm interested in data and technology analyst roles at McKesson's Irving campus. My portfolio includes a sponsor-aware career intelligence dashboard with Python, SQL, and cloud security case studies — skills aligned with your healthcare technology teams. I'd welcome a brief conversation about current openings.
+### Recruiter (via careers portal)
+> Hi, I'm exploring Health IT Analyst roles at McKesson's DFW locations. My portfolio includes a sponsor-aware Career Intelligence OS that scores enterprise role fit — demonstrating Python, SQL, and cloud security skills relevant to your teams. I'd welcome guidance on the best application path via your careers portal.
 
 ### Hiring Manager
-> Hi [Name], McKesson's healthcare supply chain technology creates interesting data and security challenges. I built a modular decision system with explainable scoring and a companion cloud security lab — I'd appreciate 15 minutes to learn about your team's priorities around analytics and platform modernization.
-
-### Peer
-> Hi [Name], I'm exploring technology analyst paths at McKesson Irving. Would you be open to a brief informational chat about how your team handles data analytics and security in a healthcare distribution context?
+> Hi, I'm targeting technology roles aligned with Health IT modernization. My portfolio includes a working Streamlit dashboard for role-fit scoring plus case studies on AI governance and cloud security evidence. I'd appreciate 15 minutes to learn about your team's current priorities.
 
 ---
 
@@ -49,31 +50,42 @@ McKesson is a Fortune 15 healthcare distribution and technology company with maj
 
 | Category | Likely Questions |
 |----------|-----------------|
-| Technical | Python/SQL analytics, healthcare data privacy basics, IAM, SIEM, cloud security fundamentals |
-| Business | Supply chain KPI reporting, compliance awareness, stakeholder communication across business units |
-| Behavioral | Adapting to healthcare domain, cross-functional collaboration, transparent work authorization discussion |
+| Technical | Python, SQL, cloud platforms, IAM, SIEM, data pipelines |
+| Business | Risk controls, stakeholder communication, KPI dashboards |
+| Behavioral | Cross-functional collaboration, sponsorship transparency |
 
 ---
 
 ## Sponsorship Notes
 
-- Signal: H1B confidence 4; DFW Fortune/HQ presence
-- Disclaimer: Indicative only — verify via DOL/USCIS for each role
-- Approach: Transparent OPT/EAD disclosure when asked; emphasize long-term enterprise technology commitment
+- Signal: DFW Fortune/HQ; sponsor verification needed
+- Disclaimer: Indicative only — verify via DOL/USCIS PERM and H-1B disclosure data
+- Not legal advice
+
+---
+
+## Contacts (public sources)
+
+| Name | Title | Type | Verification |
+|------|-------|------|--------------|
+| McKesson Careers Recruiting Team | Technology Recruiting | recruiter | source_backed |
 
 ---
 
 ## Next Actions
 
-- [ ] Review Data Analyst role in Role Fit tab
-- [ ] Generate conversation brief via Interview Command Center
-- [ ] Prepare healthcare + data analytics talking point
-- [ ] Log outreach in conversation log CSV
+- [ ] Review top-fit roles in Role Fit tab
+- [ ] Apply via official careers portal
+- [ ] Log conversations in conversation_log_template.csv
 
 ---
 
 ## Public Sources
 
 - https://careers.mckesson.com
-- McKesson Irving headquarters public information
-- Fortune 500 healthcare distribution industry reporting
+- https://www.mckesson.com/about-us/newsroom/
+- https://www.mckesson.com/about-mckesson/our-businesses/technology/
+- https://www.dol.gov/agencies/eta/foreign-labor
+- https://www.linkedin.com/search/results/people/?keywords=McKesson%20technology%20recruiter%20DFW
+
+**Last updated:** 2026-07-04

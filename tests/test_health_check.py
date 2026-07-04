@@ -17,7 +17,8 @@ def test_check_imports_all_green():
 def test_check_csvs_required_present():
     result = check_csvs()
     assert result["status"] == "green"
-    required = [c for c in result["checks"] if c["file"].startswith("sample_") or c["file"] in (
+    required = [c for c in result["checks"] if c["file"] in (
+        "sample_companies.csv", "sample_jobs.csv", "sample_contacts.csv",
         "company_profiles.csv", "people_map.csv", "proof_assets.csv",
     )]
     assert all(c["rows"] > 0 for c in required)

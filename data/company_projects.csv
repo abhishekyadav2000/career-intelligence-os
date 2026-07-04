@@ -1,21 +1,151 @@
-project_id,company_id,company_name,theme,description,confidence_level,source_type
-PR001,C001,JPMorgan Chase,Digital banking modernization,Public reporting on consumer and commercial digital platform upgrades across mobile and web channels.,high,earnings_call_theme
-PR002,C001,JPMorgan Chase,Cloud migration,Enterprise cloud adoption and hybrid infrastructure programs widely cited in industry coverage.,high,industry_report
-PR003,C001,JPMorgan Chase,AI automation governance,AI productivity initiatives with emphasis on controls audit trails and responsible automation.,medium,public_news
-PR004,C001,JPMorgan Chase,Cybersecurity operations,SIEM IAM and incident response capabilities for regulated financial services environment.,high,job_posting_themes
-PR005,C004,Citi,Platform modernization,Technology operations modernization across Irving campus and global functions.,high,careers_site_theme
-PR006,C004,Citi,Cloud migration,Hybrid cloud and data platform consolidation programs in financial services.,medium,industry_report
-PR007,C004,Citi,AI automation,Workflow automation and analytics for operations and risk functions.,medium,public_news
-PR008,C004,Citi,Cybersecurity,Risk controls IAM and security monitoring for banking operations.,high,job_posting_themes
-PR009,C006,Capital One,Digital banking,Cloud-native banking products and customer-facing digital experiences.,high,public_company_profile
-PR010,C006,Capital One,Cloud migration,AWS-first architecture and internal developer platform initiatives.,high,engineering_blog_theme
-PR011,C006,Capital One,AI automation,ML-driven fraud detection and customer analytics automation.,medium,public_news
-PR012,C006,Capital One,Cybersecurity,Cloud security monitoring and compliance for regulated financial data.,high,job_posting_themes
-PR013,C007,Toyota Motor North America,Connected vehicle data,Data platforms for telematics vehicle connectivity and analytics.,medium,industry_report
-PR014,C007,Toyota Motor North America,Cloud migration,Enterprise cloud adoption for manufacturing and connected services.,medium,public_news
-PR015,C007,Toyota Motor North America,Cybersecurity,Vehicle and enterprise security programs for automotive technology stack.,high,job_posting_themes
-PR016,C007,Toyota Motor North America,AI automation,Manufacturing and supply chain analytics automation initiatives.,low,speculative_theme
-PR017,C008,AT&T,Network modernization,5G fiber and core network transformation programs.,high,public_company_profile
-PR018,C008,AT&T,Cloud migration,Network function virtualization and cloud-native operations.,medium,industry_report
-PR019,C008,AT&T,AI automation,AI-driven network operations and customer service automation.,medium,public_news
-PR020,C008,AT&T,Cybersecurity,Network security IAM and zero-trust implementation for telecom infrastructure.,high,job_posting_themes
+project_id,company_id,company_name,theme,description,confidence_level,source_type,source_url
+PR001,C001,JPMorgan Chase,AI productivity platform,JPMorganChase careers site cites 60K+ global technologists and AI-driven productivity initiatives with governance emphasis.,high,careers_site,https://careers.jpmorgan.com/about/technology
+PR002,C001,JPMorgan Chase,Plano technology hub,"Public careers content highlights Plano, Texas as a major technology hub with veteran and early-career pathways.",high,careers_site,https://careers.jpmorgan.com/about/technology
+PR003,C001,JPMorgan Chase,Digital banking modernization,Consumer and commercial banking divisions invest in mobile and web platform upgrades per public careers and newsroom themes.,medium,newsroom,https://www.jpmorganchase.com/newsroom
+PR004,C002,Goldman Sachs,Engineering at scale,"Goldman Sachs Engineering page describes software and systems engineering for trading, risk, and banking platforms.",high,careers_site,https://www.goldmansachs.com/careers/our-firm/engineering
+PR005,C002,Goldman Sachs,Dallas office expansion,Goldman Sachs Dallas office page invites candidates to explore open roles in Dallas — second-largest US office.,high,careers_site,https://www.goldmansachs.com/careers/discover/dallas-office
+PR006,C002,Goldman Sachs,Machine learning and AI,Featured engineering roles include machine learning and artificial intelligence on public careers portal.,medium,careers_site,https://www.goldmansachs.com/careers
+PR007,C003,Bank of America,Digital transformation,Bank of America public careers and news content emphasize digital transformation and technology hiring.,medium,careers_site,https://careers.bankofamerica.com
+PR008,C003,Bank of America,Cloud and data platforms,"Public technology pages describe cloud, data, and analytics investments.",medium,tech_blog,https://careers.bankofamerica.com/en-us/life-at-bank-of-america/technology
+PR009,C003,Bank of America,Cybersecurity programs,Enterprise security and compliance themes appear in public careers and news materials.,medium,newsroom,https://newsroom.bankofamerica.com
+PR010,C004,Citi,Digital transformation,Citi public careers and news content emphasize digital transformation and technology hiring.,medium,careers_site,https://jobs.citi.com
+PR011,C004,Citi,Cloud and data platforms,"Public technology pages describe cloud, data, and analytics investments.",medium,tech_blog,https://jobs.citi.com/technology
+PR012,C004,Citi,Cybersecurity programs,Enterprise security and compliance themes appear in public careers and news materials.,medium,newsroom,https://www.citigroup.com/global/news
+PR013,C005,Charles Schwab,Digital transformation,Charles Schwab public careers and news content emphasize digital transformation and technology hiring.,medium,careers_site,https://www.schwabjobs.com
+PR014,C005,Charles Schwab,Cloud and data platforms,"Public technology pages describe cloud, data, and analytics investments.",medium,tech_blog,https://www.aboutschwab.com/who-we-are/technology
+PR015,C005,Charles Schwab,Cybersecurity programs,Enterprise security and compliance themes appear in public careers and news materials.,medium,newsroom,https://pressroom.aboutschwab.com
+PR016,C006,Capital One,Cloud-first banking,Capital One Tech blog and careers site describe AWS-first architecture and internal developer platforms.,high,engineering_blog,https://www.capitalone.com/tech/
+PR017,C006,Capital One,ML fraud detection,Public tech content references machine learning for fraud and customer analytics.,medium,engineering_blog,https://www.capitalone.com/tech/
+PR018,C006,Capital One,Plano technology hub,Capital One careers portal lists Plano as major technology hiring location.,high,careers_site,https://www.capitalonecareers.com
+PR019,C007,Toyota Motor North America,Mobility and connected services,"Toyota careers site describes leading future of mobility with technology, data, and analytics roles in Plano.",high,careers_site,https://careers.toyota.com/us/en/home
+PR020,C007,Toyota Motor North America,Supply chain software,"Public job taxonomy includes Technology, Data and Analytics functions supporting vehicle and parts supply chain.",high,careers_site,https://careers.toyota.com/us/en/search-results
+PR021,C007,Toyota Motor North America,Talent community recruiting,Toyota careers portal uses online candidate portal and talent community for recruiting outreach.,high,careers_site,https://careers.toyota.com/us/en/home
+PR022,C008,AT&T,Network modernization,"AT&T investor and innovation pages describe 5G, fiber, and core network transformation.",high,investor_relations,https://investors.att.com
+PR023,C008,AT&T,AI-driven operations,AT&T innovation content references AI for network and customer operations.,medium,public_company_profile,https://about.att.com/innovation
+PR024,C008,AT&T,DFW technology hiring,"AT&T Jobs portal lists Dallas, Plano, and Irving technology roles.",high,careers_site,https://www.att.jobs
+PR025,C009,Ericsson,5G utilities innovation,Ericsson US page describes Global Utilities Innovation Center in Plano for 4G/5G utility solutions.,high,public_company_profile,https://www.ericsson.com/en/about-us/company-facts/ericsson-worldwide/united-states
+PR026,C009,Ericsson,AI and IoT internships,"Ericsson US internship program lists AI, ML, IoT, and big data focus areas with Plano as top location.",high,careers_site,https://www.ericsson.com/en/careers/student-young-professionals/internships-us-canada
+PR027,C009,Ericsson,Open positions portal,Ericsson directs applicants to jobs.ericsson.com for official open positions.,high,careers_site,https://jobs.ericsson.com/careers
+PR028,C010,NTT DATA,Digital transformation,NTT DATA public careers and news content emphasize digital transformation and technology hiring.,medium,careers_site,https://careers.nttdata.com
+PR029,C010,NTT DATA,Cloud and data platforms,"Public technology pages describe cloud, data, and analytics investments.",medium,tech_blog,https://www.nttdata.com/global/en/services/data-and-intelligence
+PR030,C010,NTT DATA,Cybersecurity programs,Enterprise security and compliance themes appear in public careers and news materials.,medium,newsroom,https://www.nttdata.com/global/en/news
+PR031,C011,Samsung Electronics America / Samsung Austin Semiconductor,Digital transformation,Samsung Electronics America / Samsung Austin Semiconductor public careers and news content emphasize digital transformation and technology hiring.,medium,careers_site,https://www.samsung.com/us/careers/
+PR032,C011,Samsung Electronics America / Samsung Austin Semiconductor,Cloud and data platforms,"Public technology pages describe cloud, data, and analytics investments.",medium,tech_blog,https://research.samsung.com
+PR033,C011,Samsung Electronics America / Samsung Austin Semiconductor,Cybersecurity programs,Enterprise security and compliance themes appear in public careers and news materials.,medium,newsroom,https://news.samsung.com/us
+PR034,C012,KPMG,Digital transformation,KPMG public careers and news content emphasize digital transformation and technology hiring.,medium,careers_site,https://www.kpmg.com/us/en/careers.html
+PR035,C012,KPMG,Cloud and data platforms,"Public technology pages describe cloud, data, and analytics investments.",medium,tech_blog,https://kpmg.com/us/en/capabilities-services/advisory-services/technology.html
+PR036,C012,KPMG,Cybersecurity programs,Enterprise security and compliance themes appear in public careers and news materials.,medium,newsroom,https://kpmg.com/us/en/media/news.html
+PR037,C013,Deloitte,Digital transformation,Deloitte public careers and news content emphasize digital transformation and technology hiring.,medium,careers_site,https://apply.deloitte.com
+PR038,C013,Deloitte,Cloud and data platforms,"Public technology pages describe cloud, data, and analytics investments.",medium,tech_blog,https://www2.deloitte.com/us/en/pages/technology/articles/deloitte-on-technology.html
+PR039,C013,Deloitte,Cybersecurity programs,Enterprise security and compliance themes appear in public careers and news materials.,medium,newsroom,https://www2.deloitte.com/us/en/pages/about-deloitte/articles/press-releases.html
+PR040,C014,Accenture,Digital transformation,Accenture public careers and news content emphasize digital transformation and technology hiring.,medium,careers_site,https://www.accenture.com/us-en/careers
+PR041,C014,Accenture,Cloud and data platforms,"Public technology pages describe cloud, data, and analytics investments.",medium,tech_blog,https://www.accenture.com/us-en/services/cloud
+PR042,C014,Accenture,Cybersecurity programs,Enterprise security and compliance themes appear in public careers and news materials.,medium,newsroom,https://newsroom.accenture.com
+PR043,C015,Cognizant,Digital transformation,Cognizant public careers and news content emphasize digital transformation and technology hiring.,medium,careers_site,https://careers.cognizant.com
+PR044,C015,Cognizant,Cloud and data platforms,"Public technology pages describe cloud, data, and analytics investments.",medium,tech_blog,https://www.cognizant.com/us/en/services/cloud-solutions
+PR045,C015,Cognizant,Cybersecurity programs,Enterprise security and compliance themes appear in public careers and news materials.,medium,newsroom,https://news.cognizant.com
+PR046,C016,Infosys,Digital transformation,Infosys public careers and news content emphasize digital transformation and technology hiring.,medium,careers_site,https://careers.infosys.com
+PR047,C016,Infosys,Cloud and data platforms,"Public technology pages describe cloud, data, and analytics investments.",medium,tech_blog,https://www.infosys.com/services/cloud-computing.html
+PR048,C016,Infosys,Cybersecurity programs,Enterprise security and compliance themes appear in public careers and news materials.,medium,newsroom,https://www.infosys.com/newsroom.html
+PR049,C017,Oracle,Digital transformation,Oracle public careers and news content emphasize digital transformation and technology hiring.,medium,careers_site,https://careers.oracle.com
+PR050,C017,Oracle,Cloud and data platforms,"Public technology pages describe cloud, data, and analytics investments.",medium,tech_blog,https://blogs.oracle.com/
+PR051,C017,Oracle,Cybersecurity programs,Enterprise security and compliance themes appear in public careers and news materials.,medium,newsroom,https://www.oracle.com/news/
+PR052,C018,Tesla,Digital transformation,Tesla public careers and news content emphasize digital transformation and technology hiring.,medium,careers_site,https://www.tesla.com/careers
+PR053,C018,Tesla,Cloud and data platforms,"Public technology pages describe cloud, data, and analytics investments.",medium,tech_blog,https://www.tesla.com/AI
+PR054,C018,Tesla,Cybersecurity programs,Enterprise security and compliance themes appear in public careers and news materials.,medium,newsroom,https://www.tesla.com/blog
+PR055,C019,Hewlett Packard Enterprise,Digital transformation,Hewlett Packard Enterprise public careers and news content emphasize digital transformation and technology hiring.,medium,careers_site,https://careers.hpe.com
+PR056,C019,Hewlett Packard Enterprise,Cloud and data platforms,"Public technology pages describe cloud, data, and analytics investments.",medium,tech_blog,https://www.hpe.com/us/en/solutions/cloud.html
+PR057,C019,Hewlett Packard Enterprise,Cybersecurity programs,Enterprise security and compliance themes appear in public careers and news materials.,medium,newsroom,https://www.hpe.com/us/en/newsroom.html
+PR058,C020,Dell Technologies / Dell USA / Dell Products,Digital transformation,Dell Technologies / Dell USA / Dell Products public careers and news content emphasize digital transformation and technology hiring.,medium,careers_site,https://jobs.dell.com
+PR059,C020,Dell Technologies / Dell USA / Dell Products,Cloud and data platforms,"Public technology pages describe cloud, data, and analytics investments.",medium,tech_blog,https://www.dell.com/en-us/blog/categories/artificial-intelligence/
+PR060,C020,Dell Technologies / Dell USA / Dell Products,Cybersecurity programs,Enterprise security and compliance themes appear in public careers and news materials.,medium,newsroom,https://www.dell.com/en-us/dt/corporate/newsroom.htm
+PR061,C021,Texas Instruments,Digital transformation,Texas Instruments public careers and news content emphasize digital transformation and technology hiring.,medium,careers_site,https://careers.ti.com
+PR062,C021,Texas Instruments,Cloud and data platforms,"Public technology pages describe cloud, data, and analytics investments.",medium,tech_blog,https://www.ti.com/about-ti/company/technology.html
+PR063,C021,Texas Instruments,Cybersecurity programs,Enterprise security and compliance themes appear in public careers and news materials.,medium,newsroom,https://news.ti.com
+PR064,C022,American Airlines,Digital transformation,American Airlines public careers and news content emphasize digital transformation and technology hiring.,medium,careers_site,https://jobs.aa.com
+PR065,C022,American Airlines,Cloud and data platforms,"Public technology pages describe cloud, data, and analytics investments.",medium,tech_blog,https://jobs.aa.com/en/teams/technology
+PR066,C022,American Airlines,Cybersecurity programs,Enterprise security and compliance themes appear in public careers and news materials.,medium,newsroom,https://news.aa.com
+PR067,C023,Southwest Airlines,Digital transformation,Southwest Airlines public careers and news content emphasize digital transformation and technology hiring.,medium,careers_site,https://careers.southwestair.com
+PR068,C023,Southwest Airlines,Cloud and data platforms,"Public technology pages describe cloud, data, and analytics investments.",medium,tech_blog,https://careers.southwestair.com/technology
+PR069,C023,Southwest Airlines,Cybersecurity programs,Enterprise security and compliance themes appear in public careers and news materials.,medium,newsroom,https://www.swamedia.com
+PR070,C024,McKesson,Digital transformation,McKesson public careers and news content emphasize digital transformation and technology hiring.,medium,careers_site,https://careers.mckesson.com
+PR071,C024,McKesson,Cloud and data platforms,"Public technology pages describe cloud, data, and analytics investments.",medium,tech_blog,https://www.mckesson.com/about-mckesson/our-businesses/technology/
+PR072,C024,McKesson,Cybersecurity programs,Enterprise security and compliance themes appear in public careers and news materials.,medium,newsroom,https://www.mckesson.com/about-us/newsroom/
+PR073,C025,CBRE,Digital transformation,CBRE public careers and news content emphasize digital transformation and technology hiring.,medium,careers_site,https://careers.cbre.com
+PR074,C025,CBRE,Cloud and data platforms,"Public technology pages describe cloud, data, and analytics investments.",medium,tech_blog,https://www.cbre.com/technology
+PR075,C025,CBRE,Cybersecurity programs,Enterprise security and compliance themes appear in public careers and news materials.,medium,newsroom,https://www.cbre.com/press-releases
+PR076,C026,Lockheed Martin,Digital transformation,Lockheed Martin public careers and news content emphasize digital transformation and technology hiring.,medium,careers_site,https://www.lockheedmartinjobs.com
+PR077,C026,Lockheed Martin,Cloud and data platforms,"Public technology pages describe cloud, data, and analytics investments.",medium,tech_blog,https://www.lockheedmartin.com/en-us/capabilities/cyber.html
+PR078,C026,Lockheed Martin,Cybersecurity programs,Enterprise security and compliance themes appear in public careers and news materials.,medium,newsroom,https://news.lockheedmartin.com
+PR079,C027,Raytheon / RTX,Digital transformation,Raytheon / RTX public careers and news content emphasize digital transformation and technology hiring.,medium,careers_site,https://careers.rtx.com
+PR080,C027,Raytheon / RTX,Cloud and data platforms,"Public technology pages describe cloud, data, and analytics investments.",medium,tech_blog,https://www.rtx.com/who-we-are/technology-and-innovation
+PR081,C027,Raytheon / RTX,Cybersecurity programs,Enterprise security and compliance themes appear in public careers and news materials.,medium,newsroom,https://www.rtx.com/news
+PR082,C028,BNSF Railway,Digital transformation,BNSF Railway public careers and news content emphasize digital transformation and technology hiring.,medium,careers_site,https://jobs.bnsf.com
+PR083,C028,BNSF Railway,Cloud and data platforms,"Public technology pages describe cloud, data, and analytics investments.",medium,tech_blog,https://www.bnsf.com/about-bnsf/technology/
+PR084,C028,BNSF Railway,Cybersecurity programs,Enterprise security and compliance themes appear in public careers and news materials.,medium,newsroom,https://www.bnsf.com/news-media/
+PR085,C029,GM Financial,Digital transformation,GM Financial public careers and news content emphasize digital transformation and technology hiring.,medium,careers_site,https://careers.gmfinancial.com
+PR086,C029,GM Financial,Cloud and data platforms,"Public technology pages describe cloud, data, and analytics investments.",medium,tech_blog,https://www.gmfinancial.com/en-us/company/about-us/technology.html
+PR087,C029,GM Financial,Cybersecurity programs,Enterprise security and compliance themes appear in public careers and news materials.,medium,newsroom,https://news.gmfinancial.com
+PR088,C030,Sabre,Digital transformation,Sabre public careers and news content emphasize digital transformation and technology hiring.,medium,careers_site,https://www.sabre.com/about/careers/
+PR089,C030,Sabre,Cloud and data platforms,"Public technology pages describe cloud, data, and analytics investments.",medium,tech_blog,https://www.sabre.com/insights/
+PR090,C030,Sabre,Cybersecurity programs,Enterprise security and compliance themes appear in public careers and news materials.,medium,newsroom,https://investors.sabre.com/news-releases
+PR091,C031,Alkami Technology,Digital transformation,Alkami Technology public careers and news content emphasize digital transformation and technology hiring.,medium,careers_site,https://www.alkami.com/careers/
+PR092,C031,Alkami Technology,Cloud and data platforms,"Public technology pages describe cloud, data, and analytics investments.",medium,tech_blog,https://www.alkami.com/platform/
+PR093,C031,Alkami Technology,Cybersecurity programs,Enterprise security and compliance themes appear in public careers and news materials.,medium,newsroom,https://www.alkami.com/news/
+PR094,C032,Tyler Technologies,Digital transformation,Tyler Technologies public careers and news content emphasize digital transformation and technology hiring.,medium,careers_site,https://www.tylertech.com/careers
+PR095,C032,Tyler Technologies,Cloud and data platforms,"Public technology pages describe cloud, data, and analytics investments.",medium,tech_blog,https://www.tylertech.com/solutions
+PR096,C032,Tyler Technologies,Cybersecurity programs,Enterprise security and compliance themes appear in public careers and news materials.,medium,newsroom,https://www.tylertech.com/news
+PR097,C033,State Farm,Digital transformation,State Farm public careers and news content emphasize digital transformation and technology hiring.,medium,careers_site,https://jobs.statefarm.com
+PR098,C033,State Farm,Cloud and data platforms,"Public technology pages describe cloud, data, and analytics investments.",medium,tech_blog,https://www.statefarm.com/careers/technology
+PR099,C033,State Farm,Cybersecurity programs,Enterprise security and compliance themes appear in public careers and news materials.,medium,newsroom,https://newsroom.statefarm.com
+PR100,C034,Liberty Mutual,Digital transformation,Liberty Mutual public careers and news content emphasize digital transformation and technology hiring.,medium,careers_site,https://jobs.libertymutual.com
+PR101,C034,Liberty Mutual,Cloud and data platforms,"Public technology pages describe cloud, data, and analytics investments.",medium,tech_blog,https://jobs.libertymutual.com/technology
+PR102,C034,Liberty Mutual,Cybersecurity programs,Enterprise security and compliance themes appear in public careers and news materials.,medium,newsroom,https://newsroom.libertymutual.com
+PR103,C035,PepsiCo / Frito-Lay,Digital transformation,PepsiCo / Frito-Lay public careers and news content emphasize digital transformation and technology hiring.,medium,careers_site,https://www.pepsicojobs.com
+PR104,C035,PepsiCo / Frito-Lay,Cloud and data platforms,"Public technology pages describe cloud, data, and analytics investments.",medium,tech_blog,https://www.pepsico.com/our-stories/technology
+PR105,C035,PepsiCo / Frito-Lay,Cybersecurity programs,Enterprise security and compliance themes appear in public careers and news materials.,medium,newsroom,https://www.pepsico.com/news
+PR106,C036,Wells Fargo,Digital transformation,Wells Fargo public careers and news content emphasize digital transformation and technology hiring.,medium,careers_site,https://www.wellsfargojobs.com
+PR107,C036,Wells Fargo,Cloud and data platforms,"Public technology pages describe cloud, data, and analytics investments.",medium,tech_blog,https://www.wellsfargo.com/about/careers/technology/
+PR108,C036,Wells Fargo,Cybersecurity programs,Enterprise security and compliance themes appear in public careers and news materials.,medium,newsroom,https://newsroom.wf.com
+PR109,C037,Morgan Stanley,Digital transformation,Morgan Stanley public careers and news content emphasize digital transformation and technology hiring.,medium,careers_site,https://www.morganstanley.com/careers
+PR110,C037,Morgan Stanley,Cloud and data platforms,"Public technology pages describe cloud, data, and analytics investments.",medium,tech_blog,https://www.morganstanley.com/what-we-do/technology
+PR111,C037,Morgan Stanley,Cybersecurity programs,Enterprise security and compliance themes appear in public careers and news materials.,medium,newsroom,https://www.morganstanley.com/press-releases
+PR112,C038,Nasdaq,Digital transformation,Nasdaq public careers and news content emphasize digital transformation and technology hiring.,medium,careers_site,https://www.nasdaq.com/about/careers
+PR113,C038,Nasdaq,Cloud and data platforms,"Public technology pages describe cloud, data, and analytics investments.",medium,tech_blog,https://www.nasdaq.com/solutions/data
+PR114,C038,Nasdaq,Cybersecurity programs,Enterprise security and compliance themes appear in public careers and news materials.,medium,newsroom,https://www.nasdaq.com/newsroom
+PR115,C039,NYSE Texas / Intercontinental Exchange,Digital transformation,NYSE Texas / Intercontinental Exchange public careers and news content emphasize digital transformation and technology hiring.,medium,careers_site,https://careers.ice.com
+PR116,C039,NYSE Texas / Intercontinental Exchange,Cloud and data platforms,"Public technology pages describe cloud, data, and analytics investments.",medium,tech_blog,https://www.ice.com/fixed-income-data-services
+PR117,C039,NYSE Texas / Intercontinental Exchange,Cybersecurity programs,Enterprise security and compliance themes appear in public careers and news materials.,medium,newsroom,https://ir.theice.com/press/news-releases
+PR118,C040,Siemens Industry Software,Digital transformation,Siemens Industry Software public careers and news content emphasize digital transformation and technology hiring.,medium,careers_site,https://jobs.siemens.com
+PR119,C040,Siemens Industry Software,Cloud and data platforms,"Public technology pages describe cloud, data, and analytics investments.",medium,tech_blog,https://www.sw.siemens.com/en-US/
+PR120,C040,Siemens Industry Software,Cybersecurity programs,Enterprise security and compliance themes appear in public careers and news materials.,medium,newsroom,https://press.siemens.com/global/en
+PR121,C041,NXP USA,Digital transformation,NXP USA public careers and news content emphasize digital transformation and technology hiring.,medium,careers_site,https://www.nxp.com/company/about-nxp/careers:CAREERS
+PR122,C041,NXP USA,Cloud and data platforms,"Public technology pages describe cloud, data, and analytics investments.",medium,tech_blog,https://www.nxp.com/design/design-center/software:MCUXpresso-Software
+PR123,C041,NXP USA,Cybersecurity programs,Enterprise security and compliance themes appear in public careers and news materials.,medium,newsroom,https://media.nxp.com/news-releases
+PR124,C042,Indeed,Digital transformation,Indeed public careers and news content emphasize digital transformation and technology hiring.,medium,careers_site,https://www.indeed.com/careers
+PR125,C042,Indeed,Cloud and data platforms,"Public technology pages describe cloud, data, and analytics investments.",medium,tech_blog,https://engineering.indeed.com
+PR126,C042,Indeed,Cybersecurity programs,Enterprise security and compliance themes appear in public careers and news materials.,medium,newsroom,https://www.indeed.com/news
+PR127,C043,UT Southwestern Medical Center,Digital transformation,UT Southwestern Medical Center public careers and news content emphasize digital transformation and technology hiring.,medium,careers_site,https://jobs.utsouthwestern.edu
+PR128,C043,UT Southwestern Medical Center,Cloud and data platforms,"Public technology pages describe cloud, data, and analytics investments.",medium,tech_blog,https://www.utsouthwestern.edu/departments/information-resources/
+PR129,C043,UT Southwestern Medical Center,Cybersecurity programs,Enterprise security and compliance themes appear in public careers and news materials.,medium,newsroom,https://www.utsouthwestern.edu/newsroom/
+PR130,C044,Dallas Independent School District,Digital transformation,Dallas Independent School District public careers and news content emphasize digital transformation and technology hiring.,medium,careers_site,https://www.dallasisd.org/careers
+PR131,C044,Dallas Independent School District,Cloud and data platforms,"Public technology pages describe cloud, data, and analytics investments.",medium,tech_blog,https://www.dallasisd.org/departments/technology
+PR132,C044,Dallas Independent School District,Cybersecurity programs,Enterprise security and compliance themes appear in public careers and news materials.,medium,newsroom,https://www.dallasisd.org/news
+PR133,C045,Baylor College of Medicine / Baylor Scott & White ecosystem,Digital transformation,Baylor College of Medicine / Baylor Scott & White ecosystem public careers and news content emphasize digital transformation and technology hiring.,medium,careers_site,https://jobs.bcm.edu
+PR134,C045,Baylor College of Medicine / Baylor Scott & White ecosystem,Cloud and data platforms,"Public technology pages describe cloud, data, and analytics investments.",medium,tech_blog,https://www.bcm.edu/departments/medicine/informatics
+PR135,C045,Baylor College of Medicine / Baylor Scott & White ecosystem,Cybersecurity programs,Enterprise security and compliance themes appear in public careers and news materials.,medium,newsroom,https://www.bcm.edu/news
+PR136,C046,Fluor Corporation,Digital transformation,Fluor Corporation public careers and news content emphasize digital transformation and technology hiring.,medium,careers_site,https://careers.fluor.com
+PR137,C046,Fluor Corporation,Cloud and data platforms,"Public technology pages describe cloud, data, and analytics investments.",medium,tech_blog,https://www.fluor.com/solutions/digital-solutions
+PR138,C046,Fluor Corporation,Cybersecurity programs,Enterprise security and compliance themes appear in public careers and news materials.,medium,newsroom,https://investor.fluor.com/news/news-releases
+PR139,C047,Jacobs Solutions,Digital transformation,Jacobs Solutions public careers and news content emphasize digital transformation and technology hiring.,medium,careers_site,https://careers.jacobs.com
+PR140,C047,Jacobs Solutions,Cloud and data platforms,"Public technology pages describe cloud, data, and analytics investments.",medium,tech_blog,https://www.jacobs.com/solutions/digital
+PR141,C047,Jacobs Solutions,Cybersecurity programs,Enterprise security and compliance themes appear in public careers and news materials.,medium,newsroom,https://www.jacobs.com/newsroom
+PR142,C048,Kimberly-Clark,Digital transformation,Kimberly-Clark public careers and news content emphasize digital transformation and technology hiring.,medium,careers_site,https://careers.kimberly-clark.com
+PR143,C048,Kimberly-Clark,Cloud and data platforms,"Public technology pages describe cloud, data, and analytics investments.",medium,tech_blog,https://www.kimberly-clark.com/en-us/who-we-are/our-company/innovation
+PR144,C048,Kimberly-Clark,Cybersecurity programs,Enterprise security and compliance themes appear in public careers and news materials.,medium,newsroom,https://www.kimberly-clark.com/en-us/news
+PR145,C049,Celanese,Digital transformation,Celanese public careers and news content emphasize digital transformation and technology hiring.,medium,careers_site,https://careers.celanese.com
+PR146,C049,Celanese,Cloud and data platforms,"Public technology pages describe cloud, data, and analytics investments.",medium,tech_blog,https://www.celanese.com/company/innovation
+PR147,C049,Celanese,Cybersecurity programs,Enterprise security and compliance themes appear in public careers and news materials.,medium,newsroom,https://investors.celanese.com/news-events/news-releases
+PR148,C050,Vistra,Digital transformation,Vistra public careers and news content emphasize digital transformation and technology hiring.,medium,careers_site,https://careers.vistracorp.com
+PR149,C050,Vistra,Cloud and data platforms,"Public technology pages describe cloud, data, and analytics investments.",medium,tech_blog,https://www.vistracorp.com/technology
+PR150,C050,Vistra,Cybersecurity programs,Enterprise security and compliance themes appear in public careers and news materials.,medium,newsroom,https://investor.vistracorp.com/news

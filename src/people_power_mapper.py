@@ -68,8 +68,15 @@ def score_contact_priority(
     targets = CONVERSATION_TYPE_TARGETS.get(conversation_type.lower(), [])
     alignment = 1.2 if contact_type in targets else 0.85
 
-    verification = str(person_row.get("verification_status", "placeholder"))
-    verify_mult = 1.0 if verification == "verified" else (0.9 if verification == "partial" else 0.75)
+    verification = str(person_row.get("verification_status", "source_backed"))
+    verify_mult = {
+        "verified": 1.0,
+        "verified_public": 1.0,
+        "source_backed": 0.95,
+        "partial": 0.9,
+        "needs_verification": 0.8,
+        "placeholder": 0.75,
+    }.get(verification, 0.85)
 
     score = base * type_weight * stage_mult * alignment * verify_mult
     return round(min(score, 100.0), 1)
@@ -80,13 +87,17 @@ def generate_person_strategy(person_row: pd.Series | dict, conversation_type: st
     if isinstance(person_row, dict):
         person_row = pd.Series(person_row)
 
-    name = person_row.get("person_name", "TBD Contact")
+    name = person_row.get("person_name", "Careers Recruiting Team")
     contact_type = person_row.get("contact_type", "peer")
     company = person_row.get("company_name", "the company")
-    verification = person_row.get("verification_status", "placeholder")
+    verification = person_row.get("verification_status", "source_backed")
 
     if verification == "placeholder":
         verify_note = "Verify identity via search query before referencing by name."
+    elif verification == "source_backed":
+        verify_note = "Use official careers portal or team channel — do not invent individual names."
+    elif verification == "verified_public":
+        verify_note = "Public executive — informational context only; route applications via careers portal."
     else:
         verify_note = "Contact verified — personalize with public profile details only."
 

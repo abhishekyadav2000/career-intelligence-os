@@ -8,7 +8,7 @@ from datetime import datetime
 from pathlib import Path
 
 DEFAULT_LOG_PATH = Path(__file__).resolve().parent.parent / "data" / "conversation_log_template.csv"
-SAMPLE_LOG_PATH = Path(__file__).resolve().parent.parent / "data" / "sample_conversation_log.csv"
+SAMPLE_LOG_PATH = Path(__file__).resolve().parent.parent / "docs" / "examples" / "sample_conversation_log.csv"
 
 RESPONSE_WARM = {"replied", "interested", "scheduled", "positive", "warm", "follow-up scheduled"}
 RESPONSE_COLD = {"no reply", "declined", "not interested", "rejected", "ghosted", "closed"}

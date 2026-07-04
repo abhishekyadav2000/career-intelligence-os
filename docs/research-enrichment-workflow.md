@@ -5,8 +5,8 @@ Manual, CSV-first workflow for enriching Interview Command Center data without s
 ## Principles
 
 1. **Public sources only** — careers portals, earnings themes, industry reports, DOL/USCIS
-2. **TBD placeholders** — never invent contact names; use `verification_status`
-3. **Confidence levels** — high / medium / low for project themes
+2. **No TBD placeholders** — use official recruiting team names with `source_backed`, or leave people_map empty and rely on research_sources careers URLs
+3. **Confidence levels** — high / medium / low for project themes; `verified_public` only for named individuals on official pages
 4. **CSV as source of truth** — all enrichment lands in `data/*.csv`
 
 ## Workflow Steps
@@ -31,8 +31,8 @@ Manual, CSV-first workflow for enriching Interview Command Center data without s
 
 1. Open **People Map** tab
 2. Use **Search Query URLs** to manually verify contacts on LinkedIn
-3. Until verified, keep `person_name` as `TBD Recruiter`, `TBD Hiring Manager`, etc.
-4. Update `verification_status`: `placeholder` → `partial` → `verified`
+3. Use official careers portal and recruiting team channels — keep `person_name` as the official team title from the careers site when no individual is public
+4. Update `verification_status`: `source_backed` → `verified_public` (named on public page) → `user_verified` (you confirmed)
 5. Adjust `hiring_power_score` based on relevance
 
 **Never:** automate LinkedIn searches, scrape profiles, or use fake names.
@@ -71,7 +71,7 @@ Manual, CSV-first workflow for enriching Interview Command Center data without s
 | File | Purpose |
 |------|---------|
 | `company_profiles.csv` | Strategic 360 profiles for ICC seed companies |
-| `people_map.csv` | TBD contact placeholders with search URLs |
+| `people_map.csv` | Public recruiting teams and verified_public leaders with source URLs |
 | `company_projects.csv` | Public initiative themes with confidence |
 | `role_reasoning.csv` | Why role exists, 30/60/90, questions |
 | `proof_assets.csv` | Portfolio artifacts for proof-of-work matching |

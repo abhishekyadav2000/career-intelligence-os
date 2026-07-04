@@ -127,15 +127,25 @@ def generate_row(job: pd.Series, idx: int, profiles: pd.DataFrame) -> dict:
     )
     company_id = job.get("company_id", "")
     profile_rows = profiles[profiles["company_id"] == company_id]
-    industry = profile_rows.iloc[0]["industry"] if not profile_rows.empty else "Enterprise Technology"
+    if not profile_rows.empty:
+        prow = profile_rows.iloc[0]
+        industry = prow["industry"]
+        themes = str(prow.get("current_strategic_themes", prow.get("growth_signals", "")))
+        why_hire = str(prow.get("why_they_hire_tech_roles", ""))
+        why = (
+            f"{title} supports {business_problem.lower()} at {prow['company_name']}, "
+            f"aligned with public strategic themes ({themes.split(';')[0].strip()}). "
+            f"{why_hire[:120]}."
+        )
+    else:
+        industry = "Enterprise Technology"
+        why = (
+            f"{title} hiring supports {business_problem.lower()} "
+            f"within {industry.lower()} organization."
+        )
 
     team = _infer_team(title, str(job.get("role_family", "")))
     m30, m60, m90 = _metrics_for_team(team)
-
-    why = (
-        f"{title} hiring supports {business_problem.lower()} "
-        f"within {industry.lower()} organization."
-    )
 
     return {
         "reasoning_id": f"RR{idx:03d}",
@@ -157,14 +167,11 @@ def main() -> int:
     profiles = data["company_profiles"]
 
     existing = pd.read_csv(OUTPUT) if OUTPUT.exists() else pd.DataFrame()
-    seeded = {row["job_id"]: row for _, row in existing.iterrows()} if not existing.empty else {}
+    seeded = {}
 
     rows = []
     for i, (_, job) in enumerate(jobs.iterrows(), 1):
-        if job["job_id"] in seeded:
-            rows.append(seeded[job["job_id"]].to_dict())
-        else:
-            rows.append(generate_row(job, i, profiles))
+        rows.append(generate_row(job, i, profiles))
 
     df = pd.DataFrame(rows)
     df.to_csv(OUTPUT, index=False)

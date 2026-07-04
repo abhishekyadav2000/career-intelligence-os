@@ -64,7 +64,10 @@ OPTIONAL_CSVS = [
     "pipeline_cards.csv",
     "monday_launch_plan.csv",
     "activity_schedule.csv",
-    "sample_conversation_log.csv",
+]
+
+EXAMPLE_CSVS = [
+    ("docs/examples/sample_conversation_log.csv", "sample_conversation_log.csv"),
 ]
 
 
@@ -139,6 +142,24 @@ def check_csvs(data_dir: Path | None = None) -> dict[str, Any]:
         except Exception as exc:
             results.append({
                 "file": fname,
+                "status": "red",
+                "rows": 0,
+                "detail": f"{type(exc).__name__}: {exc}",
+            })
+
+    for rel_path, label in EXAMPLE_CSVS:
+        path = ROOT / rel_path
+        if not path.exists():
+            results.append({"file": label, "status": "yellow", "rows": 0, "detail": "Example file — see docs/examples/"})
+            continue
+        try:
+            import pandas as pd
+
+            df = pd.read_csv(path)
+            results.append({"file": label, "status": "green", "rows": len(df), "detail": "OK (docs/examples)"})
+        except Exception as exc:
+            results.append({
+                "file": label,
                 "status": "red",
                 "rows": 0,
                 "detail": f"{type(exc).__name__}: {exc}",

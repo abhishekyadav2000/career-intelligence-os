@@ -72,6 +72,7 @@ def _verification_score(status: str) -> float:
     mapping = {
         "verified": 100,
         "verified_public": 95,
+        "source_backed": 75,
         "partial": 70,
         "needs_verification": 40,
         "placeholder": 15,
@@ -120,6 +121,9 @@ def assign_pipeline_stage(
             return "Research Needed", ""
         return "Person Verification", "Contact not verified"
 
+    if status in ("source_backed", "partial") and action == "apply now":
+        return "Ready to Contact", ""
+
     if follow_up_date:
         fu = None
         for fmt in ("%Y-%m-%d", "%m/%d/%Y"):
@@ -138,7 +142,7 @@ def assign_pipeline_stage(
     if outreach in ("scheduled", "interviewing", "interview scheduled"):
         return "Interviewing", ""
 
-    if action == "apply now" and status in ("verified", "verified_public", "partial"):
+    if action == "apply now" and status in ("verified", "verified_public", "source_backed", "partial"):
         return "Ready to Contact", ""
     if action == "network first":
         return "Ready to Contact", ""
@@ -205,7 +209,7 @@ def build_pipeline_cards(data: dict, reference: datetime | None = None) -> list[
 
         contact = _best_contact(company_id, people_df)
         person_id = contact.get("person_id", "")
-        person_name = contact.get("person_name", "TBD")
+        person_name = contact.get("person_name", "")
         contact_type = contact.get("contact_type", "recruiter")
         verification = contact.get("verification_status", "placeholder")
 

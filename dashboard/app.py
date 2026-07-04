@@ -143,6 +143,8 @@ INTERVIEW_STAGES = [
 
 STATUS_LABELS = {
     "verified": ("Verified", "status-verified"),
+    "verified_public": ("Verified Public", "status-verified"),
+    "source_backed": ("Source Backed", "confidence-source_backed"),
     "partial": ("Partial", "status-partial"),
     "placeholder": ("Placeholder", "status-placeholder"),
     "needs_verification": ("Needs Verification", "status-needs_verification"),
@@ -731,8 +733,19 @@ def tab_people_map():
         key="pm_filter",
     )
     people_subset = build_people_map(icc_company_id, people_df)
+    src_subset = sources_df[sources_df["company_id"] == icc_company_id] if not sources_df.empty else pd.DataFrame()
+    career_rows = src_subset[src_subset["source_type"] == "careers_portal"] if not src_subset.empty else pd.DataFrame()
+    career_url = career_rows.iloc[0]["source_url"] if not career_rows.empty else ""
+
     if people_subset.empty:
-        st.info("No people mapped for this company. Add contacts to people_map.csv with verification status.")
+        if career_url:
+            st.info(
+                f"No verified individual contact — use careers link: [{career_url}]({career_url})"
+            )
+        else:
+            st.info(
+                "No verified contact — add research_sources careers_portal row or people_map entry."
+            )
     else:
         ranked = rank_contacts_for_conversation(icc_company_id, icc_conversation_type, icc_interview_stage, people_df)
         ranked = [p for p in ranked if p["contact_type"] in pm_filter]

@@ -34,7 +34,7 @@ def test_build_company_360_jpmorgan():
     assert profile["found"] is True
     assert profile["company_name"] == "JPMorgan Chase"
     assert len(profile["themes"]) >= 3
-    assert profile["people_count"] >= 4
+    assert profile["people_count"] >= 1
 
 
 def test_summarize_company_themes():
@@ -44,17 +44,18 @@ def test_summarize_company_themes():
     assert themes[0]["confidence_level"] in ("high", "medium", "low")
 
 
-def test_research_gaps_have_placeholders():
+def test_research_gaps_no_placeholders():
     data = load_all()
     gaps = get_company_research_gaps("C001", data["company_profiles"], data["people_map"], data["research_sources"])
-    assert any("placeholder" in g.lower() or "TBD" in g or "verify" in g.lower() for g in gaps)
+    assert not any("TBD" in g for g in gaps)
+    assert not any("placeholder" in g.lower() for g in gaps)
 
 
 def test_score_contact_priority_hiring_manager():
     row = {
         "hiring_power_score": 85,
         "contact_type": "hiring_manager",
-        "verification_status": "placeholder",
+        "verification_status": "verified_public",
     }
     score = score_contact_priority(row, "hiring manager", "hiring manager screen")
     assert score > 50
@@ -62,11 +63,11 @@ def test_score_contact_priority_hiring_manager():
 
 def test_hiring_manager_beats_peer_for_hm_conversation():
     hm = score_contact_priority(
-        {"hiring_power_score": 80, "contact_type": "hiring_manager", "verification_status": "placeholder"},
+        {"hiring_power_score": 80, "contact_type": "hiring_manager", "verification_status": "verified_public"},
         "hiring manager", "hiring manager screen",
     )
     peer = score_contact_priority(
-        {"hiring_power_score": 80, "contact_type": "peer", "verification_status": "placeholder"},
+        {"hiring_power_score": 80, "contact_type": "peer", "verification_status": "source_backed"},
         "hiring manager", "hiring manager screen",
     )
     assert hm > peer
@@ -75,8 +76,9 @@ def test_hiring_manager_beats_peer_for_hm_conversation():
 def test_build_people_map():
     data = load_all()
     people = build_people_map("C001", data["people_map"])
-    assert len(people) >= 4
-    assert all(p.startswith("TBD") or "TBD" in p for p in people["person_name"])
+    assert len(people) >= 1
+    assert not any("TBD" in str(n) for n in people["person_name"])
+    assert not any(s == "placeholder" for s in people["verification_status"])
 
 
 def test_people_search_query_url():

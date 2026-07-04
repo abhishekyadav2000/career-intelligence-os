@@ -16,6 +16,7 @@ CONFIDENCE_LABELS = (
 VERIFICATION_TO_CONFIDENCE = {
     "verified": "user_verified",
     "verified_public": "verified_public",
+    "source_backed": "source_backed",
     "partial": "source_backed",
     "needs_verification": "hypothesis",
     "placeholder": "placeholder",
@@ -91,6 +92,8 @@ def get_confidence_warnings(
         subset = people_df[people_df["company_id"] == company_id]
         placeholders = subset[subset["verification_status"].str.lower() == "placeholder"]
         if len(placeholders) == len(subset) and len(subset) > 0:
-            warnings.append("All people_map contacts are placeholders — verify before messaging.")
+            warnings.append(
+                "No verified contacts — use careers link from research_sources before outreach."
+            )
 
     return warnings

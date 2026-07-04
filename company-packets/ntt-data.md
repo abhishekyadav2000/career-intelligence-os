@@ -3,45 +3,46 @@
 **Industry:** IT Services + Consulting  
 **Location:** Plano / Dallas  
 **Career URL:** https://careers.nttdata.com  
-**CI OS Priority Rank:** 10 (Tier 1 — attack first)  
-**Sponsorship Signal:** Texas top H-1B employer list; Plano top employer
+**CI OS Priority Rank:** 10 (Tier 1 - attack first)  
+**Sponsorship Signal:** Texas top H-1B employer list; Plano top employer H-1B employer signal confidence 5/5 from sample research — validate per role via DOL LCA data; not legal advice.
 
 ---
 
 ## Why This Company
 
-NTT DATA is a global IT services and consulting firm with major Plano presence, appearing on Texas top H-1B employer lists. Client delivery roles in cloud migration, data analytics, and cybersecurity create steady demand for technology analysts with Python, SQL, and security fundamentals — matching the universal profile and DFW targeting priorities.
+NTT DATA (Plano / Dallas): AI-led modernization; cloud-native delivery; industry-specific platforms. DFW presence supports technology hiring in target role families.
+
+**Why they hire tech roles:** Deliver client programs requiring scalable engineering, data, and security talent in DFW delivery centers.
+
+**Business model:** IT services and outsourcing revenue from application development, cloud migration, and managed services for enterprise clients.
 
 ---
 
-## Target Roles (from sample data)
+## Target Roles (from job data)
 
-| Title | Location | Role Family | Notes |
-|-------|----------|-------------|-------|
-| Technology Risk Analyst | Plano / Dallas | Cloud / Security / Data / AI / Analyst | Client risk and GRC engagements |
-| Cloud Security Analyst | Plano / Dallas | Cloud / Security / Data / AI / Analyst | Client cloud security delivery |
-| Data Analyst | Plano / Dallas | Cloud / Security / Data / AI / Analyst | Analytics for client projects |
+| Title | Location | Role Family | Fit Score |
+|-------|----------|-------------|-----------|
+| Technology Risk Analyst | Plano / Dallas | Cloud / Security / Data / AI / Analyst | — |
+| Platform Engineer | Plano / Dallas | Cloud / Security / Data / AI / Analyst | — |
+| Platform Engineer | Plano / Dallas | Cloud / Security / Data / AI / Analyst | — |
 
 ---
 
 ## Talking Points
 
-1. **Client Delivery Mindset:** IT services roles require structured deliverables and explainable analysis — my Career Intelligence OS demonstrates modular design with transparent scoring categories.
-2. **Cloud and Security Breadth:** NTT DATA client engagements span cloud migration and security — my Secure Cloud Evidence Lab and AI Risk Scoring case studies cover both domains.
-3. **Plano Hub Advantage:** NTT DATA's Plano presence aligns with other Tier 1 DFW targets — enabling networking across the finance-tech and consulting ecosystem.
+1. **Strategic themes:** AI-led modernization; cloud-native delivery; industry-specific platforms
+2. **Technology stack:** Hybrid cloud; DevOps; microservices; data engineering
+3. **AI / cloud / security:** ML ops; cloud security posture; automation; analytics at scale
 
 ---
 
 ## Outreach Angles
 
-### Recruiter
-> Hi [Name], I'm interested in technology analyst roles at NTT DATA's Plano office. My portfolio includes a sponsor-aware career intelligence dashboard with Python, SQL, cloud security, and data analytics demonstrations. I'd welcome a brief conversation about current openings.
+### Recruiter (via careers portal)
+> Hi, I'm exploring Technology Analyst roles at NTT DATA's DFW locations. My portfolio includes a sponsor-aware Career Intelligence OS that scores enterprise role fit — demonstrating Python, SQL, and cloud security skills relevant to your teams. I'd welcome guidance on the best application path via your careers portal.
 
 ### Hiring Manager
-> Hi [Name], NTT DATA's client delivery model aligns with my portfolio focus on structured decision systems and cloud security evidence. I built a working Streamlit dashboard plus companion case studies — I'd appreciate 15 minutes to learn about your team's client focus areas.
-
-### Peer
-> Hi [Name], I'm exploring technology analyst paths at NTT DATA Plano. Would you be open to a brief informational chat about day-to-day work on cloud and data client engagements?
+> Hi, I'm targeting technology roles aligned with AI-led modernization. My portfolio includes a working Streamlit dashboard for role-fit scoring plus case studies on AI governance and cloud security evidence. I'd appreciate 15 minutes to learn about your team's current priorities.
 
 ---
 
@@ -49,31 +50,42 @@ NTT DATA is a global IT services and consulting firm with major Plano presence, 
 
 | Category | Likely Questions |
 |----------|-----------------|
-| Technical | Python/SQL, cloud security basics, data analytics, IAM fundamentals, client tooling |
-| Business | Client stakeholder communication, project delivery timelines, structured problem-solving |
-| Behavioral | Adapting to different client environments, team collaboration, work authorization transparency |
+| Technical | Python, SQL, cloud platforms, IAM, SIEM, data pipelines |
+| Business | Risk controls, stakeholder communication, KPI dashboards |
+| Behavioral | Cross-functional collaboration, sponsorship transparency |
 
 ---
 
 ## Sponsorship Notes
 
-- Signal: H1B confidence 5; Texas top H-1B employer; Plano top employer
-- Disclaimer: Indicative only — verify via DOL/USCIS for each role
-- Approach: Strong sponsorship signal — prioritize alongside AT&T and Ericsson
+- Signal: Texas top H-1B employer list; Plano top employer
+- Disclaimer: Indicative only — verify via DOL/USCIS PERM and H-1B disclosure data
+- Not legal advice
+
+---
+
+## Contacts (public sources)
+
+| Name | Title | Type | Verification |
+|------|-------|------|--------------|
+| NTT DATA Careers Recruiting Team | Technology Recruiting | recruiter | source_backed |
 
 ---
 
 ## Next Actions
 
-- [ ] Review Technology Risk Analyst role in Role Fit tab
-- [ ] Generate conversation brief via Interview Command Center
-- [ ] Prepare client delivery + cloud security talking point
-- [ ] Log outreach in conversation log CSV
+- [ ] Review top-fit roles in Role Fit tab
+- [ ] Apply via official careers portal
+- [ ] Log conversations in conversation_log_template.csv
 
 ---
 
 ## Public Sources
 
 - https://careers.nttdata.com
-- NTT DATA Plano office public information
-- Texas top H-1B employer public lists
+- https://www.nttdata.com/global/en/news
+- https://www.nttdata.com/global/en/services/data-and-intelligence
+- https://www.dol.gov/agencies/eta/foreign-labor
+- https://www.linkedin.com/search/results/people/?keywords=NTT%20DATA%20technology%20recruiter%20DFW
+
+**Last updated:** 2026-07-04

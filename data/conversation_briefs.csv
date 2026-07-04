@@ -1,6 +1,1 @@
 brief_id,company_id,company_name,job_id,job_title,conversation_type,interview_stage,contact_type,created_at,status,markdown_path,notes
-BR-79074F24,C001,JPMorgan Chase,J0001,AI Automation Analyst,hiring manager,hiring manager screen,hiring manager,2026-07-04T18:06:25,sample,exports/brief-jpmorgan-chase-sample.md,Pre-generated sample brief for portfolio
-BR-57724D5B,C004,Citi,J0010,Security Engineer,hiring manager,hiring manager screen,hiring manager,2026-07-04T18:06:25,sample,exports/brief-citi-sample.md,Pre-generated sample brief for portfolio
-BR-70189802,C006,Capital One,J0015,Data Analyst,hiring manager,hiring manager screen,hiring manager,2026-07-04T18:06:25,sample,exports/brief-capital-one-sample.md,Pre-generated sample brief for portfolio
-BR-9F270377,C007,Toyota Motor North America,J0018,Cybersecurity Analyst,hiring manager,hiring manager screen,hiring manager,2026-07-04T18:06:25,sample,exports/brief-toyota-sample.md,Pre-generated sample brief for portfolio
-BR-12E04C4E,C008,AT&T,J0020,Operations Technology Analyst,hiring manager,hiring manager screen,hiring manager,2026-07-04T18:06:25,sample,exports/brief-att-sample.md,Pre-generated sample brief for portfolio

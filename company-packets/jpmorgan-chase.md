@@ -3,45 +3,46 @@
 **Industry:** Finance + Technology  
 **Location:** Plano / Dallas  
 **Career URL:** https://careers.jpmorgan.com  
-**CI OS Priority Rank:** 1 (Tier 1 — attack first)  
-**Sponsorship Signal:** DFW mega tech center; >800 open positions reported; validate via DOL/USCIS
+**CI OS Priority Rank:** 1 (Tier 1 - attack first)  
+**Sponsorship Signal:** DFW mega tech center; >800 open positions reported June 2026; validate sponsorship via DOL/USCIS H-1B employer signal confidence 4/5 from sample research — validate per role via DOL LCA data; not legal advice.
 
 ---
 
 ## Why This Company
 
-JPMorgan Chase operates one of the largest technology centers in DFW (Plano), with reported headcount exceeding 800 tech roles. The bank's public focus on AI productivity, platform modernization, and risk controls aligns directly with the universal profile: Enterprise Technology Analyst — AI Automation, Cloud Security & Data Analytics. Finance-tech convergence creates steady demand for analysts who bridge data pipelines, security controls, and business stakeholder communication.
+JPMorgan Chase (Plano / Dallas): Digital banking; AI productivity; platform modernization; risk and compliance automation. DFW presence supports technology hiring in target role families.
+
+**Why they hire tech roles:** Scale regulated digital products, automate operations, and maintain security controls across global platforms.
+
+**Business model:** Regulated financial services revenue from lending, payments, trading, and wealth management with technology as core delivery channel.
 
 ---
 
-## Target Roles (from sample data)
+## Target Roles (from job data)
 
-| Title | Location | Role Family | Notes |
-|-------|----------|-------------|-------|
-| AI Automation Analyst | Plano / Dallas | Cloud / Security / Data / AI / Analyst | AI productivity + automation governance |
-| Technology Analyst | Plano / Dallas | Cloud / Security / Data / AI / Analyst | Data pipeline reliability + audit readiness |
-| Cloud Security Analyst | Plano / Dallas | Cloud / Security / Data / AI / Analyst | IAM, SIEM, incident response |
+| Title | Location | Role Family | Fit Score |
+|-------|----------|-------------|-----------|
+| AI Automation Analyst | Plano / Dallas | Cloud / Security / Data / AI / Analyst | — |
+| Technology Analyst | Plano / Dallas | Cloud / Security / Data / AI / Analyst | — |
+| Cloud Security Analyst | Plano / Dallas | Cloud / Security / Data / AI / Analyst | — |
 
 ---
 
 ## Talking Points
 
-1. **Platform Modernization:** JPMorgan's DFW tech center drives cloud migration and automation — my Career Intelligence OS demo shows structured decision-making for exactly this type of enterprise targeting.
-2. **AI Automation with Controls:** The bank is investing in AI productivity — my AI Agent Risk Scoring framework demonstrates I think about guardrails, not just capabilities.
-3. **Data + Security Convergence:** Roles require Python, SQL, IAM, and SIEM — my Secure Cloud Evidence Lab covers IAM policy review and SIEM alert tuning with synthetic artifacts.
+1. **Strategic themes:** Digital banking; AI productivity; platform modernization; risk and compliance automation
+2. **Technology stack:** Cloud migration; microservices; data platforms; API banking; DevSecOps
+3. **AI / cloud / security:** Responsible AI; fraud analytics; IAM; SIEM; model risk governance
 
 ---
 
 ## Outreach Angles
 
-### Recruiter
-> Hi [Name], I noticed the Technology Analyst and AI Automation Analyst roles in Plano. I built a sponsor-aware career intelligence system that scores enterprise role fit across 50 DFW employers — it demonstrates the Python, SQL, and cloud security skills these roles require. I'd welcome a brief conversation about how my background in data analytics and risk controls maps to your team's priorities. Portfolio: [GitHub link]
+### Recruiter (via careers portal)
+> Hi, I'm exploring Technology Analyst roles at JPMorgan Chase's DFW locations. My portfolio includes a sponsor-aware Career Intelligence OS that scores enterprise role fit — demonstrating Python, SQL, and cloud security skills relevant to your teams. I'd welcome guidance on the best application path via your careers portal.
 
 ### Hiring Manager
-> Hi [Name], I'm targeting technology analyst roles at JPMorgan's Plano center. My portfolio includes a working Streamlit dashboard that ingests structured job data, scores role fit across six categories, and generates interview prep — plus companion case studies on AI agent risk scoring and cloud security evidence collection. I'd appreciate 15 minutes to learn about your team's current priorities around platform modernization and automation governance.
-
-### Alumni / Peer
-> Hi [Name], I'm exploring technology analyst paths at JPMorgan's DFW campus. Would you be open to a brief informational chat about your team's day-to-day — particularly around data pipeline work and cross-functional collaboration? No pressure on referrals — I'm focused on understanding the role landscape first.
+> Hi, I'm targeting technology roles aligned with Digital banking. My portfolio includes a working Streamlit dashboard for role-fit scoring plus case studies on AI governance and cloud security evidence. I'd appreciate 15 minutes to learn about your team's current priorities.
 
 ---
 
@@ -49,30 +50,43 @@ JPMorgan Chase operates one of the largest technology centers in DFW (Plano), wi
 
 | Category | Likely Questions |
 |----------|-----------------|
-| Technical | Python data pipelines, SQL analytics, IAM least-privilege, SIEM alert tuning, cloud architecture basics |
-| Business | Risk control evidence, stakeholder communication, Agile/Jira delivery, KPI dashboard design |
-| Behavioral | Cross-functional collaboration, learning from failure, transparent communication about work authorization |
+| Technical | Python, SQL, cloud platforms, IAM, SIEM, data pipelines |
+| Business | Risk controls, stakeholder communication, KPI dashboards |
+| Behavioral | Cross-functional collaboration, sponsorship transparency |
 
 ---
 
 ## Sponsorship Notes
 
-- Signal: H1B confidence 4 (from sample data); large DFW tech headcount suggests recurring sponsorship
-- Disclaimer: Indicative only — verify via DOL/USCIS for each specific role
-- Approach: Transparent OPT/EAD disclosure when asked; emphasize long-term enterprise technology commitment
+- Signal: DFW mega tech center; >800 open positions reported June 2026; validate sponsorship via DOL/USCIS
+- Disclaimer: Indicative only — verify via DOL/USCIS PERM and H-1B disclosure data
+- Not legal advice
+
+---
+
+## Contacts (public sources)
+
+| Name | Title | Type | Verification |
+|------|-------|------|--------------|
+| JPMorgan Chase Careers Recruiting Team | Technology Recruiting | recruiter | source_backed |
+| Lori Beer | Global Chief Information Officer | hiring_manager | verified_public |
 
 ---
 
 ## Next Actions
 
-- [ ] Drill into AI Automation Analyst role in Role Fit tab
-- [ ] Send recruiter outreach using angle above
-- [ ] Prepare IAM policy review walkthrough from Secure Cloud Evidence Lab
-- [ ] Log conversation in conversation log CSV
+- [ ] Review top-fit roles in Role Fit tab
+- [ ] Apply via official careers portal
+- [ ] Log conversations in conversation_log_template.csv
 
 ---
 
 ## Public Sources
 
 - https://careers.jpmorgan.com
-- JPMorgan Chase DFW technology center public reporting (Plano campus)
+- https://www.jpmorganchase.com/newsroom
+- https://careers.jpmorgan.com/about/technology
+- https://www.dol.gov/agencies/eta/foreign-labor
+- https://www.linkedin.com/search/results/people/?keywords=JPMorgan%20Chase%20technology%20recruiter%20DFW
+
+**Last updated:** 2026-07-04

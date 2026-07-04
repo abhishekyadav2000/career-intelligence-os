@@ -1,47 +1,47 @@
 # Company Packet: Oracle
 
 **Industry:** Cloud + Enterprise Software  
-**Location:** Austin / Texas (cloud roles)  
-**Career URL:** https://www.oracle.com/careers  
-**CI OS Priority Rank:** 17 (Tier 2 — strong sponsor / verify DFW)  
-**Sponsorship Signal:** Texas top H-1B employer list
+**Location:** Austin / Texas + cloud roles  
+**Career URL:** https://careers.oracle.com  
+**CI OS Priority Rank:** 17 (Tier 2 - strong sponsor / verify DFW)  
+**Sponsorship Signal:** Texas top H-1B employer list H-1B employer signal confidence 5/5 from sample research — validate per role via DOL LCA data; not legal advice.
 
 ---
 
 ## Why This Company
 
-Oracle is a major cloud and enterprise software provider with significant Texas hiring for cloud infrastructure, database, and security roles. The company's OCI platform and enterprise customer base create technology analyst demand for data analytics, cloud security, and automation — aligned with the universal profile's cloud and data focus.
+Oracle (Austin / Texas + cloud roles): Digital transformation; cloud migration; data-driven operations; cybersecurity. DFW presence supports technology hiring in target role families.
+
+**Why they hire tech roles:** Support enterprise platforms, analytics, and security for DFW headquarters and regional operations.
+
+**Business model:** Diversified enterprise revenue with technology enabling operations, customer experience, and product innovation.
 
 ---
 
-## Target Roles (from sample data)
+## Target Roles (from job data)
 
-| Title | Location | Role Family | Notes |
-|-------|----------|-------------|-------|
-| Cloud Analyst | Austin / Texas | Cloud / Security / Data / AI / Analyst | OCI and cloud platform operations |
-| Data Analyst | Austin / Texas | Cloud / Security / Data / AI / Analyst | Enterprise data and analytics |
-| Security Engineer | Austin / Texas | Cloud / Security / Data / AI / Analyst | Cloud security and IAM |
+| Title | Location | Role Family | Fit Score |
+|-------|----------|-------------|-----------|
+| Cloud Analyst | Austin / Texas + cloud roles | Cloud / Security / Data / AI / Analyst | — |
+| Platform Engineer | Austin / Texas + cloud roles | Cloud / Security / Data / AI / Analyst | — |
 
 ---
 
 ## Talking Points
 
-1. **Cloud Platform Expertise:** Oracle's OCI growth creates cloud analyst demand — my Secure Cloud Evidence Lab demonstrates IAM, SIEM, and cloud architecture fundamentals applicable across platforms.
-2. **Enterprise Data at Scale:** Database and analytics roles require SQL depth — Career Intelligence OS includes SQLite analytics with joins, aggregations, and CTEs as a live demo.
-3. **Strong Sponsorship History:** Oracle appears on Texas top H-1B employer lists — ranked Tier 2 with high sponsorship confidence in sample data.
+1. **Strategic themes:** Digital transformation; cloud migration; data-driven operations; cybersecurity
+2. **Technology stack:** Cloud; ERP; analytics; automation; platform engineering
+3. **AI / cloud / security:** AI automation; data platforms; cloud security; GRC
 
 ---
 
 ## Outreach Angles
 
-### Recruiter
-> Hi [Name], I'm interested in cloud and data analyst roles at Oracle in Texas. My portfolio includes a cloud security evidence lab and a data-driven career intelligence dashboard — demonstrating Python, SQL, and cloud security skills. Happy to share a demo link.
+### Recruiter (via careers portal)
+> Hi, I'm exploring Technology Analyst roles at Oracle's DFW locations. My portfolio includes a sponsor-aware Career Intelligence OS that scores enterprise role fit — demonstrating Python, SQL, and cloud security skills relevant to your teams. I'd welcome guidance on the best application path via your careers portal.
 
 ### Hiring Manager
-> Hi [Name], Oracle's cloud platform growth aligns with my portfolio focus. I built a modular decision system with companion case studies on cloud security and AI risk scoring — I'd value 15 minutes to learn about your team's priorities on OCI and enterprise analytics.
-
-### Peer
-> Hi [Name], I'm exploring technology analyst paths at Oracle. Would you be open to a brief informational chat about cloud and data team culture in Texas?
+> Hi, I'm targeting technology roles aligned with Digital transformation. My portfolio includes a working Streamlit dashboard for role-fit scoring plus case studies on AI governance and cloud security evidence. I'd appreciate 15 minutes to learn about your team's current priorities.
 
 ---
 
@@ -49,31 +49,43 @@ Oracle is a major cloud and enterprise software provider with significant Texas 
 
 | Category | Likely Questions |
 |----------|-----------------|
-| Technical | SQL/database fundamentals, cloud security, IAM, Python automation, OCI basics |
-| Business | Enterprise customer context, KPI reporting, cross-functional stakeholder communication |
-| Behavioral | Learning new cloud platforms, collaborative problem solving, authorization transparency |
+| Technical | Python, SQL, cloud platforms, IAM, SIEM, data pipelines |
+| Business | Risk controls, stakeholder communication, KPI dashboards |
+| Behavioral | Cross-functional collaboration, sponsorship transparency |
 
 ---
 
 ## Sponsorship Notes
 
-- Signal: H1B confidence 5; Texas top H-1B employer
-- Disclaimer: Indicative only — verify via DOL/USCIS for each role; confirm DFW/Texas role location
-- Approach: Verify specific role location (Austin vs DFW remote) before applying
+- Signal: Texas top H-1B employer list
+- Disclaimer: Indicative only — verify via DOL/USCIS PERM and H-1B disclosure data
+- Not legal advice
+
+---
+
+## Contacts (public sources)
+
+| Name | Title | Type | Verification |
+|------|-------|------|--------------|
+| Oracle Careers Recruiting Team | Technology Recruiting | recruiter | source_backed |
+| Clay Magouyrk | Chief Executive Officer, Oracle Cloud Infrastructure | hiring_manager | verified_public |
 
 ---
 
 ## Next Actions
 
-- [ ] Confirm Texas role locations in Role Fit tab
-- [ ] Generate conversation brief via Interview Command Center
-- [ ] Prepare cloud platform + SQL analytics talking point
-- [ ] Log outreach in conversation log CSV
+- [ ] Review top-fit roles in Role Fit tab
+- [ ] Apply via official careers portal
+- [ ] Log conversations in conversation_log_template.csv
 
 ---
 
 ## Public Sources
 
-- https://www.oracle.com/careers
-- Oracle cloud (OCI) public product information
-- Texas top H-1B employer public lists
+- https://careers.oracle.com
+- https://www.oracle.com/news/
+- https://blogs.oracle.com/
+- https://www.dol.gov/agencies/eta/foreign-labor
+- https://www.linkedin.com/search/results/people/?keywords=Oracle%20technology%20recruiter%20DFW
+
+**Last updated:** 2026-07-04

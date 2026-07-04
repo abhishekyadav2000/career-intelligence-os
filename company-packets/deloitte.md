@@ -3,45 +3,46 @@
 **Industry:** Consulting + Technology  
 **Location:** Dallas  
 **Career URL:** https://apply.deloitte.com  
-**CI OS Priority Rank:** 13 (Tier 1 — attack first)  
-**Sponsorship Signal:** Large DFW consulting presence; DOL/USCIS verification needed
+**CI OS Priority Rank:** 13 (Tier 1 - attack first)  
+**Sponsorship Signal:** Large DFW consulting presence; DOL/USCIS verification needed H-1B employer signal confidence 4/5 from sample research — validate per role via DOL LCA data; not legal advice.
 
 ---
 
 ## Why This Company
 
-Deloitte maintains a large Dallas consulting and technology practice spanning risk advisory, cloud transformation, and cybersecurity. Client-facing technology analyst and risk roles require structured problem-solving, data analytics, and security fundamentals — skills demonstrated across the Career Intelligence OS portfolio and companion case studies.
+Deloitte (Dallas): Client digital transformation; cloud migration; cyber resilience; AI advisory. DFW presence supports technology hiring in target role families.
+
+**Why they hire tech roles:** Staff client-facing delivery teams for enterprise transformation and managed security programs.
+
+**Business model:** Professional services revenue from client engagements across strategy, technology implementation, audit, and risk advisory.
 
 ---
 
-## Target Roles (from sample data)
+## Target Roles (from job data)
 
-| Title | Location | Role Family | Notes |
-|-------|----------|-------------|-------|
-| Technology Risk Analyst | Dallas | Cloud / Security / Data / AI / Analyst | Risk advisory and GRC themes |
-| Cloud Security Analyst | Dallas | Cloud / Security / Data / AI / Analyst | Client cloud security engagements |
-| Data Analyst | Dallas | Cloud / Security / Data / AI / Analyst | Analytics for consulting deliverables |
+| Title | Location | Role Family | Fit Score |
+|-------|----------|-------------|-----------|
+| Technology Risk Analyst | Dallas | Cloud / Security / Data / AI / Analyst | — |
+| Technology Risk Analyst | Dallas | Cloud / Security / Data / AI / Analyst | — |
+| Data Analyst | Dallas | Cloud / Security / Data / AI / Analyst | — |
 
 ---
 
 ## Talking Points
 
-1. **Structured Decision-Making:** Consulting roles value frameworks and explainable analysis — my Career Intelligence OS uses weighted scoring with transparent category breakdowns, mirroring client-ready deliverable thinking.
-2. **Risk and Controls:** Technology Risk Analyst roles align with my AI Agent Risk Scoring framework — demonstrating guardrails and governance, not just capabilities.
-3. **Proof-of-Work Portfolio:** Deloitte values demonstrable skills — my Streamlit dashboard, SQL analytics, and cloud security lab are runnable artifacts, not slide-deck claims.
+1. **Strategic themes:** Client digital transformation; cloud migration; cyber resilience; AI advisory
+2. **Technology stack:** Cloud platforms; ERP modernization; data analytics; agile delivery
+3. **AI / cloud / security:** GenAI governance; cloud security; data mesh; identity management
 
 ---
 
 ## Outreach Angles
 
-### Recruiter
-> Hi [Name], I'm interested in technology risk and analyst roles at Deloitte's Dallas office. My portfolio includes a sponsor-aware career intelligence system with Python, SQL, cloud security, and AI risk scoring case studies. I'd welcome a brief conversation about current campus and experienced-hire openings.
+### Recruiter (via careers portal)
+> Hi, I'm exploring Technology Consultant roles at Deloitte's DFW locations. My portfolio includes a sponsor-aware Career Intelligence OS that scores enterprise role fit — demonstrating Python, SQL, and cloud security skills relevant to your teams. I'd welcome guidance on the best application path via your careers portal.
 
 ### Hiring Manager
-> Hi [Name], Deloitte's risk and technology advisory practice aligns with my portfolio focus. I built a modular decision system with explainable scoring and companion case studies on cloud security and AI governance — I'd appreciate 15 minutes to learn about your team's client focus areas.
-
-### Peer
-> Hi [Name], I'm exploring technology analyst paths at Deloitte Dallas. Would you be open to a brief informational chat about day-to-day work on risk and cloud engagements?
+> Hi, I'm targeting technology roles aligned with Client digital transformation. My portfolio includes a working Streamlit dashboard for role-fit scoring plus case studies on AI governance and cloud security evidence. I'd appreciate 15 minutes to learn about your team's current priorities.
 
 ---
 
@@ -49,31 +50,42 @@ Deloitte maintains a large Dallas consulting and technology practice spanning ri
 
 | Category | Likely Questions |
 |----------|-----------------|
-| Technical | Python/SQL, cloud security basics, risk frameworks, data analytics, IAM fundamentals |
-| Business | Client stakeholder communication, structured problem-solving, case interview-style scenarios |
-| Behavioral | Team collaboration on engagements, learning new domains quickly, work authorization transparency |
+| Technical | Python, SQL, cloud platforms, IAM, SIEM, data pipelines |
+| Business | Risk controls, stakeholder communication, KPI dashboards |
+| Behavioral | Cross-functional collaboration, sponsorship transparency |
 
 ---
 
 ## Sponsorship Notes
 
-- Signal: H1B confidence 4; large DFW consulting presence
-- Disclaimer: Indicative only — verify via DOL/USCIS for each role
-- Approach: Transparent OPT/EAD disclosure; emphasize consulting-ready communication skills
+- Signal: Large DFW consulting presence; DOL/USCIS verification needed
+- Disclaimer: Indicative only — verify via DOL/USCIS PERM and H-1B disclosure data
+- Not legal advice
+
+---
+
+## Contacts (public sources)
+
+| Name | Title | Type | Verification |
+|------|-------|------|--------------|
+| Deloitte Careers Recruiting Team | Technology Recruiting | recruiter | source_backed |
 
 ---
 
 ## Next Actions
 
-- [ ] Review Technology Risk Analyst role in Role Fit tab
-- [ ] Generate conversation brief via Interview Command Center
-- [ ] Prepare risk advisory + AI governance talking point
-- [ ] Log outreach in conversation log CSV
+- [ ] Review top-fit roles in Role Fit tab
+- [ ] Apply via official careers portal
+- [ ] Log conversations in conversation_log_template.csv
 
 ---
 
 ## Public Sources
 
 - https://apply.deloitte.com
-- Deloitte US careers public information
-- Dallas consulting market public reporting
+- https://www2.deloitte.com/us/en/pages/about-deloitte/articles/press-releases.html
+- https://www2.deloitte.com/us/en/pages/technology/articles/deloitte-on-technology.html
+- https://www.dol.gov/agencies/eta/foreign-labor
+- https://www.linkedin.com/search/results/people/?keywords=Deloitte%20technology%20recruiter%20DFW
+
+**Last updated:** 2026-07-04

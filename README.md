@@ -59,7 +59,7 @@ Mission Control is the **default tab** — it answers Monday morning questions i
 4. **10:30–11:30** — copy messages from Message Queue; log in `conversation_log_template.csv`
 5. **End of day** — update pipeline stages; mark activities done in schedule
 
-Real conversation samples live in `data/sample_conversation_log.csv` — the template CSV is header-only for your real logs.
+Real conversation **examples** live in `docs/examples/sample_conversation_log.csv` — the live template CSV (`data/conversation_log_template.csv`) is header-only for your real logs.
 
 ## Interview Command Center
 
@@ -74,9 +74,9 @@ The ICC upgrade transforms CI OS from a portfolio dashboard into an **end-to-end
 | Conversation briefs | `src/conversation_brief_generator.py` | `data/conversation_briefs.csv` |
 | Research prompts | `src/research_prompt_generator.py` | `prompts/*.md` |
 
-**Seed companies:** JPMorgan Chase, Citi, Capital One, Toyota Motor North America, AT&T
+**Seed companies:** All 50 DFW target employers in `data/companies.csv` — enriched from public sources (July 2026).
 
-**Rules:** CSV-first, TBD placeholders with `verification_status`, no scraping/automation, no fake names.
+**Rules:** CSV-first, no TBD placeholders, no invented contact names. Use `source_backed` for official careers teams and `verified_public` only when name/role appears on a public company page. Manual verification workflow for individual contacts — see [docs/research-enrichment-workflow.md](docs/research-enrichment-workflow.md).
 
 ### ICC Demo Flow
 

@@ -68,7 +68,9 @@ def build_company_360(
         "sources": company_sources.to_dict("records"),
         "people_count": len(company_people),
         "verified_people": int(
-            company_people[company_people["verification_status"] == "verified"].shape[0]
+            company_people[
+                company_people["verification_status"].isin(["verified", "verified_public"])
+            ].shape[0]
             if not company_people.empty and "verification_status" in company_people.columns
             else 0
         ),
@@ -128,11 +130,13 @@ def get_company_research_gaps(
 
     company_people = people_df[people_df["company_id"] == company_id] if not people_df.empty else pd.DataFrame()
     if company_people.empty:
-        gaps.append("No people mapped — run people-map research workflow")
+        gaps.append("No people mapped — use careers link from research_sources")
     else:
         placeholders = company_people[company_people["verification_status"] == "placeholder"]
         if len(placeholders) == len(company_people):
-            gaps.append("All contacts are TBD placeholders — verify hiring manager and recruiter before outreach")
+            gaps.append(
+                "No verified individual contacts — use careers link from research_sources"
+            )
 
     company_sources = sources_df[sources_df["company_id"] == company_id] if not sources_df.empty else pd.DataFrame()
     if company_sources.empty:

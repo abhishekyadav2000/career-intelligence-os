@@ -3,45 +3,46 @@
 **Industry:** Aviation + Technology  
 **Location:** Fort Worth  
 **Career URL:** https://jobs.aa.com  
-**CI OS Priority Rank:** 22 (Tier 1 — attack first)  
-**Sponsorship Signal:** Texas top H-1B employer list; DFW HQ
+**CI OS Priority Rank:** 22 (Tier 1 - attack first)  
+**Sponsorship Signal:** Texas top H-1B employer list; DFW HQ H-1B employer signal confidence 5/5 from sample research — validate per role via DOL LCA data; not legal advice.
 
 ---
 
 ## Why This Company
 
-American Airlines is headquartered in Fort Worth with major technology operations supporting flight operations, customer experience, and enterprise systems. Aviation-scale data analytics, cybersecurity, and cloud modernization create technology analyst roles requiring Python, SQL, IAM, and automation skills — directly aligned with the universal profile.
+American Airlines (Fort Worth): Digital transformation; cloud migration; data-driven operations; cybersecurity. DFW presence supports technology hiring in target role families.
+
+**Why they hire tech roles:** Support enterprise platforms, analytics, and security for DFW headquarters and regional operations.
+
+**Business model:** Diversified enterprise revenue with technology enabling operations, customer experience, and product innovation.
 
 ---
 
-## Target Roles (from sample data)
+## Target Roles (from job data)
 
-| Title | Location | Role Family | Notes |
-|-------|----------|-------------|-------|
-| Cybersecurity Analyst | Fort Worth | Cloud / Security / Data / AI / Analyst | Aviation enterprise security |
-| Data Analyst | Fort Worth | Cloud / Security / Data / AI / Analyst | Operations and customer analytics |
-| Technology Analyst | Fort Worth | Cloud / Security / Data / AI / Analyst | Platform modernization and automation |
+| Title | Location | Role Family | Fit Score |
+|-------|----------|-------------|-----------|
+| Cybersecurity Analyst | Fort Worth | Cloud / Security / Data / AI / Analyst | — |
+| Business Systems Analyst | Fort Worth | Cloud / Security / Data / AI / Analyst | — |
+| Security Engineer | Fort Worth | Cloud / Security / Data / AI / Analyst | — |
 
 ---
 
 ## Talking Points
 
-1. **Aviation-Scale Operations:** Airline operations generate complex data pipelines — my scoring engine processes structured job and company data at scale, demonstrating pipeline design thinking.
-2. **Enterprise Security:** Cybersecurity Analyst roles require IAM, SIEM, and incident response — covered in my Secure Cloud Evidence Lab with synthetic IAM and SIEM artifacts.
-3. **Strong Sponsorship Signal:** American Airlines appears on Texas top H-1B employer lists — my targeting system ranked it Tier 1 for sponsorship signal strength.
+1. **Strategic themes:** Digital transformation; cloud migration; data-driven operations; cybersecurity
+2. **Technology stack:** Cloud; ERP; analytics; automation; platform engineering
+3. **AI / cloud / security:** AI automation; data platforms; cloud security; GRC
 
 ---
 
 ## Outreach Angles
 
-### Recruiter
-> Hi [Name], I'm interested in technology and cybersecurity analyst roles at American Airlines' Fort Worth headquarters. My portfolio includes cloud security evidence collection and a data-driven career intelligence system — skills aligned with your enterprise technology teams. Happy to share a demo link.
+### Recruiter (via careers portal)
+> Hi, I'm exploring Technology Analyst roles at American Airlines's DFW locations. My portfolio includes a sponsor-aware Career Intelligence OS that scores enterprise role fit — demonstrating Python, SQL, and cloud security skills relevant to your teams. I'd welcome guidance on the best application path via your careers portal.
 
 ### Hiring Manager
-> Hi [Name], American Airlines' technology modernization aligns with my portfolio focus on data analytics and cloud security. I built a modular decision system with explainable scoring and companion case studies — I'd value 15 minutes to learn about your team's current priorities.
-
-### Alumni / Peer
-> Hi [Name], I'm researching technology analyst career paths at American Airlines. Would you be open to a brief informational chat about how your team approaches data analytics and security at aviation scale?
+> Hi, I'm targeting technology roles aligned with Digital transformation. My portfolio includes a working Streamlit dashboard for role-fit scoring plus case studies on AI governance and cloud security evidence. I'd appreciate 15 minutes to learn about your team's current priorities.
 
 ---
 
@@ -49,31 +50,43 @@ American Airlines is headquartered in Fort Worth with major technology operation
 
 | Category | Likely Questions |
 |----------|-----------------|
-| Technical | Python/SQL analytics, IAM, SIEM, cloud security, operational KPI dashboards |
-| Business | Airline operations metrics, incident response coordination, stakeholder communication |
-| Behavioral | Working at enterprise scale, cross-team collaboration, transparent authorization discussion |
+| Technical | Python, SQL, cloud platforms, IAM, SIEM, data pipelines |
+| Business | Risk controls, stakeholder communication, KPI dashboards |
+| Behavioral | Cross-functional collaboration, sponsorship transparency |
 
 ---
 
 ## Sponsorship Notes
 
-- Signal: H1B confidence 5; Texas top H-1B employer; DFW HQ
-- Disclaimer: Indicative only — verify via DOL/USCIS for each role
-- Approach: Use sponsorship disclosure playbook; lead with technical portfolio
+- Signal: Texas top H-1B employer list; DFW HQ
+- Disclaimer: Indicative only — verify via DOL/USCIS PERM and H-1B disclosure data
+- Not legal advice
+
+---
+
+## Contacts (public sources)
+
+| Name | Title | Type | Verification |
+|------|-------|------|--------------|
+| American Airlines Careers Recruiting Team | Technology Recruiting | recruiter | source_backed |
+| Melissa Wheeler | Senior Vice President, Information Technology | hiring_manager | verified_public |
 
 ---
 
 ## Next Actions
 
-- [ ] Review Cybersecurity Analyst role in Role Fit tab
-- [ ] Generate conversation brief via Interview Command Center
-- [ ] Prepare aviation-scale operations talking point
-- [ ] Log outreach in conversation log CSV
+- [ ] Review top-fit roles in Role Fit tab
+- [ ] Apply via official careers portal
+- [ ] Log conversations in conversation_log_template.csv
 
 ---
 
 ## Public Sources
 
 - https://jobs.aa.com
-- American Airlines Fort Worth headquarters public information
-- Texas top H-1B employer public lists
+- https://news.aa.com
+- https://jobs.aa.com/en/teams/technology
+- https://www.dol.gov/agencies/eta/foreign-labor
+- https://www.linkedin.com/search/results/people/?keywords=American%20Airlines%20technology%20recruiter%20DFW
+
+**Last updated:** 2026-07-04

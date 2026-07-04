@@ -1,13 +1,251 @@
 source_id,company_id,company_name,source_type,source_title,source_url,verified,notes
-RS001,C001,JPMorgan Chase,careers_portal,JPMorgan Chase Careers,https://careers.jpmorgan.com,yes,Primary job listing and culture information
-RS002,C001,JPMorgan Chase,public_news,DFW tech center expansion coverage,https://www.dallasnews.com,browser_verify,Search for JPMorgan Plano technology center reporting
-RS003,C001,JPMorgan Chase,government_data,DOL H-1B LCA search,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation — not legal certainty
-RS004,C004,Citi,careers_portal,Citi Careers,https://jobs.citi.com,yes,Irving campus and global roles
-RS005,C004,Citi,public_news,Citi Irving campus technology news,https://www.dallasnews.com,browser_verify,Verify current campus initiatives
-RS006,C006,Capital One,careers_portal,Capital One Careers,https://www.capitalonecareers.com,yes,Plano and remote technology roles
-RS007,C006,Capital One,engineering_blog,Capital One Tech Blog,https://www.capitalone.com/tech,browser_verify,Cloud and engineering culture signals
-RS008,C007,Toyota Motor North America,careers_portal,Toyota Careers,https://careers.toyota.com,yes,Plano HQ roles
-RS009,C007,Toyota Motor North America,industry_report,Automotive connected vehicle trends,https://www.mckinsey.com,browser_verify,Broad industry context only
-RS010,C008,AT&T,careers_portal,AT&T Jobs,https://www.att.jobs,yes,Dallas Plano Irving technology roles
-RS011,C008,AT&T,public_company_profile,AT&T Investor Relations,https://investors.att.com,yes,Network modernization and strategy themes
-RS012,C008,AT&T,government_data,DOL H-1B LCA search,https://www.dol.gov/agencies/eta/foreign-labor,yes,Texas top H-1B employer validation
+RS001,C001,JPMorgan Chase,careers_portal,JPMorgan Chase Careers,https://careers.jpmorgan.com,yes,Primary job listings and application portal
+RS002,C001,JPMorgan Chase,newsroom,JPMorgan Chase Newsroom,https://www.jpmorganchase.com/newsroom,yes,Press releases and strategic announcements
+RS003,C001,JPMorgan Chase,tech_blog,JPMorgan Chase Technology,https://careers.jpmorgan.com/about/technology,yes,Technology strategy and engineering culture
+RS004,C001,JPMorgan Chase,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS005,C001,JPMorgan Chase,linkedin_search,JPMorgan Chase LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=JPMorgan%20Chase%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS006,C002,Goldman Sachs,careers_portal,Goldman Sachs Careers,https://www.goldmansachs.com/careers,yes,Primary job listings and application portal
+RS007,C002,Goldman Sachs,newsroom,Goldman Sachs Newsroom,https://www.goldmansachs.com/pressroom,yes,Press releases and strategic announcements
+RS008,C002,Goldman Sachs,tech_blog,Goldman Sachs Technology,https://www.goldmansachs.com/careers/our-firm/engineering,yes,Technology strategy and engineering culture
+RS009,C002,Goldman Sachs,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS010,C002,Goldman Sachs,linkedin_search,Goldman Sachs LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=Goldman%20Sachs%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS011,C003,Bank of America,careers_portal,Bank of America Careers,https://careers.bankofamerica.com,yes,Primary job listings and application portal
+RS012,C003,Bank of America,newsroom,Bank of America Newsroom,https://newsroom.bankofamerica.com,yes,Press releases and strategic announcements
+RS013,C003,Bank of America,tech_blog,Bank of America Technology,https://careers.bankofamerica.com/en-us/life-at-bank-of-america/technology,yes,Technology strategy and engineering culture
+RS014,C003,Bank of America,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS015,C003,Bank of America,linkedin_search,Bank of America LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=Bank%20of%20America%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS016,C004,Citi,careers_portal,Citi Careers,https://jobs.citi.com,yes,Primary job listings and application portal
+RS017,C004,Citi,newsroom,Citi Newsroom,https://www.citigroup.com/global/news,yes,Press releases and strategic announcements
+RS018,C004,Citi,tech_blog,Citi Technology,https://jobs.citi.com/technology,yes,Technology strategy and engineering culture
+RS019,C004,Citi,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS020,C004,Citi,linkedin_search,Citi LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=Citi%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS021,C005,Charles Schwab,careers_portal,Charles Schwab Careers,https://www.schwabjobs.com,yes,Primary job listings and application portal
+RS022,C005,Charles Schwab,newsroom,Charles Schwab Newsroom,https://pressroom.aboutschwab.com,yes,Press releases and strategic announcements
+RS023,C005,Charles Schwab,tech_blog,Charles Schwab Technology,https://www.aboutschwab.com/who-we-are/technology,yes,Technology strategy and engineering culture
+RS024,C005,Charles Schwab,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS025,C005,Charles Schwab,linkedin_search,Charles Schwab LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=Charles%20Schwab%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS026,C006,Capital One,careers_portal,Capital One Careers,https://www.capitalonecareers.com,yes,Primary job listings and application portal
+RS027,C006,Capital One,newsroom,Capital One Newsroom,https://www.capitalone.com/about/newsroom/,yes,Press releases and strategic announcements
+RS028,C006,Capital One,tech_blog,Capital One Technology,https://www.capitalone.com/tech/,yes,Technology strategy and engineering culture
+RS029,C006,Capital One,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS030,C006,Capital One,linkedin_search,Capital One LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=Capital%20One%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS031,C007,Toyota Motor North America,careers_portal,Toyota Motor North America Careers,https://careers.toyota.com,yes,Primary job listings and application portal
+RS032,C007,Toyota Motor North America,newsroom,Toyota Motor North America Newsroom,https://pressroom.toyota.com,yes,Press releases and strategic announcements
+RS033,C007,Toyota Motor North America,tech_blog,Toyota Motor North America Technology,https://careers.toyota.com/us/en/technology-data-analytics,yes,Technology strategy and engineering culture
+RS034,C007,Toyota Motor North America,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS035,C007,Toyota Motor North America,linkedin_search,Toyota Motor North America LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=Toyota%20Motor%20North%20America%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS036,C008,AT&T,careers_portal,AT&T Careers,https://www.att.jobs,yes,Primary job listings and application portal
+RS037,C008,AT&T,newsroom,AT&T Newsroom,https://about.att.com/newsroom,yes,Press releases and strategic announcements
+RS038,C008,AT&T,tech_blog,AT&T Technology,https://about.att.com/innovation,yes,Technology strategy and engineering culture
+RS039,C008,AT&T,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS040,C008,AT&T,linkedin_search,AT&T LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=AT&T%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS041,C009,Ericsson,careers_portal,Ericsson Careers,https://jobs.ericsson.com/careers,yes,Primary job listings and application portal
+RS042,C009,Ericsson,newsroom,Ericsson Newsroom,https://www.ericsson.com/en/news,yes,Press releases and strategic announcements
+RS043,C009,Ericsson,tech_blog,Ericsson Technology,https://www.ericsson.com/en/blog,yes,Technology strategy and engineering culture
+RS044,C009,Ericsson,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS045,C009,Ericsson,linkedin_search,Ericsson LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=Ericsson%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS046,C010,NTT DATA,careers_portal,NTT DATA Careers,https://careers.nttdata.com,yes,Primary job listings and application portal
+RS047,C010,NTT DATA,newsroom,NTT DATA Newsroom,https://www.nttdata.com/global/en/news,yes,Press releases and strategic announcements
+RS048,C010,NTT DATA,tech_blog,NTT DATA Technology,https://www.nttdata.com/global/en/services/data-and-intelligence,yes,Technology strategy and engineering culture
+RS049,C010,NTT DATA,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS050,C010,NTT DATA,linkedin_search,NTT DATA LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=NTT%20DATA%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS051,C011,Samsung Electronics America / Samsung Austin Semiconductor,careers_portal,Samsung Electronics America / Samsung Austin Semiconductor Careers,https://www.samsung.com/us/careers/,yes,Primary job listings and application portal
+RS052,C011,Samsung Electronics America / Samsung Austin Semiconductor,newsroom,Samsung Electronics America / Samsung Austin Semiconductor Newsroom,https://news.samsung.com/us,yes,Press releases and strategic announcements
+RS053,C011,Samsung Electronics America / Samsung Austin Semiconductor,tech_blog,Samsung Electronics America / Samsung Austin Semiconductor Technology,https://research.samsung.com,yes,Technology strategy and engineering culture
+RS054,C011,Samsung Electronics America / Samsung Austin Semiconductor,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS055,C011,Samsung Electronics America / Samsung Austin Semiconductor,linkedin_search,Samsung Electronics America / Samsung Austin Semiconductor LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=Samsung%20Electronics%20America%20/%20Samsung%20Austin%20Semiconductor%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS056,C012,KPMG,careers_portal,KPMG Careers,https://www.kpmg.com/us/en/careers.html,yes,Primary job listings and application portal
+RS057,C012,KPMG,newsroom,KPMG Newsroom,https://kpmg.com/us/en/media/news.html,yes,Press releases and strategic announcements
+RS058,C012,KPMG,tech_blog,KPMG Technology,https://kpmg.com/us/en/capabilities-services/advisory-services/technology.html,yes,Technology strategy and engineering culture
+RS059,C012,KPMG,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS060,C012,KPMG,linkedin_search,KPMG LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=KPMG%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS061,C013,Deloitte,careers_portal,Deloitte Careers,https://apply.deloitte.com,yes,Primary job listings and application portal
+RS062,C013,Deloitte,newsroom,Deloitte Newsroom,https://www2.deloitte.com/us/en/pages/about-deloitte/articles/press-releases.html,yes,Press releases and strategic announcements
+RS063,C013,Deloitte,tech_blog,Deloitte Technology,https://www2.deloitte.com/us/en/pages/technology/articles/deloitte-on-technology.html,yes,Technology strategy and engineering culture
+RS064,C013,Deloitte,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS065,C013,Deloitte,linkedin_search,Deloitte LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=Deloitte%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS066,C014,Accenture,careers_portal,Accenture Careers,https://www.accenture.com/us-en/careers,yes,Primary job listings and application portal
+RS067,C014,Accenture,newsroom,Accenture Newsroom,https://newsroom.accenture.com,yes,Press releases and strategic announcements
+RS068,C014,Accenture,tech_blog,Accenture Technology,https://www.accenture.com/us-en/services/cloud,yes,Technology strategy and engineering culture
+RS069,C014,Accenture,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS070,C014,Accenture,linkedin_search,Accenture LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=Accenture%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS071,C015,Cognizant,careers_portal,Cognizant Careers,https://careers.cognizant.com,yes,Primary job listings and application portal
+RS072,C015,Cognizant,newsroom,Cognizant Newsroom,https://news.cognizant.com,yes,Press releases and strategic announcements
+RS073,C015,Cognizant,tech_blog,Cognizant Technology,https://www.cognizant.com/us/en/services/cloud-solutions,yes,Technology strategy and engineering culture
+RS074,C015,Cognizant,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS075,C015,Cognizant,linkedin_search,Cognizant LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=Cognizant%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS076,C016,Infosys,careers_portal,Infosys Careers,https://careers.infosys.com,yes,Primary job listings and application portal
+RS077,C016,Infosys,newsroom,Infosys Newsroom,https://www.infosys.com/newsroom.html,yes,Press releases and strategic announcements
+RS078,C016,Infosys,tech_blog,Infosys Technology,https://www.infosys.com/services/cloud-computing.html,yes,Technology strategy and engineering culture
+RS079,C016,Infosys,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS080,C016,Infosys,linkedin_search,Infosys LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=Infosys%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS081,C017,Oracle,careers_portal,Oracle Careers,https://careers.oracle.com,yes,Primary job listings and application portal
+RS082,C017,Oracle,newsroom,Oracle Newsroom,https://www.oracle.com/news/,yes,Press releases and strategic announcements
+RS083,C017,Oracle,tech_blog,Oracle Technology,https://blogs.oracle.com/,yes,Technology strategy and engineering culture
+RS084,C017,Oracle,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS085,C017,Oracle,linkedin_search,Oracle LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=Oracle%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS086,C018,Tesla,careers_portal,Tesla Careers,https://www.tesla.com/careers,yes,Primary job listings and application portal
+RS087,C018,Tesla,newsroom,Tesla Newsroom,https://www.tesla.com/blog,yes,Press releases and strategic announcements
+RS088,C018,Tesla,tech_blog,Tesla Technology,https://www.tesla.com/AI,yes,Technology strategy and engineering culture
+RS089,C018,Tesla,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS090,C018,Tesla,linkedin_search,Tesla LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=Tesla%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS091,C019,Hewlett Packard Enterprise,careers_portal,Hewlett Packard Enterprise Careers,https://careers.hpe.com,yes,Primary job listings and application portal
+RS092,C019,Hewlett Packard Enterprise,newsroom,Hewlett Packard Enterprise Newsroom,https://www.hpe.com/us/en/newsroom.html,yes,Press releases and strategic announcements
+RS093,C019,Hewlett Packard Enterprise,tech_blog,Hewlett Packard Enterprise Technology,https://www.hpe.com/us/en/solutions/cloud.html,yes,Technology strategy and engineering culture
+RS094,C019,Hewlett Packard Enterprise,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS095,C019,Hewlett Packard Enterprise,linkedin_search,Hewlett Packard Enterprise LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=Hewlett%20Packard%20Enterprise%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS096,C020,Dell Technologies / Dell USA / Dell Products,careers_portal,Dell Technologies / Dell USA / Dell Products Careers,https://jobs.dell.com,yes,Primary job listings and application portal
+RS097,C020,Dell Technologies / Dell USA / Dell Products,newsroom,Dell Technologies / Dell USA / Dell Products Newsroom,https://www.dell.com/en-us/dt/corporate/newsroom.htm,yes,Press releases and strategic announcements
+RS098,C020,Dell Technologies / Dell USA / Dell Products,tech_blog,Dell Technologies / Dell USA / Dell Products Technology,https://www.dell.com/en-us/blog/categories/artificial-intelligence/,yes,Technology strategy and engineering culture
+RS099,C020,Dell Technologies / Dell USA / Dell Products,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS100,C020,Dell Technologies / Dell USA / Dell Products,linkedin_search,Dell Technologies / Dell USA / Dell Products LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=Dell%20Technologies%20/%20Dell%20USA%20/%20Dell%20Products%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS101,C021,Texas Instruments,careers_portal,Texas Instruments Careers,https://careers.ti.com,yes,Primary job listings and application portal
+RS102,C021,Texas Instruments,newsroom,Texas Instruments Newsroom,https://news.ti.com,yes,Press releases and strategic announcements
+RS103,C021,Texas Instruments,tech_blog,Texas Instruments Technology,https://www.ti.com/about-ti/company/technology.html,yes,Technology strategy and engineering culture
+RS104,C021,Texas Instruments,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS105,C021,Texas Instruments,linkedin_search,Texas Instruments LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=Texas%20Instruments%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS106,C022,American Airlines,careers_portal,American Airlines Careers,https://jobs.aa.com,yes,Primary job listings and application portal
+RS107,C022,American Airlines,newsroom,American Airlines Newsroom,https://news.aa.com,yes,Press releases and strategic announcements
+RS108,C022,American Airlines,tech_blog,American Airlines Technology,https://jobs.aa.com/en/teams/technology,yes,Technology strategy and engineering culture
+RS109,C022,American Airlines,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS110,C022,American Airlines,linkedin_search,American Airlines LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=American%20Airlines%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS111,C023,Southwest Airlines,careers_portal,Southwest Airlines Careers,https://careers.southwestair.com,yes,Primary job listings and application portal
+RS112,C023,Southwest Airlines,newsroom,Southwest Airlines Newsroom,https://www.swamedia.com,yes,Press releases and strategic announcements
+RS113,C023,Southwest Airlines,tech_blog,Southwest Airlines Technology,https://careers.southwestair.com/technology,yes,Technology strategy and engineering culture
+RS114,C023,Southwest Airlines,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS115,C023,Southwest Airlines,linkedin_search,Southwest Airlines LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=Southwest%20Airlines%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS116,C024,McKesson,careers_portal,McKesson Careers,https://careers.mckesson.com,yes,Primary job listings and application portal
+RS117,C024,McKesson,newsroom,McKesson Newsroom,https://www.mckesson.com/about-us/newsroom/,yes,Press releases and strategic announcements
+RS118,C024,McKesson,tech_blog,McKesson Technology,https://www.mckesson.com/about-mckesson/our-businesses/technology/,yes,Technology strategy and engineering culture
+RS119,C024,McKesson,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS120,C024,McKesson,linkedin_search,McKesson LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=McKesson%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS121,C025,CBRE,careers_portal,CBRE Careers,https://careers.cbre.com,yes,Primary job listings and application portal
+RS122,C025,CBRE,newsroom,CBRE Newsroom,https://www.cbre.com/press-releases,yes,Press releases and strategic announcements
+RS123,C025,CBRE,tech_blog,CBRE Technology,https://www.cbre.com/technology,yes,Technology strategy and engineering culture
+RS124,C025,CBRE,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS125,C025,CBRE,linkedin_search,CBRE LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=CBRE%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS126,C026,Lockheed Martin,careers_portal,Lockheed Martin Careers,https://www.lockheedmartinjobs.com,yes,Primary job listings and application portal
+RS127,C026,Lockheed Martin,newsroom,Lockheed Martin Newsroom,https://news.lockheedmartin.com,yes,Press releases and strategic announcements
+RS128,C026,Lockheed Martin,tech_blog,Lockheed Martin Technology,https://www.lockheedmartin.com/en-us/capabilities/cyber.html,yes,Technology strategy and engineering culture
+RS129,C026,Lockheed Martin,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS130,C026,Lockheed Martin,linkedin_search,Lockheed Martin LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=Lockheed%20Martin%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS131,C027,Raytheon / RTX,careers_portal,Raytheon / RTX Careers,https://careers.rtx.com,yes,Primary job listings and application portal
+RS132,C027,Raytheon / RTX,newsroom,Raytheon / RTX Newsroom,https://www.rtx.com/news,yes,Press releases and strategic announcements
+RS133,C027,Raytheon / RTX,tech_blog,Raytheon / RTX Technology,https://www.rtx.com/who-we-are/technology-and-innovation,yes,Technology strategy and engineering culture
+RS134,C027,Raytheon / RTX,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS135,C027,Raytheon / RTX,linkedin_search,Raytheon / RTX LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=Raytheon%20/%20RTX%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS136,C028,BNSF Railway,careers_portal,BNSF Railway Careers,https://jobs.bnsf.com,yes,Primary job listings and application portal
+RS137,C028,BNSF Railway,newsroom,BNSF Railway Newsroom,https://www.bnsf.com/news-media/,yes,Press releases and strategic announcements
+RS138,C028,BNSF Railway,tech_blog,BNSF Railway Technology,https://www.bnsf.com/about-bnsf/technology/,yes,Technology strategy and engineering culture
+RS139,C028,BNSF Railway,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS140,C028,BNSF Railway,linkedin_search,BNSF Railway LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=BNSF%20Railway%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS141,C029,GM Financial,careers_portal,GM Financial Careers,https://careers.gmfinancial.com,yes,Primary job listings and application portal
+RS142,C029,GM Financial,newsroom,GM Financial Newsroom,https://news.gmfinancial.com,yes,Press releases and strategic announcements
+RS143,C029,GM Financial,tech_blog,GM Financial Technology,https://www.gmfinancial.com/en-us/company/about-us/technology.html,yes,Technology strategy and engineering culture
+RS144,C029,GM Financial,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS145,C029,GM Financial,linkedin_search,GM Financial LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=GM%20Financial%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS146,C030,Sabre,careers_portal,Sabre Careers,https://www.sabre.com/about/careers/,yes,Primary job listings and application portal
+RS147,C030,Sabre,newsroom,Sabre Newsroom,https://investors.sabre.com/news-releases,yes,Press releases and strategic announcements
+RS148,C030,Sabre,tech_blog,Sabre Technology,https://www.sabre.com/insights/,yes,Technology strategy and engineering culture
+RS149,C030,Sabre,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS150,C030,Sabre,linkedin_search,Sabre LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=Sabre%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS151,C031,Alkami Technology,careers_portal,Alkami Technology Careers,https://www.alkami.com/careers/,yes,Primary job listings and application portal
+RS152,C031,Alkami Technology,newsroom,Alkami Technology Newsroom,https://www.alkami.com/news/,yes,Press releases and strategic announcements
+RS153,C031,Alkami Technology,tech_blog,Alkami Technology Technology,https://www.alkami.com/platform/,yes,Technology strategy and engineering culture
+RS154,C031,Alkami Technology,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS155,C031,Alkami Technology,linkedin_search,Alkami Technology LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=Alkami%20Technology%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS156,C032,Tyler Technologies,careers_portal,Tyler Technologies Careers,https://www.tylertech.com/careers,yes,Primary job listings and application portal
+RS157,C032,Tyler Technologies,newsroom,Tyler Technologies Newsroom,https://www.tylertech.com/news,yes,Press releases and strategic announcements
+RS158,C032,Tyler Technologies,tech_blog,Tyler Technologies Technology,https://www.tylertech.com/solutions,yes,Technology strategy and engineering culture
+RS159,C032,Tyler Technologies,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS160,C032,Tyler Technologies,linkedin_search,Tyler Technologies LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=Tyler%20Technologies%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS161,C033,State Farm,careers_portal,State Farm Careers,https://jobs.statefarm.com,yes,Primary job listings and application portal
+RS162,C033,State Farm,newsroom,State Farm Newsroom,https://newsroom.statefarm.com,yes,Press releases and strategic announcements
+RS163,C033,State Farm,tech_blog,State Farm Technology,https://www.statefarm.com/careers/technology,yes,Technology strategy and engineering culture
+RS164,C033,State Farm,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS165,C033,State Farm,linkedin_search,State Farm LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=State%20Farm%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS166,C034,Liberty Mutual,careers_portal,Liberty Mutual Careers,https://jobs.libertymutual.com,yes,Primary job listings and application portal
+RS167,C034,Liberty Mutual,newsroom,Liberty Mutual Newsroom,https://newsroom.libertymutual.com,yes,Press releases and strategic announcements
+RS168,C034,Liberty Mutual,tech_blog,Liberty Mutual Technology,https://jobs.libertymutual.com/technology,yes,Technology strategy and engineering culture
+RS169,C034,Liberty Mutual,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS170,C034,Liberty Mutual,linkedin_search,Liberty Mutual LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=Liberty%20Mutual%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS171,C035,PepsiCo / Frito-Lay,careers_portal,PepsiCo / Frito-Lay Careers,https://www.pepsicojobs.com,yes,Primary job listings and application portal
+RS172,C035,PepsiCo / Frito-Lay,newsroom,PepsiCo / Frito-Lay Newsroom,https://www.pepsico.com/news,yes,Press releases and strategic announcements
+RS173,C035,PepsiCo / Frito-Lay,tech_blog,PepsiCo / Frito-Lay Technology,https://www.pepsico.com/our-stories/technology,yes,Technology strategy and engineering culture
+RS174,C035,PepsiCo / Frito-Lay,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS175,C035,PepsiCo / Frito-Lay,linkedin_search,PepsiCo / Frito-Lay LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=PepsiCo%20/%20Frito-Lay%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS176,C036,Wells Fargo,careers_portal,Wells Fargo Careers,https://www.wellsfargojobs.com,yes,Primary job listings and application portal
+RS177,C036,Wells Fargo,newsroom,Wells Fargo Newsroom,https://newsroom.wf.com,yes,Press releases and strategic announcements
+RS178,C036,Wells Fargo,tech_blog,Wells Fargo Technology,https://www.wellsfargo.com/about/careers/technology/,yes,Technology strategy and engineering culture
+RS179,C036,Wells Fargo,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS180,C036,Wells Fargo,linkedin_search,Wells Fargo LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=Wells%20Fargo%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS181,C037,Morgan Stanley,careers_portal,Morgan Stanley Careers,https://www.morganstanley.com/careers,yes,Primary job listings and application portal
+RS182,C037,Morgan Stanley,newsroom,Morgan Stanley Newsroom,https://www.morganstanley.com/press-releases,yes,Press releases and strategic announcements
+RS183,C037,Morgan Stanley,tech_blog,Morgan Stanley Technology,https://www.morganstanley.com/what-we-do/technology,yes,Technology strategy and engineering culture
+RS184,C037,Morgan Stanley,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS185,C037,Morgan Stanley,linkedin_search,Morgan Stanley LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=Morgan%20Stanley%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS186,C038,Nasdaq,careers_portal,Nasdaq Careers,https://www.nasdaq.com/about/careers,yes,Primary job listings and application portal
+RS187,C038,Nasdaq,newsroom,Nasdaq Newsroom,https://www.nasdaq.com/newsroom,yes,Press releases and strategic announcements
+RS188,C038,Nasdaq,tech_blog,Nasdaq Technology,https://www.nasdaq.com/solutions/data,yes,Technology strategy and engineering culture
+RS189,C038,Nasdaq,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS190,C038,Nasdaq,linkedin_search,Nasdaq LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=Nasdaq%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS191,C039,NYSE Texas / Intercontinental Exchange,careers_portal,NYSE Texas / Intercontinental Exchange Careers,https://careers.ice.com,yes,Primary job listings and application portal
+RS192,C039,NYSE Texas / Intercontinental Exchange,newsroom,NYSE Texas / Intercontinental Exchange Newsroom,https://ir.theice.com/press/news-releases,yes,Press releases and strategic announcements
+RS193,C039,NYSE Texas / Intercontinental Exchange,tech_blog,NYSE Texas / Intercontinental Exchange Technology,https://www.ice.com/fixed-income-data-services,yes,Technology strategy and engineering culture
+RS194,C039,NYSE Texas / Intercontinental Exchange,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS195,C039,NYSE Texas / Intercontinental Exchange,linkedin_search,NYSE Texas / Intercontinental Exchange LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=NYSE%20Texas%20/%20Intercontinental%20Exchange%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS196,C040,Siemens Industry Software,careers_portal,Siemens Industry Software Careers,https://jobs.siemens.com,yes,Primary job listings and application portal
+RS197,C040,Siemens Industry Software,newsroom,Siemens Industry Software Newsroom,https://press.siemens.com/global/en,yes,Press releases and strategic announcements
+RS198,C040,Siemens Industry Software,tech_blog,Siemens Industry Software Technology,https://www.sw.siemens.com/en-US/,yes,Technology strategy and engineering culture
+RS199,C040,Siemens Industry Software,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS200,C040,Siemens Industry Software,linkedin_search,Siemens Industry Software LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=Siemens%20Industry%20Software%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS201,C041,NXP USA,careers_portal,NXP USA Careers,https://www.nxp.com/company/about-nxp/careers:CAREERS,yes,Primary job listings and application portal
+RS202,C041,NXP USA,newsroom,NXP USA Newsroom,https://media.nxp.com/news-releases,yes,Press releases and strategic announcements
+RS203,C041,NXP USA,tech_blog,NXP USA Technology,https://www.nxp.com/design/design-center/software:MCUXpresso-Software,yes,Technology strategy and engineering culture
+RS204,C041,NXP USA,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS205,C041,NXP USA,linkedin_search,NXP USA LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=NXP%20USA%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS206,C042,Indeed,careers_portal,Indeed Careers,https://www.indeed.com/careers,yes,Primary job listings and application portal
+RS207,C042,Indeed,newsroom,Indeed Newsroom,https://www.indeed.com/news,yes,Press releases and strategic announcements
+RS208,C042,Indeed,tech_blog,Indeed Technology,https://engineering.indeed.com,yes,Technology strategy and engineering culture
+RS209,C042,Indeed,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS210,C042,Indeed,linkedin_search,Indeed LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=Indeed%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS211,C043,UT Southwestern Medical Center,careers_portal,UT Southwestern Medical Center Careers,https://jobs.utsouthwestern.edu,yes,Primary job listings and application portal
+RS212,C043,UT Southwestern Medical Center,newsroom,UT Southwestern Medical Center Newsroom,https://www.utsouthwestern.edu/newsroom/,yes,Press releases and strategic announcements
+RS213,C043,UT Southwestern Medical Center,tech_blog,UT Southwestern Medical Center Technology,https://www.utsouthwestern.edu/departments/information-resources/,yes,Technology strategy and engineering culture
+RS214,C043,UT Southwestern Medical Center,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS215,C043,UT Southwestern Medical Center,linkedin_search,UT Southwestern Medical Center LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=UT%20Southwestern%20Medical%20Center%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS216,C044,Dallas Independent School District,careers_portal,Dallas Independent School District Careers,https://www.dallasisd.org/careers,yes,Primary job listings and application portal
+RS217,C044,Dallas Independent School District,newsroom,Dallas Independent School District Newsroom,https://www.dallasisd.org/news,yes,Press releases and strategic announcements
+RS218,C044,Dallas Independent School District,tech_blog,Dallas Independent School District Technology,https://www.dallasisd.org/departments/technology,yes,Technology strategy and engineering culture
+RS219,C044,Dallas Independent School District,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS220,C044,Dallas Independent School District,linkedin_search,Dallas Independent School District LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=Dallas%20Independent%20School%20District%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS221,C045,Baylor College of Medicine / Baylor Scott & White ecosystem,careers_portal,Baylor College of Medicine / Baylor Scott & White ecosystem Careers,https://jobs.bcm.edu,yes,Primary job listings and application portal
+RS222,C045,Baylor College of Medicine / Baylor Scott & White ecosystem,newsroom,Baylor College of Medicine / Baylor Scott & White ecosystem Newsroom,https://www.bcm.edu/news,yes,Press releases and strategic announcements
+RS223,C045,Baylor College of Medicine / Baylor Scott & White ecosystem,tech_blog,Baylor College of Medicine / Baylor Scott & White ecosystem Technology,https://www.bcm.edu/departments/medicine/informatics,yes,Technology strategy and engineering culture
+RS224,C045,Baylor College of Medicine / Baylor Scott & White ecosystem,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS225,C045,Baylor College of Medicine / Baylor Scott & White ecosystem,linkedin_search,Baylor College of Medicine / Baylor Scott & White ecosystem LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=Baylor%20College%20of%20Medicine%20/%20Baylor%20Scott%20&%20White%20ecosystem%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS226,C046,Fluor Corporation,careers_portal,Fluor Corporation Careers,https://careers.fluor.com,yes,Primary job listings and application portal
+RS227,C046,Fluor Corporation,newsroom,Fluor Corporation Newsroom,https://investor.fluor.com/news/news-releases,yes,Press releases and strategic announcements
+RS228,C046,Fluor Corporation,tech_blog,Fluor Corporation Technology,https://www.fluor.com/solutions/digital-solutions,yes,Technology strategy and engineering culture
+RS229,C046,Fluor Corporation,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS230,C046,Fluor Corporation,linkedin_search,Fluor Corporation LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=Fluor%20Corporation%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS231,C047,Jacobs Solutions,careers_portal,Jacobs Solutions Careers,https://careers.jacobs.com,yes,Primary job listings and application portal
+RS232,C047,Jacobs Solutions,newsroom,Jacobs Solutions Newsroom,https://www.jacobs.com/newsroom,yes,Press releases and strategic announcements
+RS233,C047,Jacobs Solutions,tech_blog,Jacobs Solutions Technology,https://www.jacobs.com/solutions/digital,yes,Technology strategy and engineering culture
+RS234,C047,Jacobs Solutions,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS235,C047,Jacobs Solutions,linkedin_search,Jacobs Solutions LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=Jacobs%20Solutions%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS236,C048,Kimberly-Clark,careers_portal,Kimberly-Clark Careers,https://careers.kimberly-clark.com,yes,Primary job listings and application portal
+RS237,C048,Kimberly-Clark,newsroom,Kimberly-Clark Newsroom,https://www.kimberly-clark.com/en-us/news,yes,Press releases and strategic announcements
+RS238,C048,Kimberly-Clark,tech_blog,Kimberly-Clark Technology,https://www.kimberly-clark.com/en-us/who-we-are/our-company/innovation,yes,Technology strategy and engineering culture
+RS239,C048,Kimberly-Clark,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS240,C048,Kimberly-Clark,linkedin_search,Kimberly-Clark LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=Kimberly-Clark%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS241,C049,Celanese,careers_portal,Celanese Careers,https://careers.celanese.com,yes,Primary job listings and application portal
+RS242,C049,Celanese,newsroom,Celanese Newsroom,https://investors.celanese.com/news-events/news-releases,yes,Press releases and strategic announcements
+RS243,C049,Celanese,tech_blog,Celanese Technology,https://www.celanese.com/company/innovation,yes,Technology strategy and engineering culture
+RS244,C049,Celanese,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS245,C049,Celanese,linkedin_search,Celanese LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=Celanese%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
+RS246,C050,Vistra,careers_portal,Vistra Careers,https://careers.vistracorp.com,yes,Primary job listings and application portal
+RS247,C050,Vistra,newsroom,Vistra Newsroom,https://investor.vistracorp.com/news,yes,Press releases and strategic announcements
+RS248,C050,Vistra,tech_blog,Vistra Technology,https://www.vistracorp.com/technology,yes,Technology strategy and engineering culture
+RS249,C050,Vistra,government_data,DOL H-1B LCA Database,https://www.dol.gov/agencies/eta/foreign-labor,yes,Sponsorship signal validation only — not legal advice
+RS250,C050,Vistra,linkedin_search,Vistra LinkedIn People Search,https://www.linkedin.com/search/results/people/?keywords=Vistra%20technology%20recruiter%20DFW,browser_verify,Manual verification for individual contacts — do not automate
