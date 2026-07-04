@@ -20,3 +20,9 @@ data/career_intel.db
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Environment
+.env
+
+# Legacy app redirect (use dashboard/app.py)
+app/dashboard.py

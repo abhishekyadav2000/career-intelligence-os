@@ -1,111 +1,111 @@
 # Career Intelligence OS
 
-**Enterprise job intelligence system for DFW sponsor-friendly targeting.**
+**Sponsor-aware career intelligence system for enterprise technology roles.**
 
-Built from analysis of the DFW Top-50 Sponsor-Friendly Company Workbook, this project demonstrates Python, SQL, data analytics, AI automation, business analysis, and security/risk thinking in a single portfolio-ready application.
+An AI-enabled enterprise decision system for role-fit scoring, talent intelligence, outreach strategy, sponsor-aware targeting, and interview readiness — built as a portfolio proof triangle: working demo, business case, and conversation weapon.
 
-## Universal Profile
+> **Universal Profile:** Enterprise Technology Analyst — AI Automation, Cloud Security & Data Analytics
 
-> Enterprise Technology Analyst — AI Automation, Cloud Security & Data Analytics
+## Business Problem
+
+Enterprise technology hiring in DFW is fragmented across 50+ sponsor-friendly employers, hundreds of role families, and opaque sponsorship signals. Candidates and analysts lack a unified decision system to prioritize companies, score role fit, detect noise, and plan outreach — leading to wasted applications and missed warm-intro opportunities.
+
+## Solution
+
+Career Intelligence OS ingests structured company, job, and contact data; scores roles against a universal enterprise technology profile; surfaces sponsorship signals (with legal disclaimers); and generates actionable recommendations — apply now, network first, research more, or skip/watchlist.
 
 ## Features
 
-| Feature | Module | What It Proves |
-|---------|--------|----------------|
-| CSV data loading | `src/loader.py` | Data engineering fundamentals |
-| Keyword extraction | `src/keywords.py` | NLP-lite, taxonomy design |
-| Role fit scoring | `src/scoring.py` | Weighted analytics, business logic |
-| Outreach generation | `src/outreach.py` | Business communication, personalization |
-| Interview prep | `src/interview.py` | Domain knowledge, structured thinking |
-| SQLite analytics | `src/db.py` | SQL joins, aggregations, CTEs |
-| Streamlit dashboard | `app/dashboard.py` | KPI storytelling, data visualization |
+| Capability | Module | What It Proves |
+|------------|--------|----------------|
+| Data ingestion & validation | `src/data_loader.py`, `src/schema_validator.py` | Data engineering, schema design |
+| Role-fit scoring | `src/role_fit_scorer.py` | Weighted analytics, business logic |
+| Company prioritization | `src/company_priority_scorer.py` | Enterprise targeting decisions |
+| Sponsorship signals | `src/sponsorship_signal.py` | Risk-aware signal interpretation |
+| Noise detection | `src/noise_detector.py` | Quality heuristics, ghost job flags |
+| Recommendations | `src/recommendation_engine.py` | Decision automation |
+| Outreach angles | `src/outreach_angle_generator.py` | Business communication |
+| Interview prep | `src/interview_topic_mapper.py` | Domain knowledge mapping |
+| Gap analysis | `src/profile_gap_analyzer.py` | Skills gap identification |
+| Dashboard | `dashboard/app.py` | KPI storytelling, Streamlit |
 
 ## Quick Start
 
 ```bash
-# Clone the repository
 git clone https://github.com/abhishekyadav2000/career-intelligence-os.git
 cd career-intelligence-os
-
-# Create virtual environment (recommended)
-python3 -m venv .venv
-source .venv/bin/activate
-
-# Install dependencies
+python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-
-# Launch dashboard
-streamlit run app/dashboard.py
+streamlit run dashboard/app.py
 ```
 
-Open `http://localhost:8501` in your browser.
+Open `http://localhost:8501`.
+
+## Demo Flow
+
+1. **Overview** — KPIs, gap matrix, fit distribution
+2. **Company Ranking** — priority scores across 50 DFW targets
+3. **Role Fit** — six-category scoring with drill-down
+4. **Sponsorship Signal** — H-1B/PERM indicators (signal only)
+5. **Networking Map** — outreach angles by contact type
+6. **Interview Prep** — technical, business, behavioral topics
+7. **Recommendations** — apply / network / research / skip
+8. **Export** — CSV download + SQL analytics demo
+
+## Architecture
+
+```
+data/ (CSVs) → data_loader → schema_validator → data_cleaner
+                                    ↓
+              scoring engine (role_fit, company_priority, sponsorship, noise)
+                                    ↓
+              recommendation_engine → outreach / interview / gap analyzers
+                                    ↓
+              dashboard/app.py (Streamlit) + SQLite audit trail
+```
+
+See [docs/architecture.md](docs/architecture.md) for full system design.
 
 ## Project Structure
 
 ```
 career-intelligence-os/
-├── README.md                 # This file
-├── architecture.md           # System design
-├── docs/case-study.md        # Recruiter-friendly case study
-├── data/
-│   ├── companies.csv         # 50 DFW target companies
-│   ├── jobs.csv              # Sample job postings
-│   ├── contacts.csv          # Networking contacts
-│   └── gap_matrix.csv        # Portfolio capability gaps
-├── src/
-│   ├── loader.py             # CSV loading
-│   ├── keywords.py           # Keyword extraction
-│   ├── scoring.py            # Role fit scoring
-│   ├── outreach.py           # Outreach angle generation
-│   ├── interview.py            # Interview prep topics
-│   └── db.py                 # SQLite analytics
-└── app/
-    └── dashboard.py          # Streamlit dashboard
+├── src/                    # Python modules
+├── data/                   # Sample datasets
+├── dashboard/              # Streamlit app
+├── docs/                   # Architecture, vision, risk register
+├── case-studies/           # Portfolio case studies
+├── prompts/                # AI agent prompt templates
+├── presentation/           # Demo scripts, recruiter copy
+├── tests/                  # Scoring engine tests
+├── screenshots/            # Dashboard captures (placeholder)
+├── README.md
+├── requirements.txt
+└── .env.example
 ```
 
-## Gap Matrix Summary
+## Employer Proof Points
 
-Derived from the DFW Top-50 Universal Portfolio Sprint workbook `Capability_Matrix`:
+- **Data pipeline:** CSV ingestion with schema validation and normalization
+- **Decision engine:** Multi-dimensional scoring with explainable categories
+- **Risk awareness:** Sponsorship signals flagged as indicative, not legal certainty
+- **Business communication:** Rule-based outreach and interview prep generators
+- **SQL analytics:** SQLite demo with joins, aggregations, CTEs
+- **Portfolio narrative:** Case study, architecture docs, demo scripts
 
-| Priority | Capability | Career Intelligence OS Coverage |
-|----------|-----------|--------------------------------|
-| P0 | SQL + Python Data Automation | **Full** — parser, scoring, keywords |
-| P0 | Dashboarding + KPI Storytelling | **Full** — Streamlit dashboard |
-| P0 | AI Automation + RAG | **Partial** — rule-based intelligence pipeline |
-| P0 | Enterprise Communication | **Partial** — outreach templates |
-| P0 | Cloud / IAM / SIEM / GRC | **Referenced** — keyword matching, interview prep |
-| P0 | AI Risk + Agentic Reliability | **Gap** — future project |
-| P1 | Business Systems Analysis | **Partial** — pipeline workflow design |
-| P1 | Agile + Delivery | **Gap** — backlog artifact not included |
+## Tests
 
-## Target Role Mapping
+```bash
+python3 tests/test_scoring.py
+# or
+python3 -m pytest tests/
+```
 
-This project maps to roles across all 50 DFW target companies:
+## Data
 
-- Technology Analyst
-- Cloud Security Analyst
-- Data Analyst
-- AI Automation Analyst
-- Technology Risk Analyst
-- Cybersecurity Analyst
-- Business Systems Analyst
-
-**Highest-impact companies:** JPMorgan Chase, Citi, Capital One, Deloitte, NTT DATA, American Airlines, Charles Schwab, AT&T
-
-## Data Sources
-
-Sample data is derived from:
-- `DFW_OPT_Sponsor_Targeting_Master_Workbook.xlsx` — 50 ranked companies, role clusters, keywords
-- `DFW_Top50_Universal_Portfolio_Sprint.xlsx` — capability matrix, proof project specs
-
-## Dashboard Tabs
-
-1. **Overview** — KPIs, gap matrix, tier-1 companies, fit distribution
-2. **Job Fit Scores** — weighted scoring with dimension breakdown
-3. **Keywords** — extracted skills and category mapping
-4. **Outreach** — personalized messages by contact type
-5. **Interview Prep** — technical, business, and behavioral topics
-6. **SQL Analytics** — demo queries on SQLite database
+Sample data migrated from DFW Top-50 Sponsor-Friendly Company Workbook:
+- 50 companies, ~117 jobs, ~75 contacts
+- See [docs/data-dictionary.md](docs/data-dictionary.md)
 
 ## License
 

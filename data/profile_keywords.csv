@@ -1,0 +1,9 @@
+skill,category,weight
+AI automation,ai_automation,0.15
+cloud security,security,0.15
+data analytics,data_analytics,0.12
+GRC,risk_grc,0.1
+SQL,sql,0.12
+Python,python,0.15
+workflow automation,ai_automation,0.11
+cloud platforms,cloud,0.1
