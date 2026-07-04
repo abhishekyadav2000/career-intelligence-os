@@ -15,6 +15,7 @@ from src.conversation_brief_generator import (
     generate_conversation_brief,
     generate_conversation_script,
     generate_next_action,
+    score_brief_completeness,
 )
 from src.data_loader import load_all
 from src.people_power_mapper import (
@@ -141,6 +142,19 @@ def test_export_brief_markdown():
     assert "Company 360" in md
     assert "JPMorgan Chase" in md
     assert "Action Plan" in md
+    assert "Table of Contents" in md
+    assert "Brief Readiness" in md
+    assert "Disclaimer" in md
+
+
+def test_score_brief_completeness():
+    data = load_all()
+    brief = generate_conversation_brief("C001", "J0001", data["jobs"], "hiring manager", "hiring manager screen")
+    result = score_brief_completeness(brief)
+    assert 0 <= result["score"] <= 100
+    assert result["label"] in ("Ready", "Needs work", "Incomplete")
+    assert isinstance(result["gaps"], list)
+    assert result["score"] >= 80
 
 
 def test_conversation_script_no_fake_names():

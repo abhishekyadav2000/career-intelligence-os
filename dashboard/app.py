@@ -12,19 +12,22 @@ sys.path.insert(0, str(ROOT))
 
 import pandas as pd
 import streamlit as st
+import streamlit.components.v1 as components
 
+from src import __version__
 from src.company_priority_scorer import score_companies
 from src.company_profile_engine import build_company_360, get_company_research_gaps, load_company_profiles
 from src.conversation_brief_generator import (
     export_brief_markdown,
     generate_conversation_brief,
     save_conversation_brief,
+    score_brief_completeness,
 )
 from src.conversation_feedback_analyzer import get_dashboard_stats
 from src.data_loader import load_all
 from src.db import DEMO_QUERIES, init_db, run_query
+from src.health_check import run_health_check
 from src.interview_topic_mapper import generate_interview_batch
-from src.keyword_extractor import categorize_keywords, extract_keywords
 from src.outreach_angle_generator import generate_outreach_batch
 from src.people_power_mapper import build_people_map, rank_contacts_for_conversation, load_people_map
 from src.profile_gap_analyzer import analyze_jobs_batch
@@ -45,14 +48,68 @@ from src.research_prompt_generator import (
 from src.role_fit_scorer import UNIVERSAL_PROFILE, score_jobs_dataframe
 from src.role_reasoning_engine import build_role_deep_dive, load_role_reasoning
 
+# ── Page config ───────────────────────────────────────────────────────────────
+
 st.set_page_config(
     page_title="Career Intelligence OS",
-    page_icon="🎯",
+    page_icon="CI",
     layout="wide",
+    initial_sidebar_state="expanded",
 )
 
-st.title("Career Intelligence OS")
-st.caption("Sponsor-aware career intelligence system for enterprise technology roles.")
+PROFESSIONAL_CSS = """
+<style>
+    .ci-header {
+        background: linear-gradient(135deg, #1a2332 0%, #2d3a4f 100%);
+        padding: 1.5rem 2rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+        border-left: 4px solid #4a90d9;
+    }
+    .ci-header h1 {
+        color: #ffffff;
+        font-size: 1.75rem;
+        font-weight: 600;
+        margin: 0 0 0.25rem 0;
+        letter-spacing: -0.02em;
+    }
+    .ci-header p {
+        color: #b8c5d6;
+        font-size: 0.95rem;
+        margin: 0;
+    }
+    .status-badge {
+        display: inline-block;
+        padding: 0.15rem 0.6rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+    .status-verified { background: #1e3a2f; color: #6ee7b7; }
+    .status-partial { background: #3a3520; color: #fcd34d; }
+    .status-placeholder { background: #2a2a2a; color: #9ca3af; }
+    .status-needs_verification { background: #3a2020; color: #fca5a5; }
+    .health-green { color: #34d399; font-weight: 600; }
+    .health-yellow { color: #fbbf24; font-weight: 600; }
+    .health-red { color: #f87171; font-weight: 600; }
+    .ci-footer {
+        margin-top: 3rem;
+        padding-top: 1rem;
+        border-top: 1px solid #333;
+        color: #888;
+        font-size: 0.8rem;
+    }
+    div[data-testid="stMetric"] {
+        background: #1a1a1a;
+        padding: 0.75rem 1rem;
+        border-radius: 6px;
+        border: 1px solid #333;
+    }
+</style>
+"""
+st.markdown(PROFESSIONAL_CSS, unsafe_allow_html=True)
 
 ICC_COMPANIES = ["JPMorgan Chase", "Citi", "Capital One", "Toyota Motor North America", "AT&T"]
 CONVERSATION_TYPES = ["recruiter", "hiring manager", "peer", "alumni", "informational"]
@@ -60,10 +117,71 @@ INTERVIEW_STAGES = [
     "initial outreach", "recruiter screen", "hiring manager screen",
     "technical interview", "final round", "follow-up",
 ]
-VERIFY_COLORS = {"verified": "🟢", "partial": "🟡", "placeholder": "⚪"}
+
+STATUS_LABELS = {
+    "verified": ("Verified", "status-verified"),
+    "partial": ("Partial", "status-partial"),
+    "placeholder": ("Placeholder", "status-placeholder"),
+    "needs_verification": ("Needs Verification", "status-needs_verification"),
+}
 
 
-@st.cache_data
+def render_status_badge(status: str) -> str:
+    label, css = STATUS_LABELS.get(status, ("Unknown", "status-placeholder"))
+    return f'<span class="status-badge {css}">{label}</span>'
+
+
+def render_health_indicator(status: str) -> str:
+    css = {"green": "health-green", "yellow": "health-yellow", "red": "health-red"}.get(status, "")
+    label = status.upper()
+    return f'<span class="{css}">{label}</span>'
+
+
+def safe_tab(module_name: str, hint: str, fn):
+    """Render a tab inside an error boundary — show error once, no re-raise."""
+    try:
+        fn()
+    except Exception as exc:
+        st.error(f"**{module_name}** failed to load.")
+        st.caption(f"{type(exc).__name__}: {exc}")
+        st.info(f"Fix hint: {hint}")
+
+
+def copy_to_clipboard_button(text: str, key: str) -> None:
+    escaped = text.replace("\\", "\\\\").replace("`", "\\`").replace("$", "\\$").replace("\n", "\\n")
+    components.html(
+        f"""
+        <button id="copy-{key}" style="
+            background:#2d3a4f;color:#fff;border:1px solid #4a90d9;
+            padding:0.4rem 1rem;border-radius:4px;cursor:pointer;font-size:0.85rem;
+        ">Copy Script to Clipboard</button>
+        <script>
+        document.getElementById('copy-{key}').addEventListener('click', function() {{
+            navigator.clipboard.writeText(`{escaped}`);
+            this.textContent = 'Copied';
+            setTimeout(() => {{ this.textContent = 'Copy Script to Clipboard'; }}, 2000);
+        }});
+        </script>
+        """,
+        height=45,
+    )
+
+
+# ── Header ────────────────────────────────────────────────────────────────────
+
+st.markdown(
+    """
+    <div class="ci-header">
+        <h1>Career Intelligence OS</h1>
+        <p>Sponsor-aware career intelligence for enterprise technology roles</p>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
+# ── Data loading (isolated from tab rendering) ──────────────────────────────────
+
+@st.cache_data(show_spinner="Loading pipeline data…")
 def load_pipeline():
     data = load_all()
     scores = score_jobs_dataframe(data["jobs"], data["companies"])
@@ -76,7 +194,20 @@ def load_pipeline():
     return data, scores, company_scores, recommendations, outreach, interviews, gaps
 
 
-data, scores, company_scores, recommendations, outreach, interviews, gaps = load_pipeline()
+pipeline_error = None
+try:
+    with st.spinner("Initializing intelligence pipeline…"):
+        data, scores, company_scores, recommendations, outreach, interviews, gaps = load_pipeline()
+except Exception as exc:
+    pipeline_error = exc
+    data = scores = company_scores = recommendations = outreach = interviews = gaps = None
+
+if pipeline_error:
+    st.error("Pipeline failed to initialize. Check data files and module imports.")
+    st.code(f"{type(pipeline_error).__name__}: {pipeline_error}")
+    st.info("Run `python scripts/test_all_tabs.py` to diagnose import and data issues.")
+    st.stop()
+
 companies_df = data["companies"]
 jobs_df = data["jobs"]
 contacts_df = data["contacts"]
@@ -103,11 +234,11 @@ scores_df = pd.DataFrame([
     }
     for s in scores
 ])
-
 rec_df = pd.DataFrame(recommendations)
 company_rank_df = pd.DataFrame(company_scores)
 
-# Sidebar filters (existing)
+# ── Sidebar ───────────────────────────────────────────────────────────────────
+
 st.sidebar.header("Filters")
 industry_opts = sorted(companies_df["industry"].unique())
 industry_filter = st.sidebar.multiselect("Industry", options=industry_opts, default=industry_opts)
@@ -125,20 +256,51 @@ filtered_scores = filtered_scores[filtered_scores["job_id"].isin(
     rec_df[rec_df["action"].isin(action_filter)]["job_id"]
 )]
 
-# Global Interview Command Center selectors (shared across ICC tabs)
-st.subheader("Interview Command Center — Global Selection")
+st.sidebar.divider()
+with st.sidebar.expander("System Status", expanded=False):
+    health = run_health_check()
+    overall_html = render_health_indicator(health["overall"])
+    st.markdown(f"**Overall:** {overall_html}", unsafe_allow_html=True)
+
+    st.markdown("**Imports**")
+    for check in health["imports"]["checks"]:
+        icon = render_health_indicator(check["status"])
+        mod_short = check["module"].replace("src.", "")
+        st.markdown(f"{icon} `{mod_short}`", unsafe_allow_html=True)
+
+    st.markdown("**Data Files**")
+    for check in health["csvs"]["checks"]:
+        if check["status"] == "red":
+            st.markdown(f'<span class="health-red">FAIL</span> {check["file"]}: {check["detail"]}', unsafe_allow_html=True)
+        elif check["rows"] == 0 and check["file"] in health["csvs"]["checks"]:
+            st.markdown(f'<span class="health-yellow">WARN</span> {check["file"]}', unsafe_allow_html=True)
+
+    st.markdown("**Pipeline**")
+    for check in health["pipeline"]["checks"]:
+        icon = render_health_indicator(check["status"])
+        st.markdown(f"{icon} {check['step']}: {check['detail']}", unsafe_allow_html=True)
+
+# ── ICC global selectors (session state) ─────────────────────────────────────
+
+if "icc_company" not in st.session_state:
+    st.session_state.icc_company = ICC_COMPANIES[0]
+if "current_brief" not in st.session_state:
+    st.session_state.current_brief = None
+if "brief_markdown" not in st.session_state:
+    st.session_state.brief_markdown = ""
+
+st.subheader("Interview Command Center")
+st.caption("Select target company and role for brief generation across all intelligence tabs.")
+
 icc_col1, icc_col2, icc_col3, icc_col4 = st.columns(4)
 
 with icc_col1:
-    icc_company_name = st.selectbox(
-        "Target Company",
-        options=ICC_COMPANIES,
-        index=0,
-        key="icc_company",
-    )
+    icc_company_name = st.selectbox("Target Company", options=ICC_COMPANIES, key="icc_company")
 with icc_col2:
     company_jobs = jobs_df[jobs_df["company_name"] == icc_company_name].sort_values("title")
     icc_job_options = company_jobs["job_id"].tolist()
+    if not icc_job_options:
+        icc_job_options = jobs_df["job_id"].tolist()[:1]
     icc_job_id = st.selectbox(
         "Target Role",
         options=icc_job_options,
@@ -146,31 +308,20 @@ with icc_col2:
         key="icc_job",
     )
 with icc_col3:
-    icc_conversation_type = st.selectbox(
-        "Conversation Type",
-        options=CONVERSATION_TYPES,
-        index=1,
-        key="icc_conv_type",
-    )
+    icc_conversation_type = st.selectbox("Conversation Type", options=CONVERSATION_TYPES, index=1, key="icc_conv_type")
 with icc_col4:
-    icc_interview_stage = st.selectbox(
-        "Interview Stage",
-        options=INTERVIEW_STAGES,
-        index=2,
-        key="icc_stage",
-    )
+    icc_interview_stage = st.selectbox("Interview Stage", options=INTERVIEW_STAGES, index=2, key="icc_stage")
 
 icc_company_row = companies_df[companies_df["company_name"] == icc_company_name]
 icc_company_id = icc_company_row.iloc[0]["company_id"] if not icc_company_row.empty else ""
 icc_job_row = jobs_df[jobs_df["job_id"] == icc_job_id].iloc[0] if icc_job_id else None
 
-if "current_brief" not in st.session_state:
-    st.session_state.current_brief = None
-if "brief_markdown" not in st.session_state:
-    st.session_state.brief_markdown = ""
+st.divider()
+
+# ── Tabs ──────────────────────────────────────────────────────────────────────
 
 tabs = st.tabs([
-    "Interview Command Center",
+    "Command Center",
     "Company 360",
     "People Map",
     "Role Deep Dive",
@@ -183,16 +334,14 @@ tabs = st.tabs([
     "Interview Prep",
     "Recommendations",
     "Export",
-    "Conversation Feedback",
+    "Feedback",
 ])
 
-# ── Tab 0: Interview Command Center ──────────────────────────────────────────
-with tabs[0]:
+
+def tab_command_center():
     st.subheader("Interview Command Center")
-    st.caption(
-        f"**{icc_company_name}** · **{icc_job_row['title'] if icc_job_row is not None else 'N/A'}** · "
-        f"{icc_conversation_type} · {icc_interview_stage}"
-    )
+    job_title = icc_job_row["title"] if icc_job_row is not None else "N/A"
+    st.caption(f"{icc_company_name} · {job_title} · {icc_conversation_type} · {icc_interview_stage}")
 
     btn_col1, btn_col2, btn_col3 = st.columns(3)
     with btn_col1:
@@ -202,21 +351,17 @@ with tabs[0]:
                 icc_conversation_type, icc_interview_stage,
             )
             st.session_state.brief_markdown = export_brief_markdown(st.session_state.current_brief)
-            st.success(f"Brief {st.session_state.current_brief['brief_id']} generated.")
     with btn_col2:
         if st.button("Save Brief", key="save_brief"):
             if st.session_state.current_brief:
-                path = save_conversation_brief(
-                    st.session_state.current_brief,
-                    st.session_state.brief_markdown,
-                )
-                st.success(f"Saved to {path} and conversation_briefs.csv")
+                path = save_conversation_brief(st.session_state.current_brief, st.session_state.brief_markdown)
+                st.success(f"Saved to {path}")
             else:
-                st.warning("Generate a brief first.")
+                st.warning("Generate a brief before saving.")
     with btn_col3:
         if st.session_state.brief_markdown:
             st.download_button(
-                "Export Brief as Markdown",
+                "Download Markdown",
                 st.session_state.brief_markdown,
                 file_name=f"brief_{icc_job_id}_{icc_conversation_type.replace(' ', '_')}.md",
                 mime="text/markdown",
@@ -224,102 +369,128 @@ with tabs[0]:
             )
 
     brief = st.session_state.current_brief
-    if brief:
-        sec = brief["sections"]
-        st.markdown("---")
+    if not brief:
+        st.info("Select a company and role above, then click **Generate Brief** to build a seven-section conversation package.")
+        return
 
-        st.markdown("### 1. Company 360")
-        c360 = sec["company_360"]
-        c1, c2, c3 = st.columns(3)
-        c1.metric("Industry", c360.get("industry", ""))
-        c2.metric("DFW Presence", c360.get("dfw_presence", "")[:30])
-        c3.metric("Priority", c360.get("priority_tier", ""))
-        st.write(c360.get("strategic_summary", ""))
-        if c360.get("themes"):
-            st.write("**Active Themes:**", ", ".join(t["theme"] for t in c360["themes"][:5]))
+    readiness = score_brief_completeness(brief)
+    r1, r2 = st.columns([1, 3])
+    r1.metric("Brief Readiness", f"{readiness['score']}%")
+    with r2:
+        if readiness["gaps"]:
+            st.caption("Gaps: " + "; ".join(readiness["gaps"]))
 
-        st.markdown("### 2. Role Intelligence")
-        role = sec["role_intelligence"]
-        st.write(f"**Why role exists:** {role.get('why_role_exists', '')}")
-        st.write(f"**Business problem:** {role.get('business_problem', '')}")
-        st.write(f"**Likely team:** {role.get('likely_team', '')}")
+    sec = brief["sections"]
+    st.divider()
 
-        st.markdown("### 3. People / Power Map")
+    st.markdown("#### 1. Company 360")
+    c360 = sec["company_360"]
+    c1, c2, c3 = st.columns(3)
+    c1.metric("Industry", c360.get("industry", "—"))
+    c2.metric("DFW Presence", (c360.get("dfw_presence", "") or "—")[:40])
+    c3.metric("Priority Tier", c360.get("priority_tier", "—"))
+    st.write(c360.get("strategic_summary", ""))
+    if c360.get("themes"):
+        st.write("**Active Themes:**", ", ".join(t["theme"] for t in c360["themes"][:5]))
+
+    st.divider()
+    st.markdown("#### 2. Role Intelligence")
+    role = sec["role_intelligence"]
+    st.write(f"**Why role exists:** {role.get('why_role_exists', '')}")
+    st.write(f"**Business problem:** {role.get('business_problem', '')}")
+    st.write(f"**Likely team:** {role.get('likely_team', '')}")
+
+    st.divider()
+    st.markdown("#### 3. People / Power Map")
+    if sec["people_power_map"]:
         for person in sec["people_power_map"][:4]:
-            icon = VERIFY_COLORS.get(person.get("verification_status", "placeholder"), "⚪")
-            st.write(
-                f"{icon} **{person.get('person_name')}** ({person.get('contact_type')}) — "
-                f"priority {person.get('conversation_priority', 0)}"
+            badge = render_status_badge(person.get("verification_status", "placeholder"))
+            st.markdown(
+                f'{badge} **{person.get("person_name")}** ({person.get("contact_type")}) — '
+                f'priority {person.get("conversation_priority", 0)}',
+                unsafe_allow_html=True,
             )
-
-        st.markdown("### 4. Proof-of-Work Match")
-        for asset in sec["proof_of_work_match"].get("top_three_display", []):
-            st.write(f"- **{asset['title']}** (match: {asset['match_score']}) — `{asset['url_or_path']}`")
-
-        st.markdown("### 5. Conversation Script")
-        st.info(sec["conversation_script"])
-
-        st.markdown("### 6. Interview Prep")
-        prep = sec.get("interview_prep", {})
-        for label, key in [("Technical", "technical_topics"), ("Business", "business_topics"), ("Behavioral", "behavioral_topics")]:
-            topics = prep.get(key, [])
-            if topics:
-                st.write(f"**{label}:**")
-                for t in topics[:2]:
-                    st.write(f"- [{t.get('priority', '')}] {t.get('question', '')}")
-
-        st.markdown("### 7. Action Plan")
-        st.write("**Follow-up:**")
-        st.text(sec["action_plan"]["follow_up"])
-        st.write("**Next actions:**")
-        for action in sec["action_plan"]["next_actions"]:
-            st.write(f"- [ ] {action}")
-
-        with st.expander("Full Markdown Preview"):
-            st.markdown(st.session_state.brief_markdown)
     else:
-        st.info("Click **Generate Brief** to build a full 7-section conversation package.")
+        st.warning("No contacts mapped. Add entries to people_map.csv.")
 
-# ── Tab 1: Company 360 ───────────────────────────────────────────────────────
-with tabs[1]:
+    st.divider()
+    st.markdown("#### 4. Proof-of-Work Match")
+    for asset in sec["proof_of_work_match"].get("top_three_display", []):
+        st.write(f"- **{asset['title']}** (match: {asset['match_score']}) — `{asset['url_or_path']}`")
+
+    st.divider()
+    st.markdown("#### 5. Conversation Script")
+    script_text = sec["conversation_script"]
+    st.code(script_text, language=None)
+    copy_to_clipboard_button(script_text, "conv_script")
+
+    st.divider()
+    st.markdown("#### 6. Interview Prep")
+    prep = sec.get("interview_prep", {})
+    for label, key in [("Technical", "technical_topics"), ("Business", "business_topics"), ("Behavioral", "behavioral_topics")]:
+        topics = prep.get(key, [])
+        if topics:
+            st.write(f"**{label}:**")
+            for t in topics[:2]:
+                st.write(f"- [{t.get('priority', '')}] {t.get('question', '')}")
+
+    st.divider()
+    st.markdown("#### 7. Action Plan")
+    st.write("**Follow-up:**")
+    st.text(sec["action_plan"]["follow_up"])
+    st.write("**Next actions:**")
+    for action in sec["action_plan"]["next_actions"]:
+        st.write(f"- [ ] {action}")
+
+    with st.expander("Full Markdown Preview"):
+        st.markdown(st.session_state.brief_markdown)
+
+
+def tab_company_360():
     st.subheader(f"Company 360 — {icc_company_name}")
     c360 = build_company_360(icc_company_id, profiles_df, projects_df, sources_df, people_df)
+    if not c360.get("found"):
+        st.warning("Company profile not found. Add an entry to company_profiles.csv for this company.")
+        return
 
-    if c360.get("found"):
-        st.write(f"**Strategic Summary:** {c360['strategic_summary']}")
-        st.write(f"**Growth Signals:** {c360['growth_signals']}")
-        st.write(f"**Risk Factors:** {c360['risk_factors']}")
-        st.write(f"**Sponsorship Context:** {c360['sponsorship_context']}")
+    st.write(f"**Strategic Summary:** {c360['strategic_summary']}")
+    st.write(f"**Growth Signals:** {c360['growth_signals']}")
+    st.write(f"**Risk Factors:** {c360['risk_factors']}")
+    st.write(f"**Sponsorship Context:** {c360['sponsorship_context']}")
 
-        st.markdown("#### Tech Stack Themes")
-        st.write(", ".join(c360["tech_stack_themes"]))
+    st.divider()
+    st.markdown("#### Tech Stack Themes")
+    st.write(", ".join(c360["tech_stack_themes"]))
 
-        st.markdown("#### Active Projects")
-        proj_subset = projects_df[projects_df["company_id"] == icc_company_id]
-        if not proj_subset.empty:
-            st.dataframe(proj_subset[["theme", "description", "confidence_level", "source_type"]], hide_index=True)
+    st.markdown("#### Active Projects")
+    proj_subset = projects_df[projects_df["company_id"] == icc_company_id]
+    if not proj_subset.empty:
+        st.dataframe(proj_subset[["theme", "description", "confidence_level", "source_type"]], hide_index=True)
+    else:
+        st.info("No project themes recorded. Add rows to company_projects.csv.")
 
-        st.markdown("#### People Map Summary")
-        st.metric("Contacts Mapped", c360["people_count"])
-        st.metric("Verified Contacts", c360["verified_people"])
+    c1, c2 = st.columns(2)
+    c1.metric("Contacts Mapped", c360["people_count"])
+    c2.metric("Verified Contacts", c360["verified_people"])
 
-        st.markdown("#### Research Sources")
-        src_subset = sources_df[sources_df["company_id"] == icc_company_id]
-        if not src_subset.empty:
-            st.dataframe(src_subset[["source_type", "source_title", "source_url", "verified"]], hide_index=True)
+    st.markdown("#### Research Sources")
+    src_subset = sources_df[sources_df["company_id"] == icc_company_id]
+    if not src_subset.empty:
+        st.dataframe(src_subset[["source_type", "source_title", "source_url", "verified"]], hide_index=True)
 
-        st.markdown("#### Research Gaps")
-        gaps_list = get_company_research_gaps(icc_company_id, profiles_df, people_df, sources_df)
+    st.markdown("#### Research Gaps")
+    gaps_list = get_company_research_gaps(icc_company_id, profiles_df, people_df, sources_df)
+    if gaps_list:
         for gap in gaps_list:
             st.warning(gap)
-
-        with st.expander("Company Deep Profile Research Prompt"):
-            st.code(generate_company_research_prompt(icc_company_id), language="markdown")
     else:
-        st.error("Company profile not found in company_profiles.csv")
+        st.success("No critical research gaps identified.")
 
-# ── Tab 2: People Map ────────────────────────────────────────────────────────
-with tabs[2]:
+    with st.expander("Company Deep Profile Research Prompt"):
+        st.code(generate_company_research_prompt(icc_company_id), language="markdown")
+
+
+def tab_people_map():
     st.subheader(f"People Map — {icc_company_name}")
     pm_filter = st.multiselect(
         "Contact Type Filter",
@@ -328,122 +499,111 @@ with tabs[2]:
         key="pm_filter",
     )
     people_subset = build_people_map(icc_company_id, people_df)
-    if not people_subset.empty:
-        people_subset = people_subset[people_subset["contact_type"].isin(pm_filter)]
-        ranked = rank_contacts_for_conversation(
-            icc_company_id, icc_conversation_type, icc_interview_stage, people_df
-        )
+    if people_subset.empty:
+        st.info("No people mapped for this company. Add contacts to people_map.csv with verification status.")
+    else:
+        ranked = rank_contacts_for_conversation(icc_company_id, icc_conversation_type, icc_interview_stage, people_df)
         ranked = [p for p in ranked if p["contact_type"] in pm_filter]
-
         display_rows = []
         for p in ranked:
-            icon = VERIFY_COLORS.get(p.get("verification_status", "placeholder"), "⚪")
+            label, _ = STATUS_LABELS.get(p.get("verification_status", "placeholder"), ("Unknown", ""))
             display_rows.append({
-                "Status": icon,
+                "Status": label,
                 "Name": p.get("person_name"),
                 "Type": p.get("contact_type"),
                 "Role Title": p.get("role_title"),
                 "Hiring Power": p.get("hiring_power_score"),
                 "Conv. Priority": p.get("conversation_priority"),
-                "Verification": p.get("verification_status"),
             })
         st.dataframe(pd.DataFrame(display_rows), hide_index=True)
-
         for p in ranked[:3]:
             with st.expander(f"{p.get('person_name')} — {p.get('contact_type')}"):
                 st.write(f"**Strategy:** {p.get('strategy', '')}")
                 st.markdown(f"[Search Query URL]({p.get('search_query_url', '')})")
-    else:
-        st.info("No people mapped for this company.")
 
     with st.expander("People Map Research Prompt"):
         st.code(generate_people_research_prompt(icc_company_id), language="markdown")
 
-# ── Tab 3: Role Deep Dive ────────────────────────────────────────────────────
-with tabs[3]:
-    st.subheader(f"Role Deep Dive — {icc_job_row['title'] if icc_job_row is not None else ''}")
-    if icc_job_id:
-        dive = build_role_deep_dive(icc_job_id, jobs_df, reasoning_df)
-        st.write(f"**Why this role exists:** {dive.get('why_role_exists', '')}")
-        st.write(f"**Business problem:** {dive.get('business_problem', '')}")
-        st.write(f"**Likely team:** {dive.get('likely_team', '')}")
 
-        st.markdown("#### JD Keywords Detected")
-        st.write(", ".join(dive.get("jd_keywords", [])))
+def tab_role_deep_dive():
+    title = icc_job_row["title"] if icc_job_row is not None else ""
+    st.subheader(f"Role Deep Dive — {title}")
+    if not icc_job_id:
+        st.info("Select a target role in the global selectors above.")
+        return
 
-        st.markdown("#### 30 / 60 / 90 Day Plan")
-        plan = dive.get("plan_30_60_90", {})
-        st.write(f"- **30 days:** {plan.get('30_days', '')}")
-        st.write(f"- **60 days:** {plan.get('60_days', '')}")
-        st.write(f"- **90 days:** {plan.get('90_days', '')}")
+    dive = build_role_deep_dive(icc_job_id, jobs_df, reasoning_df)
+    st.write(f"**Why this role exists:** {dive.get('why_role_exists', '')}")
+    st.write(f"**Business problem:** {dive.get('business_problem', '')}")
+    st.write(f"**Likely team:** {dive.get('likely_team', '')}")
 
-        st.markdown("#### How I Would Help")
-        for bullet in dive.get("how_i_would_help", []):
-            st.write(f"- {bullet}")
+    st.divider()
+    st.markdown("#### JD Keywords Detected")
+    st.write(", ".join(dive.get("jd_keywords", [])) or "None detected")
 
-        st.markdown("#### Priority Questions")
-        for q in dive.get("priority_questions", []):
-            st.write(f"- {q}")
+    st.markdown("#### 30 / 60 / 90 Day Plan")
+    plan = dive.get("plan_30_60_90", {})
+    st.write(f"- **30 days:** {plan.get('30_days', '')}")
+    st.write(f"- **60 days:** {plan.get('60_days', '')}")
+    st.write(f"- **90 days:** {plan.get('90_days', '')}")
 
-        with st.expander("Full Job Description"):
-            st.write(icc_job_row["description"])
+    st.markdown("#### How I Would Help")
+    for bullet in dive.get("how_i_would_help", []):
+        st.write(f"- {bullet}")
 
-        with st.expander("Role Reasoning Research Prompt"):
-            st.code(generate_role_research_prompt(icc_job_id, jobs_df), language="markdown")
+    st.markdown("#### Priority Questions")
+    for q in dive.get("priority_questions", []):
+        st.write(f"- {q}")
 
-# ── Tab 4: Proof Assets ──────────────────────────────────────────────────────
-with tabs[4]:
+    with st.expander("Full Job Description"):
+        st.write(icc_job_row["description"])
+    with st.expander("Role Reasoning Research Prompt"):
+        st.code(generate_role_research_prompt(icc_job_id, jobs_df), language="markdown")
+
+
+def tab_proof_assets():
     st.subheader("Proof Assets")
-    st.write(f"Context: **{icc_company_name}** · **{icc_job_row['title'] if icc_job_row is not None else ''}**")
+    st.caption(f"{icc_company_name} · {icc_job_row['title'] if icc_job_row is not None else 'N/A'}")
 
-    if not proof_df.empty:
-        st.markdown("#### All Portfolio Assets")
-        st.dataframe(
-            proof_df[["asset_type", "title", "tags", "url_or_path", "relevance_score"]],
-            hide_index=True,
-        )
+    if proof_df.empty:
+        st.warning("No proof assets loaded. Add entries to proof_assets.csv.")
+        return
 
-        st.markdown("#### 3 Proof Assets to Show First")
-        top3 = get_top_proof_assets_for_display(
-            icc_job_id, icc_company_id, proof_df, jobs_df, profiles_df, n=3,
-        )
-        for i, asset in enumerate(top3, 1):
-            st.write(f"**{i}. {asset['title']}** (combined score: {asset['match_score']})")
-            st.caption(asset["description"])
-            st.code(asset["url_or_path"])
+    st.markdown("#### Portfolio Assets")
+    st.dataframe(proof_df[["asset_type", "title", "tags", "url_or_path", "relevance_score"]], hide_index=True)
 
-        missing = identify_missing_proof(icc_job_id, icc_company_id, proof_df, jobs_df, profiles_df)
-        if missing:
-            st.markdown("#### Missing Proof Gaps")
-            for gap in missing:
-                st.warning(gap)
+    st.divider()
+    st.markdown("#### Top 3 Assets for This Role")
+    top3 = get_top_proof_assets_for_display(icc_job_id, icc_company_id, proof_df, jobs_df, profiles_df, n=3)
+    for i, asset in enumerate(top3, 1):
+        st.write(f"**{i}. {asset['title']}** (score: {asset['match_score']})")
+        st.caption(asset["description"])
+        st.code(asset["url_or_path"])
 
-        with st.expander("Reverse Mapping — Company Assets"):
-            company_assets = match_assets_to_company(icc_company_id, proof_df, profiles_df)
-            for a in company_assets[:5]:
-                st.write(f"- {a['title']} (score: {a['match_score']})")
+    missing = identify_missing_proof(icc_job_id, icc_company_id, proof_df, jobs_df, profiles_df)
+    if missing:
+        st.markdown("#### Proof Gaps")
+        for gap in missing:
+            st.warning(gap)
 
-        with st.expander("Reverse Mapping — Role Assets"):
-            role_assets = match_assets_to_role(icc_job_id, proof_df, jobs_df)
-            for a in role_assets[:5]:
-                st.write(f"- {a['title']} (score: {a['match_score']})")
-
+    with st.expander("Reverse Mapping — Company Assets"):
+        for a in match_assets_to_company(icc_company_id, proof_df, profiles_df)[:5]:
+            st.write(f"- {a['title']} (score: {a['match_score']})")
+    with st.expander("Reverse Mapping — Role Assets"):
+        for a in match_assets_to_role(icc_job_id, proof_df, jobs_df)[:5]:
+            st.write(f"- {a['title']} (score: {a['match_score']})")
     with st.expander("Interview Packet Research Prompt"):
-        st.code(
-            generate_interview_packet_prompt(
-                icc_company_id, icc_job_id, jobs_df, icc_conversation_type,
-            ),
-            language="markdown",
-        )
+        st.code(generate_interview_packet_prompt(icc_company_id, icc_job_id, jobs_df, icc_conversation_type), language="markdown")
 
-# ── Existing tabs (unchanged logic) ──────────────────────────────────────────
-with tabs[5]:
+
+def tab_overview():
     c1, c2, c3, c4 = st.columns(4)
     c1.metric("Target Companies", len(companies_df))
     c2.metric("Active Jobs", len(jobs_df))
     c3.metric("Contacts", len(contacts_df))
     c4.metric("Avg Fit Score", f"{scores_df['fit_score'].mean():.1f}")
 
+    st.divider()
     st.subheader("Universal Profile")
     st.info(UNIVERSAL_PROFILE)
 
@@ -455,7 +615,8 @@ with tabs[5]:
     st.subheader("Fit Distribution")
     st.bar_chart(scores_df.groupby("fit_label").size())
 
-with tabs[6]:
+
+def tab_company_ranking():
     st.subheader("Company Priority Ranking")
     st.dataframe(
         company_rank_df[["company", "industry", "location", "priority_score", "priority_label", "job_count", "contact_count"]],
@@ -463,29 +624,34 @@ with tabs[6]:
     )
     st.bar_chart(company_rank_df.set_index("company")["priority_score"].head(15))
 
-with tabs[7]:
+
+def tab_role_fit():
     st.subheader("Role Fit Scores")
     st.dataframe(filtered_scores.sort_values("fit_score", ascending=False), use_container_width=True, hide_index=True)
 
     role_fit_jobs = filtered_scores.sort_values("fit_score", ascending=False)["job_id"].tolist()
-    default_job = icc_job_id if icc_job_id in role_fit_jobs else (role_fit_jobs[0] if role_fit_jobs else None)
+    if not role_fit_jobs:
+        st.info("No jobs match current filters.")
+        return
+
+    default_job = icc_job_id if icc_job_id in role_fit_jobs else role_fit_jobs[0]
     selected = st.selectbox(
         "Drill into job",
         options=role_fit_jobs,
-        index=role_fit_jobs.index(default_job) if default_job and default_job in role_fit_jobs else 0,
+        index=role_fit_jobs.index(default_job) if default_job in role_fit_jobs else 0,
         format_func=lambda jid: f"{scores_df[scores_df['job_id']==jid]['title'].values[0]} @ {scores_df[scores_df['job_id']==jid]['company'].values[0]}",
         key="role_fit_job",
     )
-    if selected:
-        detail = next(s for s in scores if s["job_id"] == selected)
-        st.write(f"**{detail['fit_label']}** ({detail['fit_score']}/100)")
-        cat_df = pd.DataFrame([{"category": k, "score": v} for k, v in detail["category_scores"].items()])
-        st.bar_chart(cat_df.set_index("category")["score"])
-        job_row = jobs_df[jobs_df["job_id"] == selected].iloc[0]
-        with st.expander("Job Description"):
-            st.write(job_row["description"])
+    detail = next(s for s in scores if s["job_id"] == selected)
+    st.write(f"**{detail['fit_label']}** ({detail['fit_score']}/100)")
+    cat_df = pd.DataFrame([{"category": k, "score": v} for k, v in detail["category_scores"].items()])
+    st.bar_chart(cat_df.set_index("category")["score"])
+    job_row = jobs_df[jobs_df["job_id"] == selected].iloc[0]
+    with st.expander("Job Description"):
+        st.write(job_row["description"])
 
-with tabs[8]:
+
+def tab_sponsorship():
     st.subheader("Sponsorship Signal Analysis")
     st.warning("Signals are indicative only — not legal certainty. Verify via DOL/USCIS.")
     sponsor_rows = []
@@ -498,57 +664,71 @@ with tabs[8]:
         })
     st.dataframe(pd.DataFrame(sponsor_rows).sort_values("signal_score", ascending=False), use_container_width=True, hide_index=True)
 
-with tabs[9]:
+
+def tab_networking():
     st.subheader("Networking Map")
-    contact_type_filter = st.multiselect("Contact Type", options=["recruiter", "hiring_manager", "peer", "alumni"], default=["recruiter", "hiring_manager"])
+    contact_type_filter = st.multiselect(
+        "Contact Type", options=["recruiter", "hiring_manager", "peer", "alumni"],
+        default=["recruiter", "hiring_manager"], key="net_filter",
+    )
     filtered_outreach = [o for o in outreach if o["contact_type"] in contact_type_filter]
     if company_filter != "All":
         filtered_outreach = [o for o in filtered_outreach if o["company_name"] == company_filter]
+    if not filtered_outreach:
+        st.info("No outreach angles match current filters.")
+        return
     for item in filtered_outreach[:10]:
         with st.expander(f"{item['company_name']} — {item['contact_type']} (fit: {item['fit_score']})"):
             st.write(f"**Angle:** {item['angle']}")
             st.text_area("Message", item["message"], height=120, key=f"msg_{item['contact_id']}")
 
-with tabs[10]:
+
+def tab_interview_prep():
     st.subheader("Interview Prep")
     int_jobs = filtered_scores.sort_values("fit_score", ascending=False)["job_id"].tolist()
-    int_default = icc_job_id if icc_job_id in int_jobs else (int_jobs[0] if int_jobs else None)
+    if not int_jobs:
+        st.info("No jobs match current filters.")
+        return
+    int_default = icc_job_id if icc_job_id in int_jobs else int_jobs[0]
     int_job = st.selectbox(
         "Select job",
         options=int_jobs,
-        index=int_jobs.index(int_default) if int_default and int_default in int_jobs else 0,
+        index=int_jobs.index(int_default) if int_default in int_jobs else 0,
         format_func=lambda jid: f"{scores_df[scores_df['job_id']==jid]['title'].values[0]} @ {scores_df[scores_df['job_id']==jid]['company'].values[0]}",
         key="int_job",
     )
-    if int_job:
-        prep = next(i for i in interviews if i["job_id"] == int_job)
-        for section, key in [("Technical", "technical_topics"), ("Business", "business_topics"), ("Behavioral", "behavioral_topics")]:
-            st.write(f"### {section}")
-            for topic in prep[key]:
-                icon = "🔴" if topic["priority"] == "High" else "🟡"
-                st.write(f"{icon} [{topic['category']}] {topic['question']}")
+    prep = next(i for i in interviews if i["job_id"] == int_job)
+    for section, key in [("Technical", "technical_topics"), ("Business", "business_topics"), ("Behavioral", "behavioral_topics")]:
+        st.markdown(f"#### {section}")
+        for topic in prep[key]:
+            priority_label = f"[{topic['priority']}]" if topic.get("priority") else ""
+            st.write(f"{priority_label} [{topic['category']}] {topic['question']}")
 
-with tabs[11]:
+
+def tab_recommendations():
     st.subheader("Action Recommendations")
     st.dataframe(
         rec_df[["company_name", "title", "fit_score", "action", "composite_score", "rationale"]].sort_values("composite_score", ascending=False),
         use_container_width=True, hide_index=True,
     )
 
-with tabs[12]:
+
+def tab_export():
     st.subheader("Export & SQL Analytics")
     st.download_button("Download Scores CSV", scores_df.to_csv(index=False), "role_fit_scores.csv", "text/csv")
     st.download_button("Download Recommendations CSV", rec_df.to_csv(index=False), "recommendations.csv", "text/csv")
 
+    st.divider()
     st.subheader("SQL Demo")
     query_name = st.selectbox("Demo Query", options=list(DEMO_QUERIES.keys()))
     st.code(DEMO_QUERIES[query_name], language="sql")
     if st.button("Run Query"):
         st.dataframe(pd.DataFrame(run_query(DEMO_QUERIES[query_name])), use_container_width=True, hide_index=True)
 
-with tabs[13]:
-    st.subheader("Conversation Feedback Loop")
-    st.caption("Rule-based analysis of outreach and interview conversations — no LLM required.")
+
+def tab_feedback():
+    st.subheader("Conversation Feedback")
+    st.caption("Rule-based analysis of outreach and interview conversations.")
     feedback = get_dashboard_stats()
 
     if feedback["total_conversations"] == 0:
@@ -558,39 +738,75 @@ with tabs[13]:
             "date, company, person_type, role_discussed, source, outreach_status, "
             "response, insight_gained, portfolio_gap, next_action, follow_up_date."
         )
+        return
+
+    c1, c2, c3 = st.columns(3)
+    c1.metric("Conversations Logged", feedback["total_conversations"])
+    c2.metric("Warm Companies", len(feedback["warm_companies"]))
+    c3.metric("Objection Themes", len(feedback["repeated_objections"]))
+    st.write(f"**Summary:** {feedback['summary']}")
+
+    col_a, col_b = st.columns(2)
+    with col_a:
+        st.write("**Warm Companies**")
+        if feedback["warm_companies"]:
+            st.dataframe(pd.DataFrame({"company": feedback["warm_companies"]}), hide_index=True)
+        else:
+            st.write("None recorded.")
+    with col_b:
+        st.write("**Repeated Objections**")
+        if feedback["repeated_objections"]:
+            st.dataframe(pd.DataFrame(feedback["repeated_objections"]), hide_index=True)
+        else:
+            st.write("No objection patterns detected.")
+
+    st.write("**Skill / Portfolio Gaps**")
+    if feedback["skill_gaps"]:
+        st.dataframe(pd.DataFrame(feedback["skill_gaps"]), hide_index=True)
     else:
-        c1, c2, c3 = st.columns(3)
-        c1.metric("Conversations Logged", feedback["total_conversations"])
-        c2.metric("Warm Companies", len(feedback["warm_companies"]))
-        c3.metric("Objection Themes", len(feedback["repeated_objections"]))
-        st.write(f"**Summary:** {feedback['summary']}")
+        st.write("No gaps logged.")
 
-        col_a, col_b = st.columns(2)
-        with col_a:
-            st.write("**Warm Companies**")
-            if feedback["warm_companies"]:
-                st.dataframe(pd.DataFrame({"company": feedback["warm_companies"]}), hide_index=True)
-            else:
-                st.write("None yet — keep networking.")
-        with col_b:
-            st.write("**Repeated Objections**")
-            if feedback["repeated_objections"]:
-                st.dataframe(pd.DataFrame(feedback["repeated_objections"]), hide_index=True)
-            else:
-                st.write("No objection patterns detected.")
+    st.write("**Next Actions**")
+    if feedback["next_actions"]:
+        st.dataframe(pd.DataFrame(feedback["next_actions"]), hide_index=True)
 
-        st.write("**Skill / Portfolio Gaps**")
-        if feedback["skill_gaps"]:
-            st.dataframe(pd.DataFrame(feedback["skill_gaps"]), hide_index=True)
-        else:
-            st.write("No gaps logged yet.")
+    if feedback["portfolio_improvements"]:
+        st.write("**Portfolio Improvements Suggested**")
+        st.dataframe(pd.DataFrame(feedback["portfolio_improvements"]), hide_index=True)
 
-        st.write("**Next Actions**")
-        if feedback["next_actions"]:
-            st.dataframe(pd.DataFrame(feedback["next_actions"]), hide_index=True)
-        else:
-            st.write("No pending actions.")
 
-        if feedback["portfolio_improvements"]:
-            st.write("**Portfolio Improvements Suggested**")
-            st.dataframe(pd.DataFrame(feedback["portfolio_improvements"]), hide_index=True)
+# ── Render tabs with error boundaries ─────────────────────────────────────────
+
+TAB_RENDERERS = [
+    ("Command Center", "conversation_brief_generator", "Check ICC CSV files and brief generator imports", tab_command_center),
+    ("Company 360", "company_profile_engine", "Verify company_profiles.csv and company_projects.csv", tab_company_360),
+    ("People Map", "people_power_mapper", "Verify people_map.csv schema and contact types", tab_people_map),
+    ("Role Deep Dive", "role_reasoning_engine", "Verify role_reasoning.csv covers all job IDs", tab_role_deep_dive),
+    ("Proof Assets", "proof_asset_mapper", "Verify proof_assets.csv exists with asset entries", tab_proof_assets),
+    ("Overview", "data_loader", "Check core CSV files in data/", tab_overview),
+    ("Company Ranking", "company_priority_scorer", "Verify sample_companies.csv and jobs data", tab_company_ranking),
+    ("Role Fit", "role_fit_scorer", "Check profile_keywords.csv and scoring module", tab_role_fit),
+    ("Sponsorship Signal", "sponsorship_signal", "Verify sponsorship fields in company data", tab_sponsorship),
+    ("Networking Map", "outreach_angle_generator", "Check contacts CSV and outreach generator", tab_networking),
+    ("Interview Prep", "interview_topic_mapper", "Verify jobs data and interview topic mapper", tab_interview_prep),
+    ("Recommendations", "recommendation_engine", "Check scoring pipeline output", tab_recommendations),
+    ("Export", "db", "Verify SQLite init and DEMO_QUERIES", tab_export),
+    ("Feedback", "conversation_feedback_analyzer", "Check conversation_log_template.csv", tab_feedback),
+]
+
+for tab_obj, (name, module, hint, renderer) in zip(tabs, TAB_RENDERERS):
+    with tab_obj:
+        safe_tab(module, hint, renderer)
+
+# ── Footer ────────────────────────────────────────────────────────────────────
+
+st.markdown(
+    f"""
+    <div class="ci-footer">
+        Career Intelligence OS v{__version__} · Internal research tool ·
+        Data derived from structured CSV sources · Verify all contact and company information independently ·
+        Not affiliated with any employer listed
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
