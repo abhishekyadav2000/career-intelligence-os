@@ -33,7 +33,27 @@ from src.data_confidence import (
     is_stale,
     validate_dataset_sources,
 )
-from src.data_loader import load_all
+from src.data_loader import load_all, load_core, load_intelligence, load_mission_control_data
+from src.metadata_renderer import (
+    display_dataframe_limited,
+    inject_metadata_css,
+    render_action_metadata,
+    render_confidence_bar,
+    render_entity_card,
+    render_freshness_badge,
+    render_metadata_expander,
+    render_metadata_ribbon,
+    render_section_header,
+    render_source_chip,
+)
+from src.schedule_engine import mark_activity_done
+from dashboard.navigation import (
+    NAV_GROUP_ORDER,
+    NAV_GROUPS,
+    feature_key_for_tab,
+    get_feature_help,
+    load_feature_registry,
+)
 from src.db import DEMO_QUERIES, init_db, run_query
 from src.health_check import run_health_check
 from src.interview_topic_mapper import generate_interview_batch
@@ -339,28 +359,48 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# ── Data loading (isolated from tab rendering) ──────────────────────────────────
+# ── Lazy data loading (isolated from tab rendering) ─────────────────────────────
 
-@st.cache_data(show_spinner="Loading pipeline data…")
-def load_pipeline():
-    data = load_all()
-    scores = score_jobs_dataframe(data["jobs"], data["companies"])
-    company_scores = score_companies(data["companies"], data["jobs"], data["contacts"])
+@st.cache_data(show_spinner="Loading core data…")
+def load_core_cached():
+    return load_core()
+
+
+@st.cache_data(show_spinner="Loading analytics…")
+def load_analytics_cached(_core_key: str):
+    core = load_core_cached()
+    scores = score_jobs_dataframe(core["jobs"], core["companies"])
+    company_scores = score_companies(core["companies"], core["jobs"], core["contacts"])
     recommendations = recommend_batch(scores, company_scores)
-    outreach = generate_outreach_batch(data["jobs"], data["contacts"], scores)
-    interviews = generate_interview_batch(data["jobs"], scores)
-    gaps = analyze_jobs_batch(data["jobs"], scores)
-    init_db(data["companies"], data["jobs"], data["contacts"])
-    return data, scores, company_scores, recommendations, outreach, interviews, gaps
+    outreach = generate_outreach_batch(core["jobs"], core["contacts"], scores)
+    interviews = generate_interview_batch(core["jobs"], scores)
+    gaps = analyze_jobs_batch(core["jobs"], scores)
+    init_db(core["companies"], core["jobs"], core["contacts"])
+    return scores, company_scores, recommendations, outreach, interviews, gaps
+
+
+@st.cache_data(show_spinner="Loading ICC datasets…")
+def load_icc_all_cached():
+    from src.data_loader import load_icc_files
+    return load_icc_files()
+
+
+@st.cache_data(show_spinner="Loading company intelligence…")
+def load_intelligence_cached(company_id: str):
+    core = load_core_cached()
+    return load_intelligence(company_id, jobs_df=core["jobs"])
 
 
 pipeline_error = None
 try:
     with st.spinner("Initializing intelligence pipeline…"):
-        data, scores, company_scores, recommendations, outreach, interviews, gaps = load_pipeline()
+        core_data = load_core_cached()
+        scores, company_scores, recommendations, outreach, interviews, gaps = load_analytics_cached("v1")
+        data = dict(core_data)
 except Exception as exc:
     pipeline_error = exc
     data = scores = company_scores = recommendations = outreach = interviews = gaps = None
+    core_data = None
 
 if pipeline_error:
     st.error("Pipeline failed to initialize. Check data files and module imports.")
@@ -372,14 +412,9 @@ companies_df = data["companies"]
 jobs_df = data["jobs"]
 contacts_df = data["contacts"]
 gap_df = data["gap_matrix"]
-profiles_df = data.get("company_profiles", load_company_profiles())
-people_df = data.get("people_map", load_people_map())
-proof_df = data.get("proof_assets", load_proof_assets())
-reasoning_df = data.get("role_reasoning", load_role_reasoning())
-projects_df = data.get("company_projects", pd.DataFrame())
-sources_df = data.get("research_sources", pd.DataFrame())
-insights_df = data.get("interview_insights", pd.DataFrame())
-journey_df = data.get("interview_journey", pd.DataFrame())
+
+inject_metadata_css()
+feature_registry = load_feature_registry()
 
 scores_df = pd.DataFrame([
     {
@@ -402,9 +437,57 @@ company_rank_df = pd.DataFrame(company_scores)
 init_icc_state(st.session_state, companies_df, jobs_df)
 total_companies = len(companies_df)
 
+# Full ICC for mission control engines; company-scoped for intelligence tabs
+icc_all = load_icc_all_cached()
+data = load_mission_control_data(data, icc_all)
+
+_intel_company = st.session_state.get("icc_company_id", "")
+_intel = load_intelligence_cached(_intel_company) if _intel_company else {}
+profiles_tab_df = _intel.get("company_profiles", pd.DataFrame())
+people_tab_df = _intel.get("people_map", pd.DataFrame())
+projects_tab_df = _intel.get("company_projects", pd.DataFrame())
+sources_tab_df = _intel.get("research_sources", pd.DataFrame())
+insights_tab_df = _intel.get("interview_insights", pd.DataFrame())
+journey_tab_df = _intel.get("interview_journey", pd.DataFrame())
+reasoning_tab_df = _intel.get("role_reasoning", pd.DataFrame())
+proof_df = _intel.get("proof_assets", icc_all.get("proof_assets", load_proof_assets()))
+
+# Tab-facing dataframes (company-scoped); fall back to full ICC where needed
+profiles_df = profiles_tab_df if not profiles_tab_df.empty else icc_all.get("company_profiles", load_company_profiles())
+people_df = people_tab_df if not people_tab_df.empty else icc_all.get("people_map", load_people_map())
+projects_df = projects_tab_df if not projects_tab_df.empty else icc_all.get("company_projects", pd.DataFrame())
+sources_df = sources_tab_df if not sources_tab_df.empty else icc_all.get("research_sources", pd.DataFrame())
+insights_df = insights_tab_df if not insights_tab_df.empty else icc_all.get("interview_insights", pd.DataFrame())
+journey_df = journey_tab_df if not journey_tab_df.empty else icc_all.get("interview_journey", pd.DataFrame())
+reasoning_df = reasoning_tab_df if not reasoning_tab_df.empty else icc_all.get("role_reasoning", load_role_reasoning())
+
 # ── Sidebar (company-first context) ───────────────────────────────────────────
 
 st.sidebar.header("Target Context")
+
+if "ci_sidebar_mode" not in st.session_state:
+    st.session_state.ci_sidebar_mode = "Essentials"
+if "ci_metadata_level" not in st.session_state:
+    st.session_state.ci_metadata_level = "Summary"
+
+st.sidebar.radio(
+    "Sidebar mode",
+    options=["Essentials", "Advanced"],
+    key="ci_sidebar_mode",
+    horizontal=True,
+    help="Essentials: company, role, focus only. Advanced: filters and system status.",
+)
+
+st.sidebar.radio(
+    "Metadata detail",
+    options=["Summary", "Detailed"],
+    key="ci_metadata_level",
+    horizontal=True,
+    help="Summary: key metrics only. Detailed: all metadata chips and source links.",
+)
+
+sidebar_advanced = st.session_state.ci_sidebar_mode == "Advanced"
+metadata_detailed = st.session_state.ci_metadata_level == "Detailed"
 
 st.sidebar.text_input(
     "Company Search",
@@ -429,7 +512,12 @@ st.sidebar.caption(f"Showing {shown_count} of {total_companies} companies")
 
 
 def _handle_company_change():
-    on_company_change(st.session_state, companies_df, jobs_df)
+    on_company_change(
+        st.session_state,
+        companies_df,
+        jobs_df,
+        scores=scores,
+    )
 
 
 def _handle_job_change():
@@ -465,17 +553,23 @@ if icc_job_options_sidebar:
 else:
     st.sidebar.selectbox("Target Role", options=["—"], disabled=True)
 
-with st.sidebar.expander("Person & Stage", expanded=False):
-    st.selectbox(
-        "Person Type",
-        options=CONVERSATION_TYPES,
-        key="icc_person_type",
-    )
-    st.selectbox(
-        "Interview Stage",
-        options=INTERVIEW_STAGES,
-        key="icc_interview_stage",
-    )
+if sidebar_advanced:
+    with st.sidebar.expander("Person & Stage", expanded=False):
+        st.selectbox(
+            "Person Type",
+            options=CONVERSATION_TYPES,
+            key="icc_person_type",
+        )
+        st.selectbox(
+            "Interview Stage",
+            options=INTERVIEW_STAGES,
+            key="icc_interview_stage",
+        )
+else:
+    if "icc_person_type" not in st.session_state:
+        st.session_state.icc_person_type = "hiring manager"
+    if "icc_interview_stage" not in st.session_state:
+        st.session_state.icc_interview_stage = "hiring manager screen"
 
 st.sidebar.toggle(
     "Focus Mode",
@@ -486,26 +580,34 @@ st.sidebar.toggle(
 
 st.sidebar.divider()
 
-with st.sidebar.expander("Advanced Filters", expanded=False):
-    st.caption(QUICK_FILTER_CAPTION)
-    pipeline_stage_opts = list(PIPELINE_STAGES)
-    tier_opts = sorted(companies_df["priority_tier"].dropna().unique().tolist())
-    role_family_opts = sorted(jobs_df["role_family"].dropna().unique().tolist())
-    st.multiselect(
-        "Pipeline stage",
-        options=pipeline_stage_opts,
-        key="icc_pipeline_stage_filter",
-    )
-    st.multiselect(
-        "Priority tier",
-        options=tier_opts,
-        key="icc_priority_tier_filter",
-    )
-    st.multiselect(
-        "Role family",
-        options=role_family_opts,
-        key="icc_role_family_filter",
-    )
+if sidebar_advanced:
+    with st.sidebar.expander("Advanced Filters", expanded=False):
+        st.caption(QUICK_FILTER_CAPTION)
+        pipeline_stage_opts = list(PIPELINE_STAGES)
+        tier_opts = sorted(companies_df["priority_tier"].dropna().unique().tolist())
+        role_family_opts = sorted(jobs_df["role_family"].dropna().unique().tolist())
+        st.multiselect(
+            "Pipeline stage",
+            options=pipeline_stage_opts,
+            key="icc_pipeline_stage_filter",
+        )
+        st.multiselect(
+            "Priority tier",
+            options=tier_opts,
+            key="icc_priority_tier_filter",
+        )
+        st.multiselect(
+            "Role family",
+            options=role_family_opts,
+            key="icc_role_family_filter",
+        )
+else:
+    if "icc_pipeline_stage_filter" not in st.session_state:
+        st.session_state.icc_pipeline_stage_filter = []
+    if "icc_priority_tier_filter" not in st.session_state:
+        st.session_state.icc_priority_tier_filter = []
+    if "icc_role_family_filter" not in st.session_state:
+        st.session_state.icc_role_family_filter = []
 
 icc_ctx = resolve_icc_context(st.session_state, companies_df, jobs_df)
 icc_company_id = icc_ctx["company_id"]
@@ -558,28 +660,29 @@ else:
     st.sidebar.metric("Pipeline cards", len(mission_control.get("all_cards", mc_cards)))
     st.sidebar.metric("Follow-ups due", mission_control["metrics"].get("follow_up_due", 0))
 
-with st.sidebar.expander("System Status", expanded=False):
-    health = run_health_check()
-    overall_html = render_health_indicator(health["overall"])
-    st.markdown(f"**Overall:** {overall_html}", unsafe_allow_html=True)
+with st.sidebar.expander("System Status", expanded=False) if sidebar_advanced else st.sidebar.container():
+    if sidebar_advanced:
+        health = run_health_check()
+        overall_html = render_health_indicator(health["overall"])
+        st.markdown(f"**Overall:** {overall_html}", unsafe_allow_html=True)
 
-    st.markdown("**Imports**")
-    for check in health["imports"]["checks"]:
-        icon = render_health_indicator(check["status"])
-        mod_short = check["module"].replace("src.", "")
-        st.markdown(f"{icon} `{mod_short}`", unsafe_allow_html=True)
+        st.markdown("**Imports**")
+        for check in health["imports"]["checks"]:
+            icon = render_health_indicator(check["status"])
+            mod_short = check["module"].replace("src.", "")
+            st.markdown(f"{icon} `{mod_short}`", unsafe_allow_html=True)
 
-    st.markdown("**Data Files**")
-    for check in health["csvs"]["checks"]:
-        if check["status"] == "red":
-            st.markdown(f'<span class="health-red">FAIL</span> {check["file"]}: {check["detail"]}', unsafe_allow_html=True)
-        elif check["rows"] == 0 and check["file"] in health["csvs"]["checks"]:
-            st.markdown(f'<span class="health-yellow">WARN</span> {check["file"]}', unsafe_allow_html=True)
+        st.markdown("**Data Files**")
+        for check in health["csvs"]["checks"]:
+            if check["status"] == "red":
+                st.markdown(f'<span class="health-red">FAIL</span> {check["file"]}: {check["detail"]}', unsafe_allow_html=True)
+            elif check["rows"] == 0 and check["file"] in health["csvs"]["checks"]:
+                st.markdown(f'<span class="health-yellow">WARN</span> {check["file"]}', unsafe_allow_html=True)
 
-    st.markdown("**Pipeline**")
-    for check in health["pipeline"]["checks"]:
-        icon = render_health_indicator(check["status"])
-        st.markdown(f"{icon} {check['step']}: {check['detail']}", unsafe_allow_html=True)
+        st.markdown("**Pipeline**")
+        for check in health["pipeline"]["checks"]:
+            icon = render_health_indicator(check["status"])
+            st.markdown(f"{icon} {check['step']}: {check['detail']}", unsafe_allow_html=True)
 
 if not profiles_df.empty and "last_updated" in profiles_df.columns:
     last_updated = profiles_df["last_updated"].dropna().max()
@@ -718,27 +821,24 @@ def _sync_interview_job():
         set_target(st.session_state, job_row_sel.iloc[0]["company_id"], selected, companies_df, jobs_df)
 
 
-# ── Tabs ──────────────────────────────────────────────────────────────────────
+# ── Grouped navigation (v1.2) ─────────────────────────────────────────────────
 
-tabs = st.tabs([
-    "Mission Control",
-    "My Profile & Portfolio",
-    "Interview Simulator",
-    "Command Center",
-    "Company 360",
-    "People Map",
-    "Role Deep Dive",
-    "Proof Assets",
-    "Overview",
-    "Company Ranking",
-    "Role Fit",
-    "Sponsorship Signal",
-    "Networking Map",
-    "Interview Prep",
-    "Recommendations",
-    "Export",
-    "Feedback",
-])
+if "ci_nav_group" not in st.session_state:
+    st.session_state.ci_nav_group = "Execute"
+
+nav_group = st.radio(
+    "Section",
+    options=NAV_GROUP_ORDER,
+    horizontal=True,
+    key="ci_nav_group",
+    label_visibility="collapsed",
+)
+st.caption(f"**{nav_group}** — {len(NAV_GROUPS[nav_group])} view(s) · metadata: {st.session_state.ci_metadata_level}")
+
+def _feature_caption(tab_name: str) -> None:
+    help_text = get_feature_help(feature_key_for_tab(tab_name), feature_registry)
+    if help_text:
+        st.caption(help_text)
 
 
 def tab_mission_control():
@@ -747,6 +847,7 @@ def tab_mission_control():
     metrics = mc["metrics"]
 
     st.subheader("Mission Control")
+    _feature_caption("Mission Control")
     if icc_focus_mode and icc_company_id and company_workspace:
         ws = company_workspace
         st.caption(f"Company workspace — **{icc_company_name}** · {ws.get('job_title', '')} · {mc['date']}")
@@ -833,17 +934,20 @@ def tab_mission_control():
     ])
 
     with mc_sections[0]:
-        st.markdown("#### Today's Action Queue")
+        render_section_header("Today's Action Queue", len(mc["action_queue"]))
         queue_df = pd.DataFrame(mc["action_queue"])
         if queue_df.empty:
-            st.info("No actions queued for current scope — adjust filters or select a company.")
+            st.caption("No actions queued for current scope.")
         else:
             display_cols = [
                 "priority_score", "company_name", "job_title", "pipeline_stage",
                 "next_action", "contact_type", "data_confidence",
             ]
             show = [c for c in display_cols if c in queue_df.columns]
-            st.dataframe(queue_df[show], use_container_width=True, hide_index=True)
+            display_dataframe_limited(queue_df[show], key_prefix="action_queue")
+            if metadata_detailed:
+                for _, row in queue_df.head(5).iterrows():
+                    render_action_metadata(row.to_dict(), detailed=metadata_detailed)
             if icc_focus_mode and "company_name" in queue_df.columns:
                 other = queue_df[queue_df["company_id"] != icc_company_id] if "company_id" in queue_df.columns else pd.DataFrame()
                 if not other.empty:
@@ -870,10 +974,9 @@ def tab_mission_control():
                 )
 
     with mc_sections[1]:
-        st.markdown("#### Message Queue")
-        mq = mc.get("message_queue", [])
+        render_section_header("Message Queue", len(mq := mc.get("message_queue", [])))
         if not mq:
-            st.info("No messages ready — verify contacts and move cards to Ready to Contact.")
+            st.caption("No messages ready — move cards to Ready to Contact.")
         else:
             mq_left, mq_right = st.columns([1, 1])
             with mq_left:
@@ -1103,6 +1206,7 @@ def tab_command_center():
 
 def tab_company_360():
     st.subheader(f"Company 360 — {icc_company_name}")
+    _feature_caption("Company 360")
     c360 = build_company_360(icc_company_id, profiles_df, projects_df, sources_df, people_df)
     if not c360.get("found"):
         st.warning("Company profile not found. Add an entry to company_profiles.csv for this company.")
@@ -1120,7 +1224,14 @@ def tab_company_360():
         projects_df=projects_df, insights_df=insights_df,
     ):
         st.caption(w)
-    render_source_freshness_badge(lu, c360.get("sources", [{}])[0].get("source_url") if c360.get("sources") else "")
+    src_url = c360.get("sources", [{}])[0].get("source_url") if c360.get("sources") else ""
+    footer_chips = [
+        render_source_chip(src_url, conf),
+        render_freshness_badge(lu),
+        f'<span class="ci-chip ci-chip-metric">{src_count} research sources</span>',
+    ]
+    render_metadata_ribbon(footer_chips)
+    render_source_freshness_badge(lu, src_url)
 
     st.write(f"**Strategic Summary:** {c360['strategic_summary']}")
     st.write(f"**Growth Signals:** {c360['growth_signals']}")
@@ -1134,9 +1245,17 @@ def tab_company_360():
     st.markdown("#### Active Projects")
     proj_subset = projects_df[projects_df["company_id"] == icc_company_id]
     if not proj_subset.empty:
-        st.dataframe(proj_subset[["theme", "description", "confidence_level", "source_type"]], hide_index=True)
-    else:
-        st.info("No project themes recorded. Add rows to company_projects.csv.")
+        display_dataframe_limited(proj_subset[["theme", "description", "confidence_level", "source_type"]])
+        if metadata_detailed:
+            for _, prow in proj_subset.iterrows():
+                render_metadata_expander(
+                    f"Metadata — {prow.get('theme', 'Project')}",
+                    {
+                        "confidence_level": prow.get("confidence_level"),
+                        "source_type": prow.get("source_type"),
+                        "last_updated": prow.get("last_updated", lu),
+                    },
+                )
 
     c1, c2 = st.columns(2)
     c1.metric("Contacts Mapped", c360["people_count"])
@@ -1145,7 +1264,7 @@ def tab_company_360():
     st.markdown("#### Research Sources")
     src_subset = sources_df[sources_df["company_id"] == icc_company_id]
     if not src_subset.empty:
-        st.dataframe(src_subset[["source_type", "source_title", "source_url", "verified"]], hide_index=True)
+        display_dataframe_limited(src_subset[["source_type", "source_title", "source_url", "verified"]])
 
     st.markdown("#### Research Gaps")
     gaps_list = get_company_research_gaps(icc_company_id, profiles_df, people_df, sources_df)
@@ -1161,6 +1280,7 @@ def tab_company_360():
 
 def tab_people_map():
     st.subheader(f"People Map — {icc_company_name}")
+    _feature_caption("People Map")
     pm_filter = st.multiselect(
         "Contact Type Filter",
         options=["recruiter", "hiring_manager", "peer", "alumni"],
@@ -1198,6 +1318,22 @@ def tab_people_map():
                 "Conv. Priority": p.get("conversation_priority"),
             })
         st.dataframe(pd.DataFrame(display_rows), hide_index=True)
+        for p in ranked[:5]:
+            hp = p.get("hiring_power_score", 0)
+            chips = [
+                render_source_chip(p.get("source_url"), p.get("verification_status")),
+                render_freshness_badge(p.get("last_updated")),
+                f'<span class="ci-chip ci-chip-metric">Hiring power {hp}</span>',
+            ]
+            render_entity_card(
+                "person",
+                p,
+                title_key="person_name",
+                body_key="strategy",
+                ribbon_chips=chips,
+            )
+            if metadata_detailed:
+                st.markdown(render_confidence_bar(hp, f"Hiring power {hp}"), unsafe_allow_html=True)
         for p in ranked[:3]:
             with st.expander(f"{p.get('person_name')} — {p.get('contact_type')}"):
                 st.write(f"**Strategy:** {p.get('strategy', '')}")
@@ -1210,13 +1346,32 @@ def tab_people_map():
 def tab_role_deep_dive():
     title = icc_job_row["title"] if icc_job_row is not None else ""
     st.subheader(f"Role Deep Dive — {title}")
+    _feature_caption("Role Deep Dive")
     if not icc_job_id:
         st.info("Select a target role in the sidebar.")
         return
 
     dive = build_role_deep_dive(icc_job_id, jobs_df, reasoning_df)
+    rr_row = reasoning_df[reasoning_df["job_id"] == icc_job_id] if not reasoning_df.empty else pd.DataFrame()
+    conf_level = "source_backed" if not rr_row.empty else "hypothesis"
+    tools_signal = icc_job_row.get("role_family", "") if icc_job_row is not None else ""
+    render_metadata_ribbon([
+        f'<span class="ci-chip ci-chip-metric">Confidence: {conf_level}</span>',
+        f'<span class="ci-chip ci-chip-metric">Tools: {tools_signal}</span>',
+        render_source_chip(
+            sources_df.iloc[0]["source_url"] if not sources_df.empty else None,
+            conf_level,
+        ),
+    ])
     st.write(f"**Why this role exists:** {dive.get('why_role_exists', '')}")
     st.write(f"**Business problem:** {dive.get('business_problem', '')}")
+    if metadata_detailed:
+        render_metadata_expander("Role reasoning metadata", {
+            "confidence_level": conf_level,
+            "tools_signal": tools_signal,
+            "business_problem": dive.get("business_problem", ""),
+            "likely_team": dive.get("likely_team", ""),
+        })
     st.write(f"**Likely team:** {dive.get('likely_team', '')}")
 
     st.divider()
@@ -1245,6 +1400,7 @@ def tab_role_deep_dive():
 
 def tab_proof_assets():
     st.subheader("Proof Assets")
+    _feature_caption("Proof Assets")
     st.caption(f"{icc_company_name} · {icc_job_row['title'] if icc_job_row is not None else 'N/A'}")
 
     if proof_df.empty:
@@ -1252,14 +1408,29 @@ def tab_proof_assets():
         return
 
     st.markdown("#### Portfolio Assets")
-    st.dataframe(proof_df[["asset_type", "title", "tags", "url_or_path", "relevance_score"]], hide_index=True)
+    display_dataframe_limited(proof_df[["asset_type", "title", "tags", "url_or_path", "relevance_score"]])
 
     st.divider()
     st.markdown("#### Top 3 Assets for This Role")
     top3 = get_top_proof_assets_for_display(icc_job_id, icc_company_id, proof_df, jobs_df, profiles_df, n=3)
     for i, asset in enumerate(top3, 1):
-        st.write(f"**{i}. {asset['title']}** (score: {asset['match_score']})")
-        st.caption(asset["description"])
+        skills = asset.get("tags", asset.get("skills_proven", ""))
+        render_entity_card(
+            "proof_asset",
+            asset,
+            ribbon_chips=[
+                f'<span class="ci-chip ci-chip-metric">Match {asset.get("match_score", "")}</span>',
+                f'<span class="ci-chip ci-chip-metric">Score {asset.get("relevance_score", "")}</span>',
+                render_freshness_badge(asset.get("last_updated")),
+            ],
+        )
+        if metadata_detailed:
+            render_metadata_expander(f"Asset metadata — {asset.get('title', i)}", {
+                "skills_proven": skills,
+                "role_families_supported": asset.get("role_families_supported", icc_job_row.get("role_family") if icc_job_row is not None else ""),
+                "status": asset.get("status", "active"),
+                "demo_instruction": asset.get("demo_instruction", asset.get("url_or_path", "")),
+            })
         st.code(asset["url_or_path"])
 
     missing = identify_missing_proof(icc_job_id, icc_company_id, proof_df, jobs_df, profiles_df)
@@ -1308,7 +1479,7 @@ def tab_company_ranking():
         other_rows = display_rank[~display_rank["selected"]].head(10)
         display_rank = pd.concat([selected_row, other_rows]).drop_duplicates(subset=["company"])
     st.dataframe(
-        display_rank[["company", "industry", "location", "priority_score", "priority_label", "job_count", "contact_count", "selected"]],
+        display_rank[["company", "industry", "location", "priority_score", "priority_label", "job_count", "contact_count", "selected"]].head(10),
         use_container_width=True,
         hide_index=True,
         column_config={
@@ -1316,12 +1487,20 @@ def tab_company_ranking():
             "priority_score": st.column_config.NumberColumn("Priority", format="%.1f"),
         },
     )
+    if len(display_rank) > 10:
+        with st.expander(f"Show all ({len(display_rank)} companies)"):
+            st.dataframe(
+                display_rank[["company", "industry", "location", "priority_score", "priority_label", "job_count", "contact_count", "selected"]],
+                use_container_width=True,
+                hide_index=True,
+            )
     st.bar_chart(company_rank_df.set_index("company")["priority_score"].head(15))
 
 
 def tab_role_fit():
     st.subheader("Role Fit Scores")
-    st.dataframe(filtered_scores.sort_values("fit_score", ascending=False), use_container_width=True, hide_index=True)
+    _feature_caption("Role Fit")
+    display_dataframe_limited(filtered_scores.sort_values("fit_score", ascending=False))
 
     role_fit_jobs = filtered_scores.sort_values("fit_score", ascending=False)["job_id"].tolist()
     if not role_fit_jobs:
@@ -1407,13 +1586,15 @@ def tab_interview_prep():
 
 def tab_recommendations():
     st.subheader("Action Recommendations")
+    _feature_caption("Recommendations")
     rec_display = rec_df.copy()
     if icc_focus_mode and icc_company_name:
         rec_display = rec_display[rec_display["company_name"] == icc_company_name]
         st.caption(f"Scoped to **{icc_company_name}**")
-    st.dataframe(
-        rec_display[["company_name", "title", "fit_score", "action", "composite_score", "rationale"]].sort_values("composite_score", ascending=False),
-        use_container_width=True, hide_index=True,
+    display_dataframe_limited(
+        rec_display[["company_name", "title", "fit_score", "action", "composite_score", "rationale"]].sort_values(
+            "composite_score", ascending=False,
+        ),
     )
 
 
@@ -1487,10 +1668,25 @@ def tab_feedback():
 
 def tab_profile_portfolio():
     st.subheader("My Profile & Portfolio")
+    _feature_caption("My Profile & Portfolio")
     st.caption("In-app profile — used automatically by Interview Simulator")
 
     profile = load_profile()
     summary = get_portfolio_summary(icc_company_id if icc_focus_mode else None, profile)
+    profile_path = ROOT / "data" / "user_profile.yaml"
+    last_edited = "—"
+    if profile_path.exists():
+        last_edited = datetime.fromtimestamp(profile_path.stat().st_mtime).strftime("%Y-%m-%d")
+    proof_ids = profile.get("proof_asset_ids", [])
+    char_counts = sum(len(str(v)) for v in [
+        profile.get("positioning", ""),
+        " ".join(profile.get("experience_bullets", [])),
+    ])
+    render_metadata_ribbon([
+        render_freshness_badge(last_edited),
+        f'<span class="ci-chip ci-chip-metric">{len(proof_ids)} proof links</span>',
+        f'<span class="ci-chip ci-chip-metric">{char_counts} chars</span>',
+    ])
 
     with st.form("profile_edit_form"):
         name = st.text_input("Name", value=profile.get("name", ""))
@@ -1547,6 +1743,7 @@ def tab_profile_portfolio():
 
 def tab_interview_simulator():
     st.subheader("Interview Practice Simulator")
+    _feature_caption("Interview Simulator")
     st.markdown('<span id="interview-simulator"></span>', unsafe_allow_html=True)
 
     if not selection_complete:
@@ -1634,8 +1831,24 @@ def tab_interview_simulator():
         with st.chat_message("assistant"):
             st.write(current_q)
             ins = st.session_state.get("sim_current_insight")
-            if ins and ins.get("source_url"):
-                st.caption(f"Source: [{ins.get('source_title', 'link')}]({ins.get('source_url')})")
+            if ins:
+                meta_parts = []
+                if ins.get("source_url"):
+                    st.caption(f"Source: [{ins.get('source_title', 'link')}]({ins.get('source_url')})")
+                if ins.get("source_type"):
+                    meta_parts.append(f"Type: {ins['source_type']}")
+                if ins.get("difficulty"):
+                    meta_parts.append(f"Difficulty: {ins['difficulty']}")
+                if ins.get("last_verified"):
+                    meta_parts.append(f"Verified: {ins['last_verified']}")
+                if meta_parts:
+                    st.caption(" · ".join(meta_parts))
+                if metadata_detailed:
+                    render_metadata_ribbon([
+                        render_source_chip(ins.get("source_url"), ins.get("confidence_level")),
+                        render_freshness_badge(ins.get("last_verified")),
+                        f'<span class="ci-chip ci-chip-metric">{ins.get("difficulty", "—")}</span>',
+                    ])
 
     answer = st.chat_input("Type your answer…")
     if answer and current_q:
@@ -1674,31 +1887,42 @@ def _pick_sim_insight(insights, history, round_key):
     return _pick_insight_question(insights, history, round_key)
 
 
-# ── Render tabs with error boundaries ─────────────────────────────────────────
+# ── Render active navigation group only (lazy tab rendering) ─────────────────
 
-TAB_RENDERERS = [
-    ("Mission Control", "mission_control_engine", "Run scripts/seed_pipeline_cards.py and check pipeline CSVs", tab_mission_control),
-    ("My Profile & Portfolio", "profile_manager", "Check data/user_profile.yaml and PyYAML", tab_profile_portfolio),
-    ("Interview Simulator", "interview_simulator", "Check data/interview_insights.csv", tab_interview_simulator),
-    ("Command Center", "conversation_brief_generator", "Check ICC CSV files and brief generator imports", tab_command_center),
-    ("Company 360", "company_profile_engine", "Verify company_profiles.csv and company_projects.csv", tab_company_360),
-    ("People Map", "people_power_mapper", "Verify people_map.csv schema and contact types", tab_people_map),
-    ("Role Deep Dive", "role_reasoning_engine", "Verify role_reasoning.csv covers all job IDs", tab_role_deep_dive),
-    ("Proof Assets", "proof_asset_mapper", "Verify proof_assets.csv exists with asset entries", tab_proof_assets),
-    ("Overview", "data_loader", "Check core CSV files in data/", tab_overview),
-    ("Company Ranking", "company_priority_scorer", "Verify sample_companies.csv and jobs data", tab_company_ranking),
-    ("Role Fit", "role_fit_scorer", "Check profile_keywords.csv and scoring module", tab_role_fit),
-    ("Sponsorship Signal", "sponsorship_signal", "Verify sponsorship fields in company data", tab_sponsorship),
-    ("Networking Map", "outreach_angle_generator", "Check contacts CSV and outreach generator", tab_networking),
-    ("Interview Prep", "interview_topic_mapper", "Verify jobs data and interview topic mapper", tab_interview_prep),
-    ("Recommendations", "recommendation_engine", "Check scoring pipeline output", tab_recommendations),
-    ("Export", "db", "Verify SQLite init and DEMO_QUERIES", tab_export),
-    ("Feedback", "conversation_feedback_analyzer", "Check conversation_log_template.csv", tab_feedback),
-]
+TAB_RENDERERS = {
+    "Mission Control": ("mission_control_engine", "Run scripts/seed_pipeline_cards.py and check pipeline CSVs", tab_mission_control),
+    "My Profile & Portfolio": ("profile_manager", "Check data/user_profile.yaml and PyYAML", tab_profile_portfolio),
+    "Interview Simulator": ("interview_simulator", "Check data/interview_insights.csv", tab_interview_simulator),
+    "Command Center": ("conversation_brief_generator", "Check ICC CSV files and brief generator imports", tab_command_center),
+    "Company 360": ("company_profile_engine", "Verify company_profiles.csv and company_projects.csv", tab_company_360),
+    "People Map": ("people_power_mapper", "Verify people_map.csv schema and contact types", tab_people_map),
+    "Role Deep Dive": ("role_reasoning_engine", "Verify role_reasoning.csv covers all job IDs", tab_role_deep_dive),
+    "Proof Assets": ("proof_asset_mapper", "Verify proof_assets.csv exists with asset entries", tab_proof_assets),
+    "Overview": ("data_loader", "Check core CSV files in data/", tab_overview),
+    "Company Ranking": ("company_priority_scorer", "Verify sample_companies.csv and jobs data", tab_company_ranking),
+    "Role Fit": ("role_fit_scorer", "Check profile_keywords.csv and scoring module", tab_role_fit),
+    "Sponsorship Signal": ("sponsorship_signal", "Verify sponsorship fields in company data", tab_sponsorship),
+    "Networking Map": ("outreach_angle_generator", "Check contacts CSV and outreach generator", tab_networking),
+    "Interview Prep": ("interview_topic_mapper", "Verify jobs data and interview topic mapper", tab_interview_prep),
+    "Recommendations": ("recommendation_engine", "Check scoring pipeline output", tab_recommendations),
+    "Export": ("db", "Verify SQLite init and DEMO_QUERIES", tab_export),
+    "Conversation Feedback": ("conversation_feedback_analyzer", "Check conversation_log_template.csv", tab_feedback),
+}
 
-for tab_obj, (name, module, hint, renderer) in zip(tabs, TAB_RENDERERS):
-    with tab_obj:
-        safe_tab(module, hint, renderer)
+active_tabs = NAV_GROUPS[nav_group]
+if len(active_tabs) == 1:
+    name = active_tabs[0]
+    module, hint, renderer = TAB_RENDERERS[name]
+    safe_tab(module, hint, renderer)
+else:
+    sub_tabs = st.tabs(active_tabs)
+    for tab_obj, name in zip(sub_tabs, active_tabs):
+        module, hint, renderer = TAB_RENDERERS[name]
+        with tab_obj:
+            safe_tab(module, hint, renderer)
+
+if nav_group == "Tools" and "Interview Prep" in active_tabs:
+    st.caption("Tip: For interactive practice, use **Prepare → Interview Simulator**.")
 
 # ── Footer ────────────────────────────────────────────────────────────────────
 

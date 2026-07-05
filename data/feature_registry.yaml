@@ -1,0 +1,212 @@
+version: "1.2.0"
+features:
+  mission_control:
+    name: Mission Control
+    group: Execute
+    description: Monday-ready execution hub — action queue, pipeline board, message queue, and launch plan.
+    data_sources:
+      - pipeline_cards.csv
+      - monday_launch_plan.csv
+      - activity_schedule.csv
+    refresh_frequency: daily
+    metadata_fields:
+      - fit_score
+      - priority_score
+      - sponsorship_signal
+      - proof_asset_count
+      - last_updated
+      - source_url_count
+
+  interview_simulator:
+    name: Interview Simulator
+    group: Prepare
+    description: Rule-based recruiter practice from verified interview_insights.csv — works offline.
+    data_sources:
+      - interview_insights.csv
+      - user_profile.yaml
+      - proof_assets.csv
+    refresh_frequency: weekly
+    metadata_fields:
+      - source_url
+      - source_type
+      - difficulty
+      - last_verified
+      - confidence_level
+
+  my_profile:
+    name: My Profile & Portfolio
+    group: Prepare
+    description: In-app profile, STAR stories, and proof links — feeds Simulator automatically.
+    data_sources:
+      - user_profile.yaml
+      - proof_assets.csv
+    refresh_frequency: on_edit
+    metadata_fields:
+      - last_edited
+      - proof_asset_ids
+      - character_counts
+
+  company_360:
+    name: Company 360
+    group: Intelligence
+    description: Strategic summary, tech themes, active projects, and research sources for one employer.
+    data_sources:
+      - company_profiles.csv
+      - company_projects.csv
+      - research_sources.csv
+      - people_map.csv
+    refresh_frequency: weekly
+    metadata_fields:
+      - source_urls
+      - confidence_level
+      - last_updated
+      - research_sources_count
+
+  role_deep_dive:
+    name: Role Deep Dive
+    group: Intelligence
+    description: Why the role exists, 30/60/90 plan, and priority questions from role_reasoning.csv.
+    data_sources:
+      - role_reasoning.csv
+      - sample_jobs.csv
+    refresh_frequency: weekly
+    metadata_fields:
+      - confidence_level
+      - tools_signal
+      - business_problem
+      - source_citation
+
+  people_map:
+    name: People Map
+    group: Intelligence
+    description: Ranked contacts with hiring power scores and conversation strategy.
+    data_sources:
+      - people_map.csv
+      - research_sources.csv
+    refresh_frequency: weekly
+    metadata_fields:
+      - verification_status
+      - source_url
+      - hiring_power_score
+      - last_updated
+
+  proof_assets:
+    name: Proof Assets
+    group: Intelligence
+    description: Portfolio artifacts matched to company and role with relevance scoring.
+    data_sources:
+      - proof_assets.csv
+    refresh_frequency: monthly
+    metadata_fields:
+      - skills_proven
+      - role_families_supported
+      - status
+      - last_updated
+      - demo_instruction
+
+  company_ranking:
+    name: Company Ranking
+    group: Analytics
+    description: Priority-ranked employer list with industry, location, and job counts.
+    data_sources:
+      - sample_companies.csv
+      - sample_jobs.csv
+    refresh_frequency: daily
+    metadata_fields:
+      - priority_score
+      - job_count
+      - contact_count
+
+  role_fit:
+    name: Role Fit
+    group: Analytics
+    description: Weighted fit scores across technical, sponsorship, and DFW relevance dimensions.
+    data_sources:
+      - sample_jobs.csv
+      - profile_keywords.csv
+    refresh_frequency: daily
+    metadata_fields:
+      - fit_score
+      - fit_label
+      - category_scores
+
+  sponsorship_signal:
+    name: Sponsorship Signal
+    group: Analytics
+    description: Indicative sponsorship signals — not legal certainty; verify via DOL/USCIS.
+    data_sources:
+      - sample_companies.csv
+    refresh_frequency: weekly
+    metadata_fields:
+      - signal_score
+      - label
+      - disclaimer
+
+  recommendations:
+    name: Recommendations
+    group: Analytics
+    description: Apply now, network first, research more — composite action recommendations.
+    data_sources:
+      - recommendation_engine output
+    refresh_frequency: daily
+    metadata_fields:
+      - composite_score
+      - action
+      - rationale
+
+  command_center:
+    name: Command Center
+    group: Tools
+    description: Seven-section conversation brief generator for interview prep.
+    data_sources:
+      - conversation_briefs.csv
+      - all ICC datasets
+    refresh_frequency: on_demand
+    metadata_fields:
+      - brief_readiness
+      - section_completeness
+
+  networking_map:
+    name: Networking Map
+    group: Tools
+    description: Outreach angles and message drafts by contact type.
+    data_sources:
+      - sample_contacts.csv
+      - outreach_angle_generator output
+    refresh_frequency: daily
+    metadata_fields:
+      - contact_type
+      - fit_score
+      - angle
+
+  interview_prep:
+    name: Interview Prep
+    group: Tools
+    description: Legacy topic mapper — use Interview Simulator for practice.
+    data_sources:
+      - interview_topic_mapper output
+    refresh_frequency: daily
+    metadata_fields:
+      - priority
+      - category
+
+  export:
+    name: Export
+    group: Tools
+    description: CSV downloads and SQL demo queries.
+    data_sources:
+      - SQLite analytics DB
+    refresh_frequency: on_demand
+    metadata_fields: []
+
+  conversation_feedback:
+    name: Conversation Feedback
+    group: Tools
+    description: Rule-based analysis of logged outreach and interview conversations.
+    data_sources:
+      - conversation_log_template.csv
+    refresh_frequency: on_log
+    metadata_fields:
+      - warm_companies
+      - skill_gaps
+      - next_actions

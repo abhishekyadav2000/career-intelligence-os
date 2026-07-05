@@ -55,6 +55,7 @@ CORE_MODULES = [
     "src.profile_manager",
     "src.interview_simulator",
     "src.company_workspace",
+    "src.metadata_renderer",
 ]
 
 COMPAT_MODULES = [

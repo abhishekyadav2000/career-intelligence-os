@@ -34,6 +34,24 @@ Career Intelligence OS ingests structured company, job, and contact data; scores
 | **My Profile & Portfolio** | `src/profile_manager.py` | In-app profile, STAR stories, proof links — feeds Simulator automatically |
 | **Verified Sources** | `src/data_confidence.py`, `data/interview_insights.csv` | Source freshness badges; no placeholder interview questions |
 
+## v1.2 — Grouped Navigation & Metadata-Rich UI
+
+Version **1.2.0** reorganizes the dashboard from 17 flat tabs into **5 navigation groups** with 1–5 views visible at a time:
+
+| Group | Views |
+|-------|-------|
+| **Execute** | Mission Control |
+| **Prepare** | Interview Simulator, My Profile & Portfolio |
+| **Intelligence** | Company 360, Role Deep Dive, People Map, Proof Assets |
+| **Analytics** | Company Ranking, Role Fit, Sponsorship Signal, Recommendations, Overview |
+| **Tools** | Command Center, Networking Map, Interview Prep (legacy), Export, Conversation Feedback |
+
+**Progressive disclosure:** Sidebar **Essentials / Advanced** mode hides person/stage filters and system status until needed. **Summary / Detailed** metadata toggle controls chip density across all panels.
+
+**Metadata layer:** `src/metadata_renderer.py` surfaces fit scores, source URLs, freshness badges, and confidence bars on entity cards. Feature help text comes from `data/feature_registry.yaml`.
+
+**Performance:** Lazy loaders in `src/data_loader.py` — `load_core()`, `load_intelligence(company_id)`, `load_mission_control_data()`. Only the active navigation group renders on each rerun.
+
 ## Mission Control
 
 Mission Control is the **default tab** — it answers Monday morning questions in one view without clicking through 10 tabs.

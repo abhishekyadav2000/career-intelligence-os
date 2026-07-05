@@ -70,8 +70,23 @@ def load_raw(data_dir: Path | None = None) -> dict[str, pd.DataFrame]:
     return {key: pd.read_csv(base / fname) for key, fname in FILE_MAP.items()}
 
 
-def load_all(data_dir: Path | None = None, validate: bool = True) -> dict[str, pd.DataFrame]:
-    """Load, validate, clean, and enrich all datasets."""
+def _load_icc_files(data_dir: Path | None = None) -> dict[str, pd.DataFrame]:
+    """Load Interview Command Center CSV files (unfiltered)."""
+    base = data_dir or DATA_DIR
+    icc_data: dict[str, pd.DataFrame] = {}
+    for key, fname in INTERVIEW_COMMAND_CENTER_FILES.items():
+        fpath = base / fname
+        icc_data[key] = pd.read_csv(fpath) if fpath.exists() else pd.DataFrame()
+    return icc_data
+
+
+def load_icc_files(data_dir: Path | None = None) -> dict[str, pd.DataFrame]:
+    """Load all Interview Command Center CSV files (public alias)."""
+    return _load_icc_files(data_dir)
+
+
+def load_core(data_dir: Path | None = None, validate: bool = True) -> dict[str, pd.DataFrame]:
+    """Load core datasets only — companies, jobs, contacts, keywords, gap matrix."""
     raw = load_raw(data_dir)
     if validate:
         reports = validate_all(raw)
@@ -86,17 +101,66 @@ def load_all(data_dir: Path | None = None, validate: bool = True) -> dict[str, p
     gap_path = (data_dir or DATA_DIR) / "gap_matrix.csv"
     gap_matrix = pd.read_csv(gap_path) if gap_path.exists() else pd.DataFrame()
 
-    base = data_dir or DATA_DIR
-    icc_data = {}
-    for key, fname in INTERVIEW_COMMAND_CENTER_FILES.items():
-        fpath = base / fname
-        icc_data[key] = pd.read_csv(fpath) if fpath.exists() else pd.DataFrame()
-
     return {
         "companies": companies,
         "jobs": jobs,
         "contacts": contacts,
         "profile_keywords": cleaned["profile_keywords"],
         "gap_matrix": gap_matrix,
-        **icc_data,
     }
+
+
+def load_intelligence(company_id: str, data_dir: Path | None = None, jobs_df: pd.DataFrame | None = None) -> dict[str, pd.DataFrame]:
+    """Load ICC datasets scoped to one company — avoids loading all 50 company profiles on every render."""
+    icc = _load_icc_files(data_dir)
+    cid = company_id or ""
+
+    def _filter_col(df: pd.DataFrame, col: str = "company_id") -> pd.DataFrame:
+        if df.empty or not cid or col not in df.columns:
+            return df
+        return df[df[col] == cid].copy()
+
+    company_profiles = _filter_col(icc.get("company_profiles", pd.DataFrame()))
+    people_map = _filter_col(icc.get("people_map", pd.DataFrame()))
+    company_projects = _filter_col(icc.get("company_projects", pd.DataFrame()))
+    research_sources = _filter_col(icc.get("research_sources", pd.DataFrame()))
+    interview_insights = _filter_col(icc.get("interview_insights", pd.DataFrame()))
+    interview_journey = _filter_col(icc.get("interview_journey", pd.DataFrame()))
+
+    role_reasoning = icc.get("role_reasoning", pd.DataFrame())
+    if not role_reasoning.empty and jobs_df is not None and not jobs_df.empty and cid:
+        job_ids = jobs_df[jobs_df["company_id"] == cid]["job_id"].tolist()
+        if job_ids and "job_id" in role_reasoning.columns:
+            role_reasoning = role_reasoning[role_reasoning["job_id"].isin(job_ids)].copy()
+
+    return {
+        "company_profiles": company_profiles,
+        "people_map": people_map,
+        "company_projects": company_projects,
+        "research_sources": research_sources,
+        "role_reasoning": role_reasoning,
+        "proof_assets": icc.get("proof_assets", pd.DataFrame()),
+        "conversation_briefs": icc.get("conversation_briefs", pd.DataFrame()),
+        "interview_insights": interview_insights,
+        "interview_journey": interview_journey,
+    }
+
+
+def load_mission_control_data(
+    core: dict[str, pd.DataFrame],
+    intelligence: dict[str, pd.DataFrame] | None = None,
+) -> dict[str, pd.DataFrame]:
+    """Merge core + intelligence into a single dict for mission_control_engine."""
+    merged = dict(core)
+    if intelligence:
+        merged.update(intelligence)
+    else:
+        merged.update(_load_icc_files())
+    return merged
+
+
+def load_all(data_dir: Path | None = None, validate: bool = True) -> dict[str, pd.DataFrame]:
+    """Load, validate, clean, and enrich all datasets."""
+    core = load_core(data_dir, validate=validate)
+    icc = _load_icc_files(data_dir)
+    return {**core, **icc}

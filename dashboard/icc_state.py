@@ -96,7 +96,40 @@ def get_company_quick_stats(
     }
 
 
-def _sync_job_for_company(session_state, companies_df: pd.DataFrame, jobs_df: pd.DataFrame) -> None:
+def select_priority_job(
+    company_id: str,
+    jobs_df: pd.DataFrame,
+    *,
+    scores: list[dict] | None = None,
+    cards_by_job: dict[str, dict] | None = None,
+) -> str:
+    """Pick highest-priority role for a company from pipeline cards or fit scores."""
+    company_jobs = get_jobs_for_company(company_id, jobs_df)
+    if company_jobs.empty:
+        return ""
+    job_ids = company_jobs["job_id"].tolist()
+    priorities: dict[str, float] = {}
+    for jid in job_ids:
+        prio = 0.0
+        if cards_by_job and jid in cards_by_job:
+            prio = float(cards_by_job[jid].get("priority_score", 0) or 0)
+        elif scores:
+            match = next((s for s in scores if s.get("job_id") == jid), None)
+            if match:
+                prio = float(match.get("fit_score", 0) or 0)
+        priorities[jid] = prio
+    return max(job_ids, key=lambda j: priorities.get(j, 0))
+
+
+def _sync_job_for_company(
+    session_state,
+    companies_df: pd.DataFrame,
+    jobs_df: pd.DataFrame,
+    *,
+    scores: list[dict] | None = None,
+    cards_by_job: dict[str, dict] | None = None,
+    force_priority: bool = False,
+) -> None:
     company_id = session_state.icc_company_id
     company_jobs = get_jobs_for_company(company_id, jobs_df)
     if company_jobs.empty:
@@ -105,8 +138,11 @@ def _sync_job_for_company(session_state, companies_df: pd.DataFrame, jobs_df: pd
         return
 
     job_ids = company_jobs["job_id"].tolist()
-    if session_state.get("icc_job_id") not in job_ids:
-        session_state.icc_job_id = job_ids[0]
+    current = session_state.get("icc_job_id")
+    if force_priority or current not in job_ids:
+        session_state.icc_job_id = select_priority_job(
+            company_id, jobs_df, scores=scores, cards_by_job=cards_by_job,
+        ) or job_ids[0]
 
     job_row = jobs_df[jobs_df["job_id"] == session_state.icc_job_id]
     if not job_row.empty:
@@ -160,7 +196,14 @@ def init_icc_state(session_state, companies_df: pd.DataFrame, jobs_df: pd.DataFr
     _sync_job_for_company(session_state, companies_df, jobs_df)
 
 
-def on_company_change(session_state, companies_df: pd.DataFrame, jobs_df: pd.DataFrame) -> None:
+def on_company_change(
+    session_state,
+    companies_df: pd.DataFrame,
+    jobs_df: pd.DataFrame,
+    *,
+    scores: list[dict] | None = None,
+    cards_by_job: dict[str, dict] | None = None,
+) -> None:
     company_id = session_state.icc_company_id
     row = companies_df[companies_df["company_id"] == company_id]
     if not row.empty:
@@ -168,7 +211,14 @@ def on_company_change(session_state, companies_df: pd.DataFrame, jobs_df: pd.Dat
     session_state.icc_focus_mode = True
     session_state.current_brief = None
     session_state.brief_markdown = ""
-    _sync_job_for_company(session_state, companies_df, jobs_df)
+    _sync_job_for_company(
+        session_state,
+        companies_df,
+        jobs_df,
+        scores=scores,
+        cards_by_job=cards_by_job,
+        force_priority=True,
+    )
 
 
 def on_job_change(session_state, jobs_df: pd.DataFrame) -> None:
@@ -198,7 +248,11 @@ def set_target(
     session_state.icc_company_id = company_id
     session_state.icc_job_id = job_id
     session_state.icc_focus_mode = True
-    on_company_change(session_state, companies_df, jobs_df)
+    row = companies_df[companies_df["company_id"] == company_id]
+    if not row.empty:
+        session_state.icc_company_name = row.iloc[0]["company_name"]
+    session_state.current_brief = None
+    session_state.brief_markdown = ""
     on_job_change(session_state, jobs_df)
 
 
