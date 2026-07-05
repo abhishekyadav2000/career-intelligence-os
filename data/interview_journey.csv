@@ -1,0 +1,9 @@
+company_id,job_id,round,status,scheduled_date,prep_complete,simulator_sessions,notes
+C001,J0001,recruiter_screen,scheduled,2026-07-08,false,0,Initial recruiter screen — practice in Simulator
+C001,J0001,hm_screen,pending,,false,0,After recruiter pass
+C001,J0001,technical,pending,,false,0,Prepare SQL/Python + cloud security topics
+C001,J0001,behavioral,pending,,false,0,Map STAR stories from profile
+C001,J0001,final,pending,,false,0,Why JPMorgan + 90-day plan
+C002,J0004,recruiter_screen,pending,,false,0,Goldman Dallas campus target
+C006,J0010,recruiter_screen,pending,,false,0,Capital One Plano tech roles
+C008,J0012,recruiter_screen,pending,,false,0,AT&T cloud/security analyst track

@@ -30,6 +30,9 @@ Career Intelligence OS ingests structured company, job, and contact data; scores
 | Dashboard | `dashboard/app.py` | KPI storytelling, Streamlit |
 | **Interview Command Center** | `src/company_profile_engine.py`, `src/conversation_brief_generator.py`, etc. | End-to-end interview prep with company 360, people map, role reasoning, proof matching |
 | **Mission Control** | `src/mission_control_engine.py`, `src/pipeline_engine.py`, etc. | Monday-ready execution: action queue, pipeline board, message queue, readiness score |
+| **Interview Simulator** | `src/interview_simulator.py` | AI recruiter practice from verified `interview_insights.csv` — works offline (rule-based) |
+| **My Profile & Portfolio** | `src/profile_manager.py` | In-app profile, STAR stories, proof links — feeds Simulator automatically |
+| **Verified Sources** | `src/data_confidence.py`, `data/interview_insights.csv` | Source freshness badges; no placeholder interview questions |
 
 ## Mission Control
 
@@ -89,6 +92,21 @@ The ICC upgrade transforms CI OS from a portfolio dashboard into an **end-to-end
 
 **Acceptance test:** JPMorgan Chase + any role + hiring manager + hiring manager screen → full brief + markdown export.
 
+## Interview Practice Simulator
+
+Rule-based recruiter practice **without any API key**. Questions come only from `data/interview_insights.csv` (82 verified insights across 10 DFW companies).
+
+| Step | Action |
+|------|--------|
+| 1 | Sidebar → JPMorgan Chase + target role |
+| 2 | **Interview Simulator** tab → pick round |
+| 3 | **Start New Question** → answer in chat → feedback + STAR suggestion |
+| 4 | **Save Session** → `data/simulator_sessions.csv` |
+
+Optional LLM: `OLLAMA_BASE_URL` / `OPENAI_API_KEY` in `.env` — [docs/interview-simulator-guide.md](docs/interview-simulator-guide.md)
+
+Profile: **My Profile & Portfolio** tab or `data/user_profile.yaml` — [docs/PROFILE.md](docs/PROFILE.md)
+
 ### Quick Start: First Brief in 5 Minutes
 
 ```bash
@@ -108,8 +126,10 @@ streamlit run dashboard/app.py
 
 ## Demo Flow
 
-1. **Mission Control** — readiness score, action queue, pipeline board (start here Monday morning)
-2. **Interview Command Center** — generate full conversation brief
+1. **Mission Control** — company workspace when focused (intel, actions, message, interview prep)
+2. **My Profile & Portfolio** — edit profile + copy 60-second pitch
+3. **Interview Simulator** — verified-source recruiter practice (offline rule-based)
+4. **Interview Command Center** — generate full conversation brief
 3. **Overview** — KPIs, gap matrix, fit distribution
 4. **Company Ranking** — priority scores across 50 DFW targets
 5. **Role Fit** — six-category scoring with drill-down

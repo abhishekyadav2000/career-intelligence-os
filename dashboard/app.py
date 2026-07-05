@@ -25,7 +25,14 @@ from src.conversation_brief_generator import (
     score_brief_completeness,
 )
 from src.conversation_feedback_analyzer import get_dashboard_stats
-from src.data_confidence import compute_confidence, confidence_badge_label, get_confidence_warnings, is_stale
+from src.data_confidence import (
+    compute_confidence,
+    confidence_badge_label,
+    format_source_freshness_badge,
+    get_confidence_warnings,
+    is_stale,
+    validate_dataset_sources,
+)
 from src.data_loader import load_all
 from src.db import DEMO_QUERIES, init_db, run_query
 from src.health_check import run_health_check
@@ -56,7 +63,24 @@ from src.message_queue_engine import (
 from src.mission_control_engine import build_mission_control
 from src.pipeline_engine import PIPELINE_STAGES, load_pipeline_cards, save_pipeline_cards
 from src.role_reasoning_engine import build_role_deep_dive, load_role_reasoning
-from src.schedule_engine import get_daily_plan, get_next_activities, load_launch_plan, mark_activity_done
+from src.company_workspace import build_company_workspace
+from src.interview_simulator import (
+    build_simulator_context,
+    count_insights_by_company,
+    generate_feedback,
+    generate_recruiter_question,
+    get_round_script,
+    load_interview_insights,
+    load_interview_journey,
+    normalize_round,
+    save_simulator_session,
+)
+from src.profile_manager import (
+    build_sixty_second_pitch,
+    get_portfolio_summary,
+    load_profile,
+    save_profile,
+)
 
 from dashboard.icc_state import (
     CONVERSATION_TYPES,
@@ -239,6 +263,17 @@ CONFIDENCE_CSS = {
 }
 
 
+def render_source_freshness_badge(last_verified: str | None, source_url: str | None) -> None:
+    """Render verified-source freshness badge or warning."""
+    label, severity = format_source_freshness_badge(last_verified, source_url)
+    if severity == "ok":
+        st.caption(f"✓ {label}")
+    elif severity == "warning":
+        st.warning(label)
+    else:
+        st.error(label)
+
+
 def render_confidence_badge(confidence: str) -> str:
     label = confidence_badge_label(confidence)
     css = CONFIDENCE_CSS.get(confidence, "confidence-placeholder")
@@ -343,6 +378,8 @@ proof_df = data.get("proof_assets", load_proof_assets())
 reasoning_df = data.get("role_reasoning", load_role_reasoning())
 projects_df = data.get("company_projects", pd.DataFrame())
 sources_df = data.get("research_sources", pd.DataFrame())
+insights_df = data.get("interview_insights", pd.DataFrame())
+journey_df = data.get("interview_journey", pd.DataFrame())
 
 scores_df = pd.DataFrame([
     {
@@ -448,28 +485,27 @@ st.sidebar.toggle(
 )
 
 st.sidebar.divider()
-st.sidebar.subheader("Quick Filters")
-st.sidebar.caption(QUICK_FILTER_CAPTION)
 
-pipeline_stage_opts = list(PIPELINE_STAGES)
-tier_opts = sorted(companies_df["priority_tier"].dropna().unique().tolist())
-role_family_opts = sorted(jobs_df["role_family"].dropna().unique().tolist())
-
-st.sidebar.multiselect(
-    "Pipeline stage",
-    options=pipeline_stage_opts,
-    key="icc_pipeline_stage_filter",
-)
-st.sidebar.multiselect(
-    "Priority tier",
-    options=tier_opts,
-    key="icc_priority_tier_filter",
-)
-st.sidebar.multiselect(
-    "Role family",
-    options=role_family_opts,
-    key="icc_role_family_filter",
-)
+with st.sidebar.expander("Advanced Filters", expanded=False):
+    st.caption(QUICK_FILTER_CAPTION)
+    pipeline_stage_opts = list(PIPELINE_STAGES)
+    tier_opts = sorted(companies_df["priority_tier"].dropna().unique().tolist())
+    role_family_opts = sorted(jobs_df["role_family"].dropna().unique().tolist())
+    st.multiselect(
+        "Pipeline stage",
+        options=pipeline_stage_opts,
+        key="icc_pipeline_stage_filter",
+    )
+    st.multiselect(
+        "Priority tier",
+        options=tier_opts,
+        key="icc_priority_tier_filter",
+    )
+    st.multiselect(
+        "Role family",
+        options=role_family_opts,
+        key="icc_role_family_filter",
+    )
 
 icc_ctx = resolve_icc_context(st.session_state, companies_df, jobs_df)
 icc_company_id = icc_ctx["company_id"]
@@ -496,6 +532,17 @@ mission_control = build_mission_control(
 mc_cards = mission_control["cards"]
 message_queue = mission_control["message_queue"]
 card_by_job = {c["job_id"]: c for c in mission_control.get("all_cards", mc_cards)}
+
+company_workspace = None
+if icc_focus_mode and icc_company_id and selection_complete:
+    company_workspace = build_company_workspace(
+        icc_company_id,
+        icc_job_id,
+        data,
+        mission_control,
+    )
+
+source_validation = validate_dataset_sources(profiles_df, projects_df, insights_df)
 
 st.sidebar.divider()
 st.sidebar.subheader("Quick Stats")
@@ -675,6 +722,8 @@ def _sync_interview_job():
 
 tabs = st.tabs([
     "Mission Control",
+    "My Profile & Portfolio",
+    "Interview Simulator",
     "Command Center",
     "Company 360",
     "People Map",
@@ -696,10 +745,63 @@ def tab_mission_control():
     mc = mission_control
     readiness = mc["readiness"]
     metrics = mc["metrics"]
-    top_target = mc.get("top_target", {})
 
     st.subheader("Mission Control")
-    if icc_focus_mode and icc_company_id:
+    if icc_focus_mode and icc_company_id and company_workspace:
+        ws = company_workspace
+        st.caption(f"Company workspace — **{icc_company_name}** · {ws.get('job_title', '')} · {mc['date']}")
+        prof_row = profiles_df[profiles_df["company_id"] == icc_company_id]
+        lu = prof_row.iloc[0]["last_updated"] if not prof_row.empty else ws.get("last_updated", "")
+        src_url = ""
+        if not sources_df.empty:
+            co_src = sources_df[sources_df["company_id"] == icc_company_id]
+            if not co_src.empty:
+                src_url = co_src.iloc[0].get("source_url", "")
+        render_source_freshness_badge(lu, src_url or "https://careers.jpmorgan.com")
+
+        st.markdown("#### Company Intel")
+        for line in ws.get("intel_summary_lines", []):
+            st.write(line)
+
+        col_a, col_b, col_c = st.columns(3)
+        with col_a:
+            st.markdown("#### Top 3 Actions Today")
+            actions = ws.get("top_actions", [])
+            if actions:
+                for i, act in enumerate(actions[:3], 1):
+                    st.write(f"{i}. **{act.get('next_action', 'Review pipeline')}**")
+                    st.caption(f"{act.get('pipeline_stage', '')} · priority {act.get('priority_score', '')}")
+            else:
+                st.info("No queued actions — check pipeline board.")
+        with col_b:
+            st.markdown("#### Message Ready to Copy")
+            msg = ws.get("copy_message", "")
+            if msg:
+                st.text_area("Outreach draft", msg, height=160, key="ws_copy_message")
+                copy_to_clipboard_button(msg, "ws_msg")
+            else:
+                st.info("Move a card to Ready to Contact for message drafts.")
+        with col_c:
+            st.markdown("#### Proof Assets to Show")
+            for asset in ws.get("proof_assets", [])[:3]:
+                st.write(f"**{asset.get('title', '')}**")
+                st.caption(asset.get("description", "")[:80])
+            st.info("Practice interviews in the **Interview Simulator** tab →")
+
+        st.markdown("#### Interview Prep Status")
+        journey = ws.get("interview_journey", [])
+        if journey:
+            for row in journey:
+                icon = "✅" if str(row.get("prep_complete", "")).lower() in ("true", "1") else "⬜"
+                st.write(
+                    f"{icon} **{str(row.get('round', '')).replace('_', ' ').title()}** — "
+                    f"{row.get('status', 'pending')} · {row.get('scheduled_date') or 'TBD'}"
+                )
+        else:
+            st.caption("Add rounds to data/interview_journey.csv for this company/role.")
+
+        st.divider()
+    elif icc_focus_mode and icc_company_id:
         st.caption(
             f"Focused on: **{icc_company_name}** "
             f"({metrics.get('total_cards', 0)} pipeline cards, "
@@ -1013,8 +1115,12 @@ def tab_company_360():
     st.markdown(render_confidence_badge(conf), unsafe_allow_html=True)
     if is_stale(lu):
         st.warning(f"Profile last updated {lu} — data may be stale (>30 days).")
-    for w in get_confidence_warnings(icc_company_id, profiles_df, people_df, sources_df):
+    for w in get_confidence_warnings(
+        icc_company_id, profiles_df, people_df, sources_df,
+        projects_df=projects_df, insights_df=insights_df,
+    ):
         st.caption(w)
+    render_source_freshness_badge(lu, c360.get("sources", [{}])[0].get("source_url") if c360.get("sources") else "")
 
     st.write(f"**Strategic Summary:** {c360['strategic_summary']}")
     st.write(f"**Growth Signals:** {c360['growth_signals']}")
@@ -1379,10 +1485,201 @@ def tab_feedback():
         st.dataframe(pd.DataFrame(feedback["portfolio_improvements"]), hide_index=True)
 
 
+def tab_profile_portfolio():
+    st.subheader("My Profile & Portfolio")
+    st.caption("In-app profile — used automatically by Interview Simulator")
+
+    profile = load_profile()
+    summary = get_portfolio_summary(icc_company_id if icc_focus_mode else None, profile)
+
+    with st.form("profile_edit_form"):
+        name = st.text_input("Name", value=profile.get("name", ""))
+        headline = st.text_input("Headline", value=profile.get("headline", ""))
+        positioning = st.text_area("Positioning", value=profile.get("positioning", ""), height=80)
+        skills = st.text_input("Skills (comma-separated)", value=", ".join(profile.get("skills", [])))
+        education = st.text_input("Education", value=profile.get("education", ""))
+        opt_status = st.text_input("Work authorization", value=profile.get("opt_status", ""))
+        bullets_text = st.text_area(
+            "Experience bullets (one per line)",
+            value="\n".join(profile.get("experience_bullets", [])),
+            height=120,
+        )
+        if st.form_submit_button("Save Profile", type="primary"):
+            updated = dict(profile)
+            updated.update({
+                "name": name,
+                "headline": headline,
+                "positioning": positioning,
+                "skills": [s.strip() for s in skills.split(",") if s.strip()],
+                "education": education,
+                "opt_status": opt_status,
+                "experience_bullets": [b.strip() for b in bullets_text.splitlines() if b.strip()],
+            })
+            path = save_profile(updated)
+            st.success(f"Profile saved to {path.name}")
+            st.rerun()
+
+    st.divider()
+    st.markdown("#### Linked Proof Assets")
+    assets = summary.get("proof_assets", [])
+    if assets:
+        for asset in assets:
+            with st.expander(asset.get("title", "Asset")):
+                st.write(asset.get("description", ""))
+                link = asset.get("url_or_path", "")
+                if link:
+                    st.caption(f"Demo: `{link}`")
+    else:
+        st.info("Add proof_asset_ids to user_profile.yaml")
+
+    st.markdown("#### 60-Second Pitch")
+    pitch = summary.get("sixty_second_pitch", build_sixty_second_pitch(profile))
+    st.text_area("Pitch preview", pitch, height=120, key="pitch_preview")
+    copy_to_clipboard_button(pitch, "pitch_copy")
+
+    highlights = summary.get("resume_highlights", "")
+    if highlights:
+        st.markdown("#### Resume Highlights (upload)")
+        st.text(highlights[:2000])
+    else:
+        st.caption("Optional: add `data/uploads/resume_highlights.txt` (gitignored)")
+
+
+def tab_interview_simulator():
+    st.subheader("Interview Practice Simulator")
+    st.markdown('<span id="interview-simulator"></span>', unsafe_allow_html=True)
+
+    if not selection_complete:
+        st.warning("Select **Target Company** and **Target Role** in the sidebar to start.")
+        return
+
+    round_options = [
+        ("recruiter_screen", "Recruiter Screen"),
+        ("hm_screen", "Hiring Manager Screen"),
+        ("technical", "Technical Interview"),
+        ("behavioral", "Behavioral Interview"),
+        ("final", "Final Round"),
+    ]
+    round_labels = [r[1] for r in round_options]
+    round_map = {label: key for key, label in round_options}
+
+    sim_round = st.selectbox("Interview Round", options=round_labels, key="sim_round_select")
+    round_key = round_map[sim_round]
+
+    role_family = icc_job_row["role_family"] if icc_job_row is not None else "Technology Analyst"
+    insights = load_interview_insights(icc_company_id, role_family, round_key)
+    company_dict = icc_ctx["company_row"].to_dict() if icc_ctx.get("company_row") is not None else {
+        "company_id": icc_company_id, "company_name": icc_company_name,
+    }
+    job_dict = icc_job_row.to_dict() if icc_job_row is not None else {}
+    profile = load_profile()
+    proof_list = get_portfolio_summary(icc_company_id, profile).get("proof_assets", [])
+
+    context = build_simulator_context(
+        company_dict,
+        job_dict,
+        profile,
+        insights,
+        proof_list,
+        reasoning_df=reasoning_df,
+        jobs_df=jobs_df,
+    )
+    context["round"] = round_key
+
+    st.caption(f"{icc_company_name} · {icc_ctx['job_title']} · {len(insights)} verified questions for this round/role")
+
+    ctx_col, src_col = st.columns([2, 1])
+    with ctx_col:
+        st.markdown("#### Context")
+        st.write(f"**Company themes:** {context.get('company_themes', '')[:200]}")
+        st.write("**Your bullets:**")
+        for b in profile.get("experience_bullets", [])[:3]:
+            st.write(f"- {b}")
+        st.write("**Proof to mention:**")
+        for p in proof_list[:3]:
+            st.write(f"- {p.get('title', '')}")
+
+    with src_col:
+        st.markdown("#### Verified Sources")
+        if insights:
+            for ins in insights[:8]:
+                title = ins.get("source_title", "Source")[:40]
+                url = ins.get("source_url", "")
+                st.markdown(f"- [{title}]({url})")
+                render_source_freshness_badge(ins.get("last_verified"), url)
+        else:
+            st.warning("No verified insights for this filter — check interview_insights.csv")
+
+    if "sim_history" not in st.session_state:
+        st.session_state.sim_history = []
+    if "sim_questions" not in st.session_state:
+        st.session_state.sim_questions = []
+
+    if st.button("Start New Question", type="primary", key="sim_new_q"):
+        q = generate_recruiter_question(context, round_key, st.session_state.sim_history)
+        insight_row = _pick_sim_insight(insights, st.session_state.sim_history, round_key)
+        st.session_state.sim_current_question = q
+        st.session_state.sim_current_insight = insight_row
+        st.session_state.sim_questions.append(q)
+
+    if st.button("Reset Session", key="sim_reset"):
+        st.session_state.sim_history = []
+        st.session_state.sim_questions = []
+        st.session_state.pop("sim_current_question", None)
+        st.session_state.pop("sim_current_insight", None)
+        st.rerun()
+
+    current_q = st.session_state.get("sim_current_question")
+    if current_q:
+        with st.chat_message("assistant"):
+            st.write(current_q)
+            ins = st.session_state.get("sim_current_insight")
+            if ins and ins.get("source_url"):
+                st.caption(f"Source: [{ins.get('source_title', 'link')}]({ins.get('source_url')})")
+
+    answer = st.chat_input("Type your answer…")
+    if answer and current_q:
+        with st.chat_message("user"):
+            st.write(answer)
+        feedback = generate_feedback(
+            answer,
+            current_q,
+            context,
+            st.session_state.get("sim_current_insight"),
+        )
+        with st.chat_message("assistant"):
+            st.markdown(feedback)
+        st.session_state.sim_history.append({
+            "question": current_q,
+            "answer": answer,
+            "insight_id": (st.session_state.get("sim_current_insight") or {}).get("insight_id"),
+        })
+        st.session_state.pop("sim_current_question", None)
+
+    if st.session_state.sim_questions and st.button("Save Session", key="sim_save"):
+        sid = save_simulator_session(
+            icc_company_id,
+            icc_company_name,
+            icc_job_id,
+            role_family,
+            round_key,
+            st.session_state.sim_questions,
+            notes=f"{len(st.session_state.sim_history)} Q&A exchanges",
+        )
+        st.success(f"Session saved: {sid}")
+
+
+def _pick_sim_insight(insights, history, round_key):
+    from src.interview_simulator import _pick_insight_question
+    return _pick_insight_question(insights, history, round_key)
+
+
 # ── Render tabs with error boundaries ─────────────────────────────────────────
 
 TAB_RENDERERS = [
     ("Mission Control", "mission_control_engine", "Run scripts/seed_pipeline_cards.py and check pipeline CSVs", tab_mission_control),
+    ("My Profile & Portfolio", "profile_manager", "Check data/user_profile.yaml and PyYAML", tab_profile_portfolio),
+    ("Interview Simulator", "interview_simulator", "Check data/interview_insights.csv", tab_interview_simulator),
     ("Command Center", "conversation_brief_generator", "Check ICC CSV files and brief generator imports", tab_command_center),
     ("Company 360", "company_profile_engine", "Verify company_profiles.csv and company_projects.csv", tab_company_360),
     ("People Map", "people_power_mapper", "Verify people_map.csv schema and contact types", tab_people_map),

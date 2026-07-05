@@ -52,6 +52,9 @@ CORE_MODULES = [
     "src.mission_control_engine",
     "src.message_queue_engine",
     "src.data_confidence",
+    "src.profile_manager",
+    "src.interview_simulator",
+    "src.company_workspace",
 ]
 
 COMPAT_MODULES = [
@@ -64,6 +67,8 @@ COMPAT_MODULES = [
 
 TAB_TESTS = [
     "Mission Control",
+    "My Profile & Portfolio",
+    "Interview Simulator",
     "Interview Command Center",
     "Company 360",
     "People Map",
@@ -118,7 +123,7 @@ def test_data_load(report: TestReport) -> dict:
     from src.data_loader import load_all
 
     data = load_all()
-    for key in ("companies", "jobs", "contacts", "company_profiles", "people_map", "proof_assets"):
+    for key in ("companies", "jobs", "contacts", "company_profiles", "people_map", "proof_assets", "interview_insights"):
         if key not in data:
             report.fail(f"data_load: missing key '{key}'")
         elif data[key].empty and key not in ("gap_matrix", "conversation_briefs"):
@@ -158,6 +163,13 @@ def test_tabs(report: TestReport, data: dict) -> None:
         generate_people_research_prompt,
         generate_role_research_prompt,
     )
+    from src.company_workspace import build_company_workspace
+    from src.interview_simulator import (
+        build_simulator_context,
+        generate_recruiter_question,
+        load_interview_insights,
+    )
+    from src.profile_manager import get_portfolio_summary, load_profile, build_sixty_second_pitch
     from src.mission_control_engine import build_mission_control
     from src.message_queue_engine import build_message_queue
     from src.pipeline_engine import build_pipeline_cards, get_pipeline_metrics
@@ -173,6 +185,7 @@ def test_tabs(report: TestReport, data: dict) -> None:
     reasoning_df = data.get("role_reasoning", load_role_reasoning())
     projects_df = data.get("company_projects", pd.DataFrame())
     sources_df = data.get("research_sources", pd.DataFrame())
+    insights_df = data.get("interview_insights", pd.DataFrame())
 
     jpm = companies_df[companies_df["company_name"] == "JPMorgan Chase"]
     if jpm.empty:
@@ -192,12 +205,31 @@ def test_tabs(report: TestReport, data: dict) -> None:
     gaps = analyze_jobs_batch(jobs_df, scores)
     init_db(companies_df, jobs_df, contacts_df)
 
+    mc = build_mission_control(data, company_id=company_id, focus_mode=True)
+    job_row = jobs_df[jobs_df["job_id"] == job_id].iloc[0]
+    jpm_row = companies_df[companies_df["company_id"] == company_id].iloc[0]
+    sim_insights = load_interview_insights(company_id, job_row["role_family"], "recruiter_screen")
+    sim_context = build_simulator_context(
+        jpm_row.to_dict(), job_row.to_dict(), load_profile(), sim_insights, [],
+        reasoning_df=reasoning_df, jobs_df=jobs_df,
+    )
+
     tab_ops = {
         "Mission Control": lambda: (
-            build_mission_control(data),
+            mc,
+            build_company_workspace(company_id, job_id, data, mc),
             build_pipeline_cards(data),
             get_pipeline_metrics(build_pipeline_cards(data)),
             build_message_queue(build_pipeline_cards(data), data),
+        ),
+        "My Profile & Portfolio": lambda: (
+            load_profile(),
+            get_portfolio_summary(company_id),
+            build_sixty_second_pitch(load_profile()),
+        ),
+        "Interview Simulator": lambda: (
+            sim_insights,
+            generate_recruiter_question(sim_context, "recruiter_screen", []),
         ),
         "Interview Command Center": lambda: (
             generate_conversation_brief(company_id, job_id, jobs_df, "hiring manager", "hiring manager screen"),

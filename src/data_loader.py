@@ -24,6 +24,8 @@ INTERVIEW_COMMAND_CENTER_FILES = {
     "proof_assets": "proof_assets.csv",
     "conversation_briefs": "conversation_briefs.csv",
     "research_sources": "research_sources.csv",
+    "interview_insights": "interview_insights.csv",
+    "interview_journey": "interview_journey.csv",
 }
 
 

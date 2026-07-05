@@ -14,7 +14,7 @@ INTERVIEW_STAGES = [
     "follow-up",
 ]
 
-QUICK_FILTER_CAPTION = "Filters: Action Queue, Pipeline Board, Message Queue"
+QUICK_FILTER_CAPTION = "Optional — Action Queue, Pipeline Board, Message Queue only"
 
 
 def build_company_options(

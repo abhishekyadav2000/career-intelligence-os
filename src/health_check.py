@@ -35,6 +35,9 @@ CORE_MODULES = [
     "src.pipeline_engine",
     "src.schedule_engine",
     "src.data_confidence",
+    "src.profile_manager",
+    "src.interview_simulator",
+    "src.company_workspace",
 ]
 
 COMPAT_MODULES = [
@@ -56,6 +59,7 @@ REQUIRED_CSVS = [
     "role_reasoning.csv",
     "proof_assets.csv",
     "research_sources.csv",
+    "interview_insights.csv",
 ]
 
 OPTIONAL_CSVS = [
@@ -64,6 +68,8 @@ OPTIONAL_CSVS = [
     "pipeline_cards.csv",
     "monday_launch_plan.csv",
     "activity_schedule.csv",
+    "interview_journey.csv",
+    "simulator_sessions.csv",
 ]
 
 EXAMPLE_CSVS = [
