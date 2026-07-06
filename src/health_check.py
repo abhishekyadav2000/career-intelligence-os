@@ -38,6 +38,12 @@ CORE_MODULES = [
     "src.profile_manager",
     "src.interview_simulator",
     "src.company_workspace",
+    "src.demand_intelligence_engine",
+    "src.role_demand_scorer",
+    "src.contact_pod_builder",
+    "src.engagement_engine",
+    "src.knowledge_graph",
+    "src.relationship_workbook",
 ]
 
 COMPAT_MODULES = [
@@ -70,6 +76,12 @@ OPTIONAL_CSVS = [
     "activity_schedule.csv",
     "interview_journey.csv",
     "simulator_sessions.csv",
+    "company_demand_signals.csv",
+    "role_demand_scores.csv",
+    "contact_pods.csv",
+    "engagement_hooks.csv",
+    "outreach_queue.csv",
+    "knowledge_graph_edges.csv",
 ]
 
 EXAMPLE_CSVS = [

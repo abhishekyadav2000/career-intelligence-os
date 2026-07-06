@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parent.parent
 REGISTRY_PATH = ROOT / "data" / "feature_registry.yaml"
 
 NAV_GROUPS: dict[str, list[str]] = {
-    "Execute": ["Mission Control"],
+    "Execute": ["Demand First", "Mission Control"],
     "Prepare": ["Interview Simulator", "My Profile & Portfolio"],
     "Intelligence": ["Company 360", "Role Deep Dive", "People Map", "Proof Assets"],
     "Analytics": ["Company Ranking", "Role Fit", "Sponsorship Signal", "Recommendations", "Overview"],
@@ -53,6 +53,7 @@ def get_feature_help(feature_key: str, registry: dict[str, Any] | None = None) -
 def feature_key_for_tab(tab_name: str) -> str:
     """Map display tab name to registry key."""
     mapping = {
+        "Demand First": "demand_first",
         "Mission Control": "mission_control",
         "Interview Simulator": "interview_simulator",
         "My Profile & Portfolio": "my_profile",

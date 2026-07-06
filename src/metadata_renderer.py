@@ -122,6 +122,27 @@ def render_freshness_badge(last_updated: str | None) -> str:
     return f'<span class="ci-chip {css}">{label}</span>'
 
 
+def render_fit_tier_badge(tier: str) -> str:
+    """HTML badge for demand-first fit tier A/B/C/D."""
+    colors = {
+        "A": ("#064e3b", "#6ee7b7"),
+        "B": ("#1e3a5f", "#7dd3fc"),
+        "C": ("#78350f", "#fcd34d"),
+        "D": ("#334155", "#94a3b8"),
+    }
+    bg, fg = colors.get(str(tier).upper(), colors["D"])
+    return (
+        f'<span class="ci-chip" style="background:{bg};color:{fg};">'
+        f'Tier {str(tier).upper()}</span>'
+    )
+
+
+def render_engagement_level(level: int | float) -> str:
+    """HTML indicator for engagement ladder 1-10."""
+    lv = max(1, min(10, int(level or 1)))
+    return f'<span class="ci-chip ci-chip-metric">Engagement L{lv}/10</span>'
+
+
 def render_confidence_bar(score: int | float, label: str = "") -> str:
     """HTML horizontal confidence bar for scores 0–100."""
     value = max(0, min(100, float(score or 0)))

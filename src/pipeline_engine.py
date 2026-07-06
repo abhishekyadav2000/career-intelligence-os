@@ -14,6 +14,7 @@ from src.data_confidence import compute_confidence, is_stale
 from src.people_power_mapper import load_people_map, rank_contacts_for_conversation
 from src.proof_asset_mapper import get_top_proof_assets_for_display, load_proof_assets
 from src.recommendation_engine import recommend_batch
+from src.role_demand_scorer import load_role_demand_scores
 from src.role_fit_scorer import score_jobs_dataframe
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
@@ -224,6 +225,7 @@ def build_pipeline_cards(data: dict, reference: datetime | None = None) -> list[
         action = rec.get("action", "research more")
         urgency = _urgency_score(action, fit)
         priority = score_pipeline_card(fit, company_pri, sponsor, proof_score, people_v, urgency)
+        priority = min(100, priority + _demand_boost(job_id))
 
         has_sources = (
             not sources_df.empty
@@ -272,10 +274,22 @@ def build_pipeline_cards(data: dict, reference: datetime | None = None) -> list[
     return cards
 
 
+def _demand_boost(job_id: str) -> float:
+    """Boost priority for Tier A/B demand scores."""
+    demand_df = load_role_demand_scores()
+    if demand_df.empty:
+        return 0.0
+    row = demand_df[demand_df["job_id"] == job_id]
+    if row.empty:
+        return 0.0
+    tier = str(row.iloc[0].get("fit_tier", "D"))
+    return {"A": 15, "B": 8, "C": 0, "D": -5}.get(tier, 0.0)
+
+
 def _next_action_for_stage(stage: str, action: str, contact_type: str, proof_title: str) -> str:
     proof_ref = proof_title or "top proof asset"
     actions = {
-        "Research Needed": "Complete company 360 research and add research_sources",
+        "Research Needed": "Review demand signals and company careers portal before people search",
         "Person Verification": f"Verify {contact_type} contact via public sources before outreach",
         "Ready to Contact": f"Draft outreach with {proof_ref}; export message from queue",
         "Message Sent": "Log conversation in conversation_log_template.csv",

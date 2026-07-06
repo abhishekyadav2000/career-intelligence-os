@@ -1,0 +1,23 @@
+edge_id,from_entity,from_type,relationship,to_entity,to_type,confidence,source_url
+KG-001,JPMorgan Chase,company,HAS_ROLE,AI Automation Analyst,role,0.95,https://careers.jpmorgan.com
+KG-002,JPMorgan Chase,company,HAS_ROLE,Technology Analyst,role,0.95,https://careers.jpmorgan.com
+KG-003,JPMorgan Chase,company,HAS_ROLE,Cloud Security Analyst,role,0.92,https://careers.jpmorgan.com
+KG-004,AI Automation Analyst,role,REQUIRES,Python,skill,0.9,
+KG-005,AI Automation Analyst,role,REQUIRES,SQL,skill,0.9,
+KG-006,AI Automation Analyst,role,REQUIRES,AI Automation,skill,0.88,
+KG-007,Technology Analyst,role,REQUIRES,Data Analytics,skill,0.9,
+KG-008,Technology Analyst,role,REQUIRES,Cloud Security,skill,0.85,
+KG-009,Cloud Security Analyst,role,REQUIRES,IAM,skill,0.92,
+KG-010,Cloud Security Analyst,role,REQUIRES,SIEM,skill,0.88,
+KG-011,Python,skill,DEMONSTRATES,PA001 Career Intelligence OS Dashboard,proof,0.9,dashboard/app.py
+KG-012,SQL,skill,DEMONSTRATES,PA001 Career Intelligence OS Dashboard,proof,0.88,dashboard/app.py
+KG-013,AI Automation,skill,DEMONSTRATES,PA003 AI Agent Risk Scoring,proof,0.92,case-studies/ai-agent-risk-scoring.md
+KG-014,Cloud Security,skill,DEMONSTRATES,PA004 Secure Cloud Evidence Lab,proof,0.95,case-studies/secure-cloud-evidence-lab.md
+KG-015,IAM,skill,DEMONSTRATES,PA004 Secure Cloud Evidence Lab,proof,0.93,case-studies/secure-cloud-evidence-lab.md
+KG-016,SIEM,skill,DEMONSTRATES,PA004 Secure Cloud Evidence Lab,proof,0.9,case-studies/secure-cloud-evidence-lab.md
+KG-017,Data Analytics,skill,DEMONSTRATES,PA001 Career Intelligence OS Dashboard,proof,0.87,dashboard/app.py
+KG-018,JPMorgan Chase,company,HAS_SIGNAL,DS-C001-03,signal,0.9,https://careers.jpmorgan.com/about/technology
+KG-019,JPMorgan Chase,company,HAS_SIGNAL,DS-C001-09,signal,0.92,https://careers.jpmorgan.com/us/en/students/programs/software-engineer-summer
+KG-020,JPMorgan Chase,company,TARGETS,Plano Technology Hub,location,0.95,https://careers.jpmorgan.com/about/technology
+KG-021,Goldman Sachs,company,HAS_ROLE,Security Engineer,role,0.85,https://www.goldmansachs.com/careers
+KG-022,Bank of America,company,HAS_SIGNAL,DS-C003-01,signal,0.85,https://careers.bankofamerica.com

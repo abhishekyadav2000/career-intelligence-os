@@ -1,26 +1,25 @@
 # Recursive Job Search Loop
 
-Career Intelligence OS implements a **10-step recursive loop** that turns job search from reactive applications into a measurable operating system. Each cycle makes the next outreach stronger.
+Career Intelligence OS implements a **10-step Demand First loop** (v1.3) that turns job search from reactive applications into a measurable operating system. **Before people, find demand. Before outreach, find context.**
+
+See [demand-first-workflow.md](demand-first-workflow.md) for the full v1.3 operating model.
 
 ---
 
-## The Loop
+## The Loop (Demand First v1.3)
 
 ```mermaid
 flowchart LR
-    A[1. Target Company] --> B[2. Analyze Role]
-    B --> C[3. Build Talking Points]
-    C --> D[4. Outreach]
-    D --> E[5. Conversation]
-    E --> F[6. Interview Notes]
-    F --> G[7. Update Repo]
-    G --> H[8. Stronger Outreach]
-    H --> A
-
-    style A fill:#e1f5fe
-    style E fill:#fff3e0
-    style G fill:#e8f5e9
-    style H fill:#f3e5f5
+    A[1. Company] --> B[2. Recent Jobs]
+    B --> C[3. Role Fit]
+    C --> D[4. Team Signals]
+    D --> E[5. People Map]
+    E --> F[6. Engagement Hook]
+    F --> G[7. Message Draft]
+    G --> H[8. Manual Outreach]
+    H --> I[9. Feedback]
+    I --> J[10. Portfolio + Follow-up]
+    J --> A
 ```
 
 ---
@@ -29,16 +28,16 @@ flowchart LR
 
 | Step | Action | Tool / Artifact | Output |
 |------|--------|----------------|--------|
-| **1. Target Company** | Select from ranked list | Company Ranking tab, company packets | Priority target with rationale |
-| **2. Analyze Role** | Score fit, check sponsorship | Role Fit tab, Sponsorship Signal tab | Fit score + six-category breakdown |
-| **3. Build Talking Points** | Prepare company-specific angles | Company packet, interview packet | 3 talking points tied to portfolio |
-| **4. Outreach** | Send targeted message | Conversation playbooks, Networking Map tab | Logged outreach with contact type |
-| **5. Conversation** | Recruiter call, informational, interview | Playbooks (recruiter, HM, peer, alumni) | Insights, objections, authorization clarity |
-| **6. Interview Notes** | Capture questions, gaps, feedback | Interview packet for role family | Structured notes in conversation log |
-| **7. Update Repo** | Fix portfolio gaps identified | Case studies, lab modules, dashboard | Improved artifact for next conversation |
-| **8. Log Conversation** | Record in CSV | `data/conversation_log_template.csv` | Structured row with all fields |
-| **9. Analyze Feedback** | Review patterns | Conversation Feedback tab | Warm companies, objections, next actions |
-| **10. Stronger Next Outreach** | Apply learnings to next target | Company packets + updated portfolio | Higher-quality message with proof |
+| **1. Company** | Select Tier-1 target | Company Ranking, Focus Mode | Priority company |
+| **2. Recent Jobs** | Review demand signals | Demand First tab, `company_demand_signals.csv` | Source-backed hiring signals |
+| **3. Role Fit** | Score with 100-pt formula | `role_demand_scores.csv` | Tier A/B/C/D board |
+| **4. Team Signals** | Business units hiring | Demand signals by technology area | Hiring themes |
+| **5. People Map** | 15-slot contact pod | `contact_pods.csv` | Search URLs — no fake names |
+| **6. Engagement Hook** | Signal → opener | `engagement_hooks.csv` | Level 1–10 ladder |
+| **7. Message Draft** | Value-first copy | `outreach_queue.csv` | Human-reviewed drafts |
+| **8. Manual Outreach** | Send + log | Conversation playbooks | Logged outreach |
+| **9. Feedback** | Analyze patterns | Conversation Feedback tab | Gaps, warm companies |
+| **10. Follow-up** | Portfolio improvement | Proof assets, pipeline | Stronger next cycle |
 
 ---
 

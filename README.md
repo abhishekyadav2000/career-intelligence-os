@@ -34,13 +34,32 @@ Career Intelligence OS ingests structured company, job, and contact data; scores
 | **My Profile & Portfolio** | `src/profile_manager.py` | In-app profile, STAR stories, proof links — feeds Simulator automatically |
 | **Verified Sources** | `src/data_confidence.py`, `data/interview_insights.csv` | Source freshness badges; no placeholder interview questions |
 
+## v1.3 — Demand First Intelligence
+
+Version **1.3.0** adds the **Demand First** operating model: company signals and role fit before people search.
+
+| Capability | Module | Data File |
+|------------|--------|-----------|
+| Demand signals | `src/demand_intelligence_engine.py` | `company_demand_signals.csv` |
+| Role demand scoring (100 pts) | `src/role_demand_scorer.py` | `role_demand_scores.csv` |
+| Contact pods (15 slots) | `src/contact_pod_builder.py` | `contact_pods.csv` |
+| Engagement hooks + drafts | `src/engagement_engine.py` | `engagement_hooks.csv`, `outreach_queue.csv` |
+| Knowledge graph | `src/knowledge_graph.py` | `knowledge_graph_edges.csv` |
+| Relationship XLSX export | `src/relationship_workbook.py` | `data/relationship_graph_export/` |
+
+**Workflow:** Company → Recent Jobs → Role Fit → Team Signals → People Map → Engagement Hook → Message Draft → Manual Outreach → Feedback → Portfolio → Follow-up
+
+**Execute tab:** **Demand First** (new) + Mission Control. Focus Mode prioritizes Tier A roles and surfaces demand blockers.
+
+Seed: `python scripts/seed_demand_first_data.py` · Guide: [docs/demand-first-workflow.md](docs/demand-first-workflow.md)
+
 ## v1.2 — Grouped Navigation & Metadata-Rich UI
 
 Version **1.2.0** reorganizes the dashboard from 17 flat tabs into **5 navigation groups** with 1–5 views visible at a time:
 
 | Group | Views |
 |-------|-------|
-| **Execute** | Mission Control |
+| **Execute** | Demand First, Mission Control |
 | **Prepare** | Interview Simulator, My Profile & Portfolio |
 | **Intelligence** | Company 360, Role Deep Dive, People Map, Proof Assets |
 | **Analytics** | Company Ranking, Role Fit, Sponsorship Signal, Recommendations, Overview |

@@ -56,6 +56,12 @@ CORE_MODULES = [
     "src.interview_simulator",
     "src.company_workspace",
     "src.metadata_renderer",
+    "src.demand_intelligence_engine",
+    "src.role_demand_scorer",
+    "src.contact_pod_builder",
+    "src.engagement_engine",
+    "src.knowledge_graph",
+    "src.relationship_workbook",
 ]
 
 COMPAT_MODULES = [
@@ -67,6 +73,7 @@ COMPAT_MODULES = [
 ]
 
 TAB_TESTS = [
+    "Demand First",
     "Mission Control",
     "My Profile & Portfolio",
     "Interview Simulator",
@@ -176,6 +183,11 @@ def test_tabs(report: TestReport, data: dict) -> None:
     from src.pipeline_engine import build_pipeline_cards, get_pipeline_metrics
     from src.role_fit_scorer import score_jobs_dataframe
     from src.role_reasoning_engine import build_role_deep_dive, load_role_reasoning
+    from src.demand_intelligence_engine import get_company_demand_summary, load_demand_signals
+    from src.contact_pod_builder import get_pod_for_company, pod_completeness
+    from src.engagement_engine import load_engagement_hooks, load_outreach_queue
+    from src.knowledge_graph import export_graph_summary, get_proof_path
+    from src.role_demand_scorer import load_role_demand_scores
 
     jobs_df = data["jobs"]
     companies_df = data["companies"]
@@ -216,6 +228,17 @@ def test_tabs(report: TestReport, data: dict) -> None:
     )
 
     tab_ops = {
+        "Demand First": lambda: (
+            load_demand_signals(company_id),
+            get_company_demand_summary(company_id),
+            load_role_demand_scores(),
+            get_pod_for_company(company_id),
+            pod_completeness(company_id),
+            load_engagement_hooks(company_id),
+            load_outreach_queue(company_id),
+            export_graph_summary(company_id),
+            get_proof_path("JPMorgan Chase", job_row["role_family"]),
+        ),
         "Mission Control": lambda: (
             mc,
             build_company_workspace(company_id, job_id, data, mc),

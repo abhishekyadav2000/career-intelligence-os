@@ -28,6 +28,15 @@ INTERVIEW_COMMAND_CENTER_FILES = {
     "interview_journey": "interview_journey.csv",
 }
 
+DEMAND_FIRST_FILES = {
+    "company_demand_signals": "company_demand_signals.csv",
+    "role_demand_scores": "role_demand_scores.csv",
+    "contact_pods": "contact_pods.csv",
+    "engagement_hooks": "engagement_hooks.csv",
+    "outreach_queue": "outreach_queue.csv",
+    "knowledge_graph_edges": "knowledge_graph_edges.csv",
+}
+
 
 def _add_ids(companies: pd.DataFrame, jobs: pd.DataFrame, contacts: pd.DataFrame):
     """Add stable IDs and legacy column aliases for downstream modules."""
@@ -80,9 +89,27 @@ def _load_icc_files(data_dir: Path | None = None) -> dict[str, pd.DataFrame]:
     return icc_data
 
 
-def load_icc_files(data_dir: Path | None = None) -> dict[str, pd.DataFrame]:
-    """Load all Interview Command Center CSV files (public alias)."""
-    return _load_icc_files(data_dir)
+def _load_demand_first_files(data_dir: Path | None = None) -> dict[str, pd.DataFrame]:
+    base = data_dir or DATA_DIR
+    out: dict[str, pd.DataFrame] = {}
+    for key, fname in DEMAND_FIRST_FILES.items():
+        fpath = base / fname
+        out[key] = pd.read_csv(fpath) if fpath.exists() else pd.DataFrame()
+    return out
+
+
+def load_demand_first_data(data_dir: Path | None = None, company_id: str | None = None) -> dict[str, pd.DataFrame]:
+    """Load Demand First datasets, optionally scoped to company."""
+    raw = _load_demand_first_files(data_dir)
+    if not company_id:
+        return raw
+    scoped = {}
+    for key, df in raw.items():
+        if df.empty or "company_id" not in df.columns:
+            scoped[key] = df
+        else:
+            scoped[key] = df[df["company_id"] == company_id].copy()
+    return scoped
 
 
 def load_core(data_dir: Path | None = None, validate: bool = True) -> dict[str, pd.DataFrame]:
@@ -159,8 +186,14 @@ def load_mission_control_data(
     return merged
 
 
+def load_icc_files(data_dir: Path | None = None) -> dict[str, pd.DataFrame]:
+    """Load all Interview Command Center CSV files (public alias)."""
+    return _load_icc_files(data_dir)
+
+
 def load_all(data_dir: Path | None = None, validate: bool = True) -> dict[str, pd.DataFrame]:
     """Load, validate, clean, and enrich all datasets."""
     core = load_core(data_dir, validate=validate)
     icc = _load_icc_files(data_dir)
-    return {**core, **icc}
+    demand = _load_demand_first_files(data_dir)
+    return {**core, **icc, **demand}

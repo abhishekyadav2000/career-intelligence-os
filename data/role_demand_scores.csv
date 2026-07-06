@@ -1,0 +1,108 @@
+job_id,company_id,company_name,job_title,role_family,posted_date,location,dfw_score,recency_score,profile_match_score,early_career_score,skills_match_score,portfolio_support_score,sponsor_score,total_fit_score,fit_tier,recommended_action,source_url,last_scored
+J0001,C001,JPMorgan Chase,AI Automation Analyst,Enterprise Technology,2026-06-28,Plano / Dallas,20,15,20,5,10,10,5,85,A,immediate_outreach,https://careers.jpmorgan.com/us/en/students/programs/software-engineer-summer,2026-07-06
+J0002,C001,JPMorgan Chase,Technology Analyst,Enterprise Technology,2026-07-01,Plano / Dallas,20,15,20,5,10,8,5,83,A,immediate_outreach,https://careers.jpmorgan.com/professionals,2026-07-06
+J0003,C001,JPMorgan Chase,Cloud Security Analyst,Enterprise Technology,2026-07-03,Plano / Dallas,20,15,23,5,10,10,5,88,A,immediate_outreach,https://careers.jpmorgan.com/about/technology,2026-07-06
+J0004,C002,Goldman Sachs,Security Engineer,Enterprise Technology,2026-04-04,Dallas,20,0,20,5,10,10,5,70,B,apply_monitor,https://careers.example.com/goldman-sachs/jobs/J0004,2026-07-06
+J0005,C002,Goldman Sachs,Business Systems Analyst,Enterprise Technology,2026-05-05,Dallas,20,0,20,5,10,8,5,68,B,apply_monitor,https://careers.example.com/goldman-sachs/jobs/J0005,2026-07-06
+J0006,C002,Goldman Sachs,Operations Technology Analyst,Enterprise Technology,2026-06-06,Dallas,20,8,23,5,10,10,5,81,A,immediate_outreach,https://careers.example.com/goldman-sachs/jobs/J0006,2026-07-06
+J0007,C003,Bank of America,Security Engineer,Enterprise Technology,2026-01-07,Dallas,20,0,20,5,10,10,5,70,B,apply_monitor,https://careers.example.com/bank-of-america/jobs/J0007,2026-07-06
+J0008,C003,Bank of America,Platform Engineer,Enterprise Technology,2026-02-08,Dallas,20,0,17,5,10,8,5,65,B,apply_monitor,https://careers.example.com/bank-of-america/jobs/J0008,2026-07-06
+J0009,C003,Bank of America,Technology Risk Analyst,Enterprise Technology,2026-03-09,Dallas,20,0,23,5,10,10,5,73,B,apply_monitor,https://careers.example.com/bank-of-america/jobs/J0009,2026-07-06
+J0010,C004,Citi,Security Engineer,Enterprise Technology,2026-04-10,Irving,20,0,20,5,10,10,5,70,B,apply_monitor,https://careers.example.com/citi/jobs/J0010,2026-07-06
+J0011,C004,Citi,AI Automation Analyst,Enterprise Technology,2026-05-11,Irving,20,0,20,5,10,8,5,68,B,apply_monitor,https://careers.example.com/citi/jobs/J0011,2026-07-06
+J0012,C005,Charles Schwab,Cloud Analyst,Enterprise Technology,2026-01-13,Westlake / DFW,20,0,20,5,10,10,2,67,B,apply_monitor,https://careers.example.com/charles-schwab/jobs/J0013,2026-07-06
+J0013,C005,Charles Schwab,Data Engineer,Enterprise Technology,2026-02-14,Westlake / DFW,20,0,17,5,10,8,2,62,B,apply_monitor,https://careers.example.com/charles-schwab/jobs/J0014,2026-07-06
+J0014,C005,Charles Schwab,Data Analyst,Enterprise Technology,2026-03-15,Westlake / DFW,20,0,23,5,10,10,2,70,B,apply_monitor,https://careers.example.com/charles-schwab/jobs/J0015,2026-07-06
+J0015,C006,Capital One,Data Analyst,Enterprise Technology,2026-04-16,Plano,20,0,25,5,10,10,5,75,A,immediate_outreach,https://careers.example.com/capital-one/jobs/J0016,2026-07-06
+J0016,C006,Capital One,Cloud Security Analyst,Enterprise Technology,2026-05-17,Plano,20,0,23,5,10,10,5,73,B,apply_monitor,https://careers.example.com/capital-one/jobs/J0017,2026-07-06
+J0017,C006,Capital One,Technology Risk Analyst,Enterprise Technology,2026-06-18,Plano,20,8,23,5,10,10,5,81,A,immediate_outreach,https://careers.example.com/capital-one/jobs/J0018,2026-07-06
+J0018,C007,Toyota Motor North America,Cybersecurity Analyst,Enterprise Technology,2026-01-19,Plano,20,0,25,5,10,10,5,75,A,immediate_outreach,https://careers.example.com/toyota-motor-north-america/jobs/J0019,2026-07-06
+J0019,C007,Toyota Motor North America,Cloud Security Analyst,Enterprise Technology,2026-02-20,Plano,20,0,23,5,10,10,5,73,B,apply_monitor,https://careers.example.com/toyota-motor-north-america/jobs/J0020,2026-07-06
+J0020,C008,AT&T,Operations Technology Analyst,Enterprise Technology,2026-04-22,Dallas / Plano / Irving,20,0,23,5,10,10,2,70,B,apply_monitor,https://careers.example.com/at&t/jobs/J0022,2026-07-06
+J0021,C008,AT&T,Platform Engineer,Enterprise Technology,2026-05-23,Dallas / Plano / Irving,20,0,17,5,10,8,2,62,B,apply_monitor,https://careers.example.com/at&t/jobs/J0023,2026-07-06
+J0022,C008,AT&T,Business Systems Analyst,Enterprise Technology,2026-06-24,Dallas / Plano / Irving,20,15,23,5,10,10,2,85,A,immediate_outreach,https://careers.example.com/at&t/jobs/J0024,2026-07-06
+J0023,C009,Ericsson,AI Automation Analyst,Enterprise Technology,2026-01-25,Plano,20,0,20,5,10,10,2,67,B,apply_monitor,https://careers.example.com/ericsson/jobs/J0025,2026-07-06
+J0024,C009,Ericsson,Business Systems Analyst,Enterprise Technology,2026-02-26,Plano,20,0,20,5,10,8,2,65,B,apply_monitor,https://careers.example.com/ericsson/jobs/J0026,2026-07-06
+J0025,C009,Ericsson,Cybersecurity Analyst,Enterprise Technology,2026-03-27,Plano,20,0,25,5,10,10,2,72,B,apply_monitor,https://careers.example.com/ericsson/jobs/J0027,2026-07-06
+J0026,C010,NTT DATA,Technology Risk Analyst,Enterprise Technology,2026-04-28,Plano / Dallas,20,0,20,5,10,10,2,67,B,apply_monitor,https://careers.example.com/ntt-data/jobs/J0028,2026-07-06
+J0027,C010,NTT DATA,Platform Engineer,Enterprise Technology,2026-05-01,Plano / Dallas,20,0,17,5,10,8,2,62,B,apply_monitor,https://careers.example.com/ntt-data/jobs/J0029,2026-07-06
+J0028,C011,Samsung Electronics America / Samsung Austin Semiconductor,Technology Analyst,Enterprise Technology,2026-01-03,Plano / Austin,20,0,23,5,10,10,2,70,B,apply_monitor,https://careers.example.com/samsung-electronics-america---samsung-au/jobs/J0031,2026-07-06
+J0029,C011,Samsung Electronics America / Samsung Austin Semiconductor,Cybersecurity Analyst,Enterprise Technology,2026-02-04,Plano / Austin,20,0,25,5,10,10,2,72,B,apply_monitor,https://careers.example.com/samsung-electronics-america---samsung-au/jobs/J0032,2026-07-06
+J0030,C011,Samsung Electronics America / Samsung Austin Semiconductor,Operations Technology Analyst,Enterprise Technology,2026-03-05,Plano / Austin,20,0,23,5,10,10,2,70,B,apply_monitor,https://careers.example.com/samsung-electronics-america---samsung-au/jobs/J0033,2026-07-06
+J0031,C012,KPMG,Data Analyst,Enterprise Technology,2026-04-06,Dallas,20,0,25,5,10,10,2,72,B,apply_monitor,https://careers.example.com/kpmg/jobs/J0034,2026-07-06
+J0032,C012,KPMG,Platform Engineer,Enterprise Technology,2026-05-07,Dallas,20,0,17,5,10,8,2,62,B,apply_monitor,https://careers.example.com/kpmg/jobs/J0035,2026-07-06
+J0033,C012,KPMG,Business Systems Analyst,Enterprise Technology,2026-06-08,Dallas,20,8,23,5,10,10,2,78,A,immediate_outreach,https://careers.example.com/kpmg/jobs/J0036,2026-07-06
+J0034,C013,Deloitte,Technology Risk Analyst,Enterprise Technology,2026-01-09,Dallas,20,0,20,5,10,10,5,70,B,apply_monitor,https://careers.example.com/deloitte/jobs/J0037,2026-07-06
+J0035,C013,Deloitte,Data Analyst,Enterprise Technology,2026-03-11,Dallas,20,0,23,5,10,10,5,73,B,apply_monitor,https://careers.example.com/deloitte/jobs/J0039,2026-07-06
+J0036,C014,Accenture,Cloud Security Analyst,Enterprise Technology,2026-04-12,Dallas,20,0,23,5,10,10,5,73,B,apply_monitor,https://careers.example.com/accenture/jobs/J0040,2026-07-06
+J0037,C014,Accenture,Cloud Analyst,Enterprise Technology,2026-05-13,Dallas,20,0,20,5,10,8,5,68,B,apply_monitor,https://careers.example.com/accenture/jobs/J0041,2026-07-06
+J0038,C015,Cognizant,Operations Technology Analyst,Enterprise Technology,2026-01-15,DFW / Texas client sites,20,0,20,5,10,10,2,67,B,apply_monitor,https://careers.example.com/cognizant/jobs/J0043,2026-07-06
+J0039,C015,Cognizant,Technology Analyst,Enterprise Technology,2026-02-16,DFW / Texas client sites,20,0,20,5,10,8,2,65,B,apply_monitor,https://careers.example.com/cognizant/jobs/J0044,2026-07-06
+J0040,C015,Cognizant,Cloud Analyst,Enterprise Technology,2026-03-17,DFW / Texas client sites,20,0,23,5,10,10,2,70,B,apply_monitor,https://careers.example.com/cognizant/jobs/J0045,2026-07-06
+J0041,C016,Infosys,Operations Technology Analyst,Enterprise Technology,2026-04-18,Richardson / Texas client sites,0,0,20,5,10,10,2,47,C,learning_stretch,https://careers.example.com/infosys/jobs/J0046,2026-07-06
+J0042,C016,Infosys,Technology Analyst,Enterprise Technology,2026-05-19,Richardson / Texas client sites,0,0,20,5,10,8,2,45,C,learning_stretch,https://careers.example.com/infosys/jobs/J0047,2026-07-06
+J0043,C016,Infosys,Platform Engineer,Enterprise Technology,2026-06-20,Richardson / Texas client sites,0,8,20,5,10,10,2,55,B,apply_monitor,https://careers.example.com/infosys/jobs/J0048,2026-07-06
+J0044,C017,Oracle,Cloud Analyst,Enterprise Technology,2026-01-21,Austin / Texas + cloud roles,0,0,20,5,10,10,2,47,C,learning_stretch,https://careers.example.com/oracle/jobs/J0049,2026-07-06
+J0045,C017,Oracle,Platform Engineer,Enterprise Technology,2026-02-22,Austin / Texas + cloud roles,0,0,17,5,10,8,2,42,C,learning_stretch,https://careers.example.com/oracle/jobs/J0050,2026-07-06
+J0046,C018,Tesla,Data Analyst,Enterprise Technology,2026-03-23,Austin / North Texas optional,0,0,20,5,10,10,2,47,C,learning_stretch,https://careers.example.com/tesla/jobs/J0051,2026-07-06
+J0047,C018,Tesla,Technology Risk Analyst,Enterprise Technology,2026-04-24,Austin / North Texas optional,0,0,20,5,10,8,2,45,C,learning_stretch,https://careers.example.com/tesla/jobs/J0052,2026-07-06
+J0048,C019,Hewlett Packard Enterprise,Cloud Analyst,Enterprise Technology,2026-05-25,Plano / Texas,20,0,23,5,10,10,2,70,B,apply_monitor,https://careers.example.com/hewlett-packard-enterprise/jobs/J0053,2026-07-06
+J0049,C019,Hewlett Packard Enterprise,Data Analyst,Enterprise Technology,2026-06-26,Plano / Texas,20,15,20,5,10,8,2,80,A,immediate_outreach,https://careers.example.com/hewlett-packard-enterprise/jobs/J0054,2026-07-06
+J0050,C020,Dell Technologies / Dell USA / Dell Products,Data Engineer,Enterprise Technology,2026-01-27,Round Rock / Texas; DFW ecosystem,20,0,17,5,10,10,2,64,B,apply_monitor,https://careers.example.com/dell-technologies---dell-usa---dell-prod/jobs/J0055,2026-07-06
+J0051,C021,Texas Instruments,Cloud Analyst,Enterprise Technology,2026-03-01,Dallas / Richardson,20,0,23,5,10,10,2,70,B,apply_monitor,https://careers.example.com/texas-instruments/jobs/J0057,2026-07-06
+J0052,C021,Texas Instruments,AI Automation Analyst,Enterprise Technology,2026-04-02,Dallas / Richardson,20,0,20,5,10,8,2,65,B,apply_monitor,https://careers.example.com/texas-instruments/jobs/J0058,2026-07-06
+J0053,C022,American Airlines,Cybersecurity Analyst,Enterprise Technology,2026-06-04,Fort Worth,20,0,25,5,10,10,2,72,B,apply_monitor,https://careers.example.com/american-airlines/jobs/J0060,2026-07-06
+J0054,C022,American Airlines,Business Systems Analyst,Enterprise Technology,2026-01-05,Fort Worth,20,0,20,5,10,8,2,65,B,apply_monitor,https://careers.example.com/american-airlines/jobs/J0061,2026-07-06
+J0055,C022,American Airlines,Security Engineer,Enterprise Technology,2026-02-06,Fort Worth,20,0,20,5,10,10,2,67,B,apply_monitor,https://careers.example.com/american-airlines/jobs/J0062,2026-07-06
+J0056,C023,Southwest Airlines,Technology Risk Analyst,Enterprise Technology,2026-03-07,Dallas,20,0,20,5,10,10,5,70,B,apply_monitor,https://careers.example.com/southwest-airlines/jobs/J0063,2026-07-06
+J0057,C023,Southwest Airlines,Security Engineer,Enterprise Technology,2026-04-08,Dallas,20,0,20,5,10,10,5,70,B,apply_monitor,https://careers.example.com/southwest-airlines/jobs/J0064,2026-07-06
+J0058,C023,Southwest Airlines,Cloud Security Analyst,Enterprise Technology,2026-05-09,Dallas,20,0,23,5,10,10,5,73,B,apply_monitor,https://careers.example.com/southwest-airlines/jobs/J0065,2026-07-06
+J0059,C024,McKesson,Data Analyst,Enterprise Technology,2026-06-10,Irving,20,8,23,5,10,10,5,81,A,immediate_outreach,https://careers.example.com/mckesson/jobs/J0066,2026-07-06
+J0060,C024,McKesson,Security Engineer,Enterprise Technology,2026-01-11,Irving,20,0,20,5,10,10,5,70,B,apply_monitor,https://careers.example.com/mckesson/jobs/J0067,2026-07-06
+J0061,C024,McKesson,Cybersecurity Analyst,Enterprise Technology,2026-02-12,Irving,20,0,25,5,10,10,5,75,A,immediate_outreach,https://careers.example.com/mckesson/jobs/J0068,2026-07-06
+J0062,C025,CBRE,Business Systems Analyst,Enterprise Technology,2026-03-13,Dallas,20,0,23,5,10,10,5,73,B,apply_monitor,https://careers.example.com/cbre/jobs/J0069,2026-07-06
+J0063,C025,CBRE,Operations Technology Analyst,Enterprise Technology,2026-04-14,Dallas,20,0,20,5,10,8,5,68,B,apply_monitor,https://careers.example.com/cbre/jobs/J0070,2026-07-06
+J0064,C026,Lockheed Martin,Cloud Security Analyst,Enterprise Technology,2026-05-15,Fort Worth / Grand Prairie,20,0,23,5,10,10,5,73,B,apply_monitor,https://careers.example.com/lockheed-martin/jobs/J0071,2026-07-06
+J0065,C026,Lockheed Martin,Business Systems Analyst,Enterprise Technology,2026-06-16,Fort Worth / Grand Prairie,20,8,20,5,10,8,5,76,A,immediate_outreach,https://careers.example.com/lockheed-martin/jobs/J0072,2026-07-06
+J0066,C027,Raytheon / RTX,Data Engineer,Enterprise Technology,2026-01-17,McKinney / Richardson,0,0,17,5,10,10,5,47,C,learning_stretch,https://careers.example.com/raytheon---rtx/jobs/J0073,2026-07-06
+J0067,C027,Raytheon / RTX,Technology Analyst,Enterprise Technology,2026-02-18,McKinney / Richardson,0,0,20,5,10,8,5,48,C,learning_stretch,https://careers.example.com/raytheon---rtx/jobs/J0074,2026-07-06
+J0068,C028,BNSF Railway,Platform Engineer,Enterprise Technology,2026-03-19,Fort Worth,20,0,20,5,10,10,5,70,B,apply_monitor,https://careers.example.com/bnsf-railway/jobs/J0075,2026-07-06
+J0069,C028,BNSF Railway,Business Systems Analyst,Enterprise Technology,2026-04-20,Fort Worth,20,0,20,5,10,8,5,68,B,apply_monitor,https://careers.example.com/bnsf-railway/jobs/J0076,2026-07-06
+J0070,C029,GM Financial,Cloud Analyst,Enterprise Technology,2026-05-21,Fort Worth,20,0,20,5,10,10,5,70,B,apply_monitor,https://careers.example.com/gm-financial/jobs/J0077,2026-07-06
+J0071,C029,GM Financial,Platform Engineer,Enterprise Technology,2026-06-22,Fort Worth,20,15,17,5,10,8,5,80,A,immediate_outreach,https://careers.example.com/gm-financial/jobs/J0078,2026-07-06
+J0072,C030,Sabre,Cloud Security Analyst,Enterprise Technology,2026-01-23,Southlake,0,0,23,5,10,10,5,53,C,learning_stretch,https://careers.example.com/sabre/jobs/J0079,2026-07-06
+J0073,C030,Sabre,Technology Risk Analyst,Enterprise Technology,2026-02-24,Southlake,0,0,20,5,10,8,5,48,C,learning_stretch,https://careers.example.com/sabre/jobs/J0080,2026-07-06
+J0074,C031,Alkami Technology,Data Analyst,Enterprise Technology,2026-03-25,Plano,20,0,25,5,10,10,5,75,A,immediate_outreach,https://careers.example.com/alkami-technology/jobs/J0081,2026-07-06
+J0075,C031,Alkami Technology,Technology Risk Analyst,Enterprise Technology,2026-04-26,Plano,20,0,20,5,10,8,5,68,B,apply_monitor,https://careers.example.com/alkami-technology/jobs/J0082,2026-07-06
+J0076,C032,Tyler Technologies,Data Analyst,Enterprise Technology,2026-05-27,Plano,20,0,20,5,10,10,5,70,B,apply_monitor,https://careers.example.com/tyler-technologies/jobs/J0083,2026-07-06
+J0077,C032,Tyler Technologies,Cybersecurity Analyst,Enterprise Technology,2026-06-28,Plano,20,15,25,5,10,10,5,90,A,immediate_outreach,https://careers.example.com/tyler-technologies/jobs/J0084,2026-07-06
+J0078,C033,State Farm,Data Engineer,Enterprise Technology,2026-01-01,Richardson,0,0,20,5,10,10,5,50,C,learning_stretch,https://careers.example.com/state-farm/jobs/J0085,2026-07-06
+J0079,C033,State Farm,Business Systems Analyst,Enterprise Technology,2026-02-02,Richardson,0,0,20,5,10,8,5,48,C,learning_stretch,https://careers.example.com/state-farm/jobs/J0086,2026-07-06
+J0080,C034,Liberty Mutual,Data Engineer,Enterprise Technology,2026-03-03,Plano,20,0,20,5,10,10,5,70,B,apply_monitor,https://careers.example.com/liberty-mutual/jobs/J0087,2026-07-06
+J0081,C034,Liberty Mutual,Cloud Analyst,Enterprise Technology,2026-04-04,Plano,20,0,20,5,10,8,5,68,B,apply_monitor,https://careers.example.com/liberty-mutual/jobs/J0088,2026-07-06
+J0082,C035,PepsiCo / Frito-Lay,Data Engineer,Enterprise Technology,2026-05-05,Plano,20,0,17,5,10,10,5,67,B,apply_monitor,https://careers.example.com/pepsico---frito-lay/jobs/J0089,2026-07-06
+J0083,C035,PepsiCo / Frito-Lay,Security Engineer,Enterprise Technology,2026-06-06,Plano,20,8,20,5,10,10,5,78,A,immediate_outreach,https://careers.example.com/pepsico---frito-lay/jobs/J0090,2026-07-06
+J0084,C036,Wells Fargo,Data Engineer,Enterprise Technology,2026-01-07,Irving / Dallas,20,0,17,5,10,10,5,67,B,apply_monitor,https://careers.example.com/wells-fargo/jobs/J0091,2026-07-06
+J0085,C036,Wells Fargo,AI Automation Analyst,Enterprise Technology,2026-02-08,Irving / Dallas,20,0,20,5,10,8,5,68,B,apply_monitor,https://careers.example.com/wells-fargo/jobs/J0092,2026-07-06
+J0086,C037,Morgan Stanley,Data Analyst,Enterprise Technology,2026-03-09,Dallas,20,0,20,5,10,10,5,70,B,apply_monitor,https://careers.example.com/morgan-stanley/jobs/J0093,2026-07-06
+J0087,C037,Morgan Stanley,Platform Engineer,Enterprise Technology,2026-04-10,Dallas,20,0,20,5,10,10,5,70,B,apply_monitor,https://careers.example.com/morgan-stanley/jobs/J0094,2026-07-06
+J0088,C038,Nasdaq,Cybersecurity Analyst,Enterprise Technology,2026-05-11,Dallas,20,0,25,5,10,10,5,75,A,immediate_outreach,https://careers.example.com/nasdaq/jobs/J0095,2026-07-06
+J0089,C038,Nasdaq,Technology Risk Analyst,Enterprise Technology,2026-06-12,Dallas,20,8,20,5,10,8,5,76,A,immediate_outreach,https://careers.example.com/nasdaq/jobs/J0096,2026-07-06
+J0090,C039,NYSE Texas / Intercontinental Exchange,Cloud Security Analyst,Enterprise Technology,2026-01-13,Dallas,20,0,23,5,10,10,5,73,B,apply_monitor,https://careers.example.com/nyse-texas---intercontinental-exchange/jobs/J0097,2026-07-06
+J0091,C039,NYSE Texas / Intercontinental Exchange,Technology Analyst,Enterprise Technology,2026-02-14,Dallas,20,0,20,5,10,8,5,68,B,apply_monitor,https://careers.example.com/nyse-texas---intercontinental-exchange/jobs/J0098,2026-07-06
+J0092,C040,Siemens Industry Software,Data Analyst,Enterprise Technology,2026-03-15,Plano / Texas,20,0,20,5,10,10,2,67,B,apply_monitor,https://careers.example.com/siemens-industry-software/jobs/J0099,2026-07-06
+J0093,C040,Siemens Industry Software,Security Engineer,Enterprise Technology,2026-04-16,Plano / Texas,20,0,20,5,10,10,2,67,B,apply_monitor,https://careers.example.com/siemens-industry-software/jobs/J0100,2026-07-06
+J0094,C041,NXP USA,Business Systems Analyst,Enterprise Technology,2026-05-17,Dallas / Austin,20,0,23,5,10,10,2,70,B,apply_monitor,https://careers.example.com/nxp-usa/jobs/J0101,2026-07-06
+J0095,C042,Indeed,Business Systems Analyst,Enterprise Technology,2026-01-19,Austin / Texas / Remote,0,0,20,5,10,10,2,47,C,learning_stretch,https://careers.example.com/indeed/jobs/J0103,2026-07-06
+J0096,C042,Indeed,Data Analyst,Enterprise Technology,2026-02-20,Austin / Texas / Remote,0,0,20,5,10,8,2,45,C,learning_stretch,https://careers.example.com/indeed/jobs/J0104,2026-07-06
+J0097,C043,UT Southwestern Medical Center,Cybersecurity Analyst,Enterprise Technology,2026-03-21,Dallas,20,0,25,5,10,10,2,72,B,apply_monitor,https://careers.example.com/ut-southwestern-medical-center/jobs/J0105,2026-07-06
+J0098,C043,UT Southwestern Medical Center,Data Analyst,Enterprise Technology,2026-04-22,Dallas,20,0,20,5,10,8,2,65,B,apply_monitor,https://careers.example.com/ut-southwestern-medical-center/jobs/J0106,2026-07-06
+J0099,C044,Dallas Independent School District,Cloud Analyst,Enterprise Technology,2026-05-23,Dallas,20,0,20,5,10,10,2,67,B,apply_monitor,https://careers.example.com/dallas-independent-school-district/jobs/J0107,2026-07-06
+J0100,C045,Baylor College of Medicine / Baylor Scott & White ecosystem,Technology Analyst,Enterprise Technology,2026-06-24,Dallas / Texas,20,15,23,5,10,10,2,85,A,immediate_outreach,https://careers.example.com/baylor-college-of-medicine---baylor-scot/jobs/J0108,2026-07-06
+J0101,C045,Baylor College of Medicine / Baylor Scott & White ecosystem,Data Engineer,Enterprise Technology,2026-01-25,Dallas / Texas,20,0,17,5,10,8,2,62,B,apply_monitor,https://careers.example.com/baylor-college-of-medicine---baylor-scot/jobs/J0109,2026-07-06
+J0102,C046,Fluor Corporation,Cloud Security Analyst,Enterprise Technology,2026-02-26,Irving,20,0,23,5,10,10,5,73,B,apply_monitor,https://careers.example.com/fluor-corporation/jobs/J0110,2026-07-06
+J0103,C047,Jacobs Solutions,Security Engineer,Enterprise Technology,2026-04-28,Dallas,20,0,20,5,10,10,5,70,B,apply_monitor,https://careers.example.com/jacobs-solutions/jobs/J0112,2026-07-06
+J0104,C047,Jacobs Solutions,Operations Technology Analyst,Enterprise Technology,2026-05-01,Dallas,20,0,20,5,10,8,5,68,B,apply_monitor,https://careers.example.com/jacobs-solutions/jobs/J0113,2026-07-06
+J0105,C048,Kimberly-Clark,Operations Technology Analyst,Enterprise Technology,2026-06-02,Irving,20,0,20,5,10,10,5,70,B,apply_monitor,https://careers.example.com/kimberly-clark/jobs/J0114,2026-07-06
+J0106,C049,Celanese,Security Engineer,Enterprise Technology,2026-02-04,Irving,20,0,20,5,10,10,5,70,B,apply_monitor,https://careers.example.com/celanese/jobs/J0116,2026-07-06
+J0107,C050,Vistra,Data Engineer,Enterprise Technology,2026-03-05,Irving,20,0,20,5,10,10,5,70,B,apply_monitor,https://careers.example.com/vistra/jobs/J0117,2026-07-06

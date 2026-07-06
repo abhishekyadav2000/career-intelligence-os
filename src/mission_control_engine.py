@@ -20,6 +20,9 @@ from src.pipeline_engine import (
     get_today_queue,
     load_pipeline_cards,
 )
+from src.contact_pod_builder import pod_completeness
+from src.demand_intelligence_engine import get_company_demand_summary, load_demand_signals
+from src.role_demand_scorer import load_role_demand_scores
 from src.schedule_engine import (
     get_daily_plan,
     get_next_activities,
@@ -65,18 +68,50 @@ def get_top_targets(cards: list[dict], limit: int = 10) -> list[dict]:
     return active[:limit]
 
 
+def _demand_tier_for_job(job_id: str, demand_df) -> str:
+    if demand_df is None or demand_df.empty or not job_id:
+        return "D"
+    row = demand_df[demand_df["job_id"] == job_id]
+    if row.empty:
+        return "D"
+    return str(row.iloc[0].get("fit_tier", "D"))
+
+
 def get_action_queue(
     cards: list[dict],
     schedule_df: list[dict] | None = None,
     company_id: str | None = None,
     limit: int = 15,
+    demand_first: bool = True,
 ) -> list[dict]:
-    return get_today_queue(
+    queue = get_today_queue(
         cards,
-        limit=limit,
+        limit=limit * 2 if demand_first else limit,
         company_id=company_id,
         schedule_df=schedule_df,
     )
+    if not demand_first:
+        return queue[:limit]
+
+    demand_df = load_role_demand_scores()
+    tier_order = {"A": 0, "B": 1, "C": 2, "D": 3}
+    queue.sort(
+        key=lambda c: (
+            tier_order.get(_demand_tier_for_job(c.get("job_id", ""), demand_df), 4),
+            -float(c.get("priority_score", 0)),
+        ),
+    )
+
+    if company_id:
+        summary = get_company_demand_summary(company_id)
+        if summary.get("has_recent_demand"):
+            for card in queue:
+                if "Review demand signals" not in card.get("next_action", ""):
+                    card["next_action"] = (
+                        f"Review demand signals ({summary['recent_signals_14d']} recent) — "
+                        + card.get("next_action", "then verify contact")
+                    )
+    return queue[:limit]
 
 
 def get_pipeline_board(cards: list[dict]) -> dict[str, list[dict]]:
@@ -152,6 +187,24 @@ def get_monday_readiness_score(
     }
 
 
+def get_demand_first_blockers(company_id: str | None) -> list[str]:
+    """Demand-first blockers when focus mode company is selected."""
+    if not company_id:
+        return []
+    blockers: list[str] = []
+    summary = get_company_demand_summary(company_id)
+    if not summary.get("has_recent_demand"):
+        blockers.append("No recent demand signals (last 14 days) — research careers/newsroom before outreach.")
+    if not summary.get("has_tier_a"):
+        blockers.append("No Tier A roles scored — review role demand board or expand search.")
+    pod = pod_completeness(company_id)
+    if not pod.get("complete"):
+        blockers.append(
+            f"Contact pod incomplete — {pod.get('verified', 0)}/{pod.get('total', 0)} verified slots."
+        )
+    return blockers
+
+
 def get_execution_warnings(cards: list[dict], data: dict, reference: datetime | None = None) -> list[str]:
     ref = reference or datetime.now()
     warnings: list[str] = []
@@ -189,6 +242,11 @@ def get_execution_warnings(cards: list[dict], data: dict, reference: datetime | 
         warnings.append("No real conversations logged — use conversation_log_template.csv after outreach.")
 
     return warnings
+
+
+def get_demand_warnings(company_id: str | None) -> list[str]:
+    """Surface demand-first warnings for Mission Control."""
+    return get_demand_first_blockers(company_id)
 
 
 def build_mission_control(
@@ -238,6 +296,10 @@ def build_mission_control(
         action_queue = filter_cards_by_company(action_queue, scoped_company_id)
     board = get_pipeline_board(cards)
     warnings = get_execution_warnings(cards, data, reference=ref)
+    if focus_mode and scoped_company_id:
+        for w in get_demand_warnings(scoped_company_id):
+            if w not in warnings:
+                warnings.append(w)
     message_queue = build_message_queue(cards, data)
     daily_plan = get_daily_plan(ref)
     week_plan = summarize_week_plan()

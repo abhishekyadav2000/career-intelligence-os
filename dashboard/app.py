@@ -33,13 +33,15 @@ from src.data_confidence import (
     is_stale,
     validate_dataset_sources,
 )
-from src.data_loader import load_all, load_core, load_intelligence, load_mission_control_data
+from src.data_loader import load_all, load_core, load_demand_first_data, load_intelligence, load_mission_control_data
 from src.metadata_renderer import (
     display_dataframe_limited,
     inject_metadata_css,
     render_action_metadata,
     render_confidence_bar,
+    render_engagement_level,
     render_entity_card,
+    render_fit_tier_badge,
     render_freshness_badge,
     render_metadata_expander,
     render_metadata_ribbon,
@@ -84,6 +86,16 @@ from src.mission_control_engine import build_mission_control
 from src.pipeline_engine import PIPELINE_STAGES, load_pipeline_cards, save_pipeline_cards
 from src.role_reasoning_engine import build_role_deep_dive, load_role_reasoning
 from src.company_workspace import build_company_workspace
+from src.demand_intelligence_engine import (
+    get_company_demand_summary,
+    get_recent_hiring_signals,
+    load_demand_signals,
+)
+from src.contact_pod_builder import get_pod_for_company, pod_completeness
+from src.engagement_engine import load_engagement_hooks, load_outreach_queue
+from src.knowledge_graph import export_graph_summary, get_proof_path
+from src.relationship_workbook import export_relationship_graph_xlsx
+from src.role_demand_scorer import load_role_demand_scores
 from src.interview_simulator import (
     build_simulator_context,
     count_insights_by_company,
@@ -839,6 +851,171 @@ def _feature_caption(tab_name: str) -> None:
     help_text = get_feature_help(feature_key_for_tab(tab_name), feature_registry)
     if help_text:
         st.caption(help_text)
+
+
+def tab_demand_first():
+  """Demand First intelligence view — signals before people."""
+  st.subheader("Demand First")
+  _feature_caption("Demand First")
+
+  company_id = icc_company_id if icc_focus_mode and icc_company_id else None
+  if not company_id:
+    st.warning(
+      "**Demand before People** — Select a company in the sidebar and enable Focus Mode "
+      "to load demand signals, role fit board, contact pod, and outreach drafts."
+    )
+    st.info("Start with company activity + recent roles — not LinkedIn people search.")
+    return
+
+  demand_data = load_demand_first_data(company_id=company_id)
+  signals_df = demand_data.get("company_demand_signals", pd.DataFrame())
+  if signals_df.empty:
+    signals_df = load_demand_signals(company_id)
+
+  if signals_df.empty:
+    st.error("**Demand before People** — No demand signals loaded for this company. Run seed script or add to company_demand_signals.csv.")
+
+  summary = get_company_demand_summary(company_id)
+  st.caption(
+    f"{summary.get('total_signals', 0)} signals · "
+    f"{summary.get('recent_signals_14d', 0)} recent (14d) · "
+    f"Tier A roles: {summary.get('tier_a_roles', 0)}"
+  )
+
+  sections = st.tabs([
+    "Demand Signals",
+    "Role Fit Board",
+    "Team Signals",
+    "Contact Pod",
+    "Engagement Hooks",
+    "Outreach Queue",
+    "Knowledge Graph",
+  ])
+
+  with sections[0]:
+    render_section_header("Company Demand Signals", len(signals_df))
+    if signals_df.empty:
+      st.caption("No signals — check careers portal and newsroom.")
+    else:
+      for _, row in signals_df.iterrows():
+        st.markdown(
+          f"**{row.get('signal_title', '')}** · `{row.get('signal_type', '')}` · "
+          f"{row.get('signal_date', '')}",
+        )
+        st.caption(
+          f"{row.get('business_unit', '')} · {row.get('technology_area', '')} · "
+          f"{row.get('location', '')}"
+        )
+        chips = render_source_chip(row.get("source_url"), row.get("confidence_level"))
+        st.markdown(chips, unsafe_allow_html=True)
+        if row.get("notes"):
+          st.write(row.get("notes"))
+
+  with sections[1]:
+    render_section_header("Role Fit Board", summary.get("tier_a_roles", 0) + summary.get("tier_b_roles", 0))
+    scores_df = demand_data.get("role_demand_scores", load_role_demand_scores())
+    if not scores_df.empty and company_id:
+      scores_df = scores_df[scores_df["company_id"] == company_id]
+    if scores_df.empty:
+      st.caption("No role demand scores — run scripts/seed_demand_first_data.py")
+    else:
+      scores_df = scores_df.sort_values("total_fit_score", ascending=False)
+      for _, row in scores_df.iterrows():
+        tier = row.get("fit_tier", "D")
+        st.markdown(
+          f"**{row.get('job_title', '')}** — {row.get('total_fit_score', 0)}/100 "
+          f"{render_fit_tier_badge(tier)} · `{row.get('recommended_action', '')}`",
+          unsafe_allow_html=True,
+        )
+        st.caption(f"{row.get('location', '')} · posted {row.get('posted_date', '')}")
+        if row.get("source_url"):
+          st.markdown(render_source_chip(row.get("source_url")), unsafe_allow_html=True)
+
+  with sections[2]:
+    render_section_header("Team Signals", len(summary.get("technology_areas", [])))
+    for area in summary.get("technology_areas", []):
+      st.write(f"• **{area}** — hiring signal from demand data")
+  recent = get_recent_hiring_signals(company_id, days=14)
+  if recent:
+    st.caption(f"{len(recent)} signals in last 14 days")
+
+  with sections[3]:
+    pod = get_pod_for_company(company_id)
+    pod_stat = pod_completeness(company_id)
+    render_section_header("Contact Pod", pod_stat.get("total", 0))
+    st.caption(f"{pod_stat.get('verified', 0)} verified · {pod_stat.get('placeholder', 0)} search slots")
+    for slot in pod:
+      st.markdown(
+        f"**{slot.get('pod_slot', '')}** ({slot.get('person_type', '')}) — "
+        f"{slot.get('person_name', '')} "
+        f"{render_engagement_level(slot.get('engagement_level', 3))}",
+        unsafe_allow_html=True,
+      )
+      if slot.get("search_query_url"):
+        st.markdown(f"[Search URL]({slot.get('search_query_url')})")
+
+  with sections[4]:
+    hooks = load_engagement_hooks(company_id)
+    render_section_header("Engagement Hooks", len(hooks))
+    for hook in hooks:
+      st.markdown(f"**{hook.get('hook_title', '')}** · `{hook.get('hook_type', '')}`")
+      st.write(hook.get("suggested_opener", ""))
+      st.markdown(render_source_chip(hook.get("source_url")), unsafe_allow_html=True)
+      st.markdown(render_engagement_level(hook.get("engagement_level", 3)), unsafe_allow_html=True)
+
+  with sections[5]:
+    queue = load_outreach_queue(company_id)
+    render_section_header("Outreach Queue", len(queue))
+    for item in queue:
+      st.markdown(
+        f"**{item.get('message_type', '')}** → {item.get('person_type', '')} · "
+        f"status: `{item.get('status', 'draft')}`"
+      )
+      st.text_area(
+        "Draft",
+        item.get("message_draft", ""),
+        height=100,
+        key=f"oq_{item.get('queue_id', '')}",
+        disabled=True,
+      )
+    if queue:
+      import io
+      qdf = pd.DataFrame(queue)
+      st.download_button(
+        "Export Outreach Queue CSV",
+        qdf.to_csv(index=False),
+        f"outreach_queue_{company_id}.csv",
+        "text/csv",
+        key="dl_outreach_queue",
+      )
+
+  with sections[6]:
+    graph = export_graph_summary(company_id)
+    render_section_header("Knowledge Graph", graph.get("edges", 0))
+    st.write("**Company → Role → Skill → Your Proof**")
+    path = get_proof_path(icc_company_name or company_id, icc_ctx.get("role_family", ""))
+    if path:
+      for step in path:
+        st.caption(f"{step.get('from', '')} —[{step.get('relationship', '')}]→ {step.get('to', '')}")
+    else:
+      for role in graph.get("roles", []):
+        st.write(f"• {role}")
+      for proof in graph.get("proof_assets", []):
+        st.write(f"  → Proof: {proof}")
+
+  exp_col1, exp_col2 = st.columns(2)
+  with exp_col1:
+    if st.button("Export Relationship Graph XLSX", key="export_rel_graph"):
+      out = export_relationship_graph_xlsx(data)
+      with open(out, "rb") as fh:
+        st.download_button(
+          "Download XLSX",
+          fh.read(),
+          out.name,
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          key="dl_rel_graph",
+        )
+      st.success(f"Exported to {out}")
 
 
 def tab_mission_control():
@@ -1890,6 +2067,7 @@ def _pick_sim_insight(insights, history, round_key):
 # ── Render active navigation group only (lazy tab rendering) ─────────────────
 
 TAB_RENDERERS = {
+    "Demand First": ("demand_intelligence_engine", "Run scripts/seed_demand_first_data.py", tab_demand_first),
     "Mission Control": ("mission_control_engine", "Run scripts/seed_pipeline_cards.py and check pipeline CSVs", tab_mission_control),
     "My Profile & Portfolio": ("profile_manager", "Check data/user_profile.yaml and PyYAML", tab_profile_portfolio),
     "Interview Simulator": ("interview_simulator", "Check data/interview_insights.csv", tab_interview_simulator),
