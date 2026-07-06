@@ -1,66 +1,37 @@
-name: Abhishek
-headline: Enterprise Technology Analyst — AI Automation, Cloud Security & Data Analytics
-positioning: >-
-  Enterprise technology analyst focused on AI automation, cloud security evidence,
-  and data-driven decision systems for regulated industries. Built sponsor-aware
-  Career Intelligence OS as portfolio proof.
+# User profile — replace placeholders with your real details.
+# See docs/PROFILE-INTAKE.md for the full questionnaire.
+
+name: '[YOUR NAME]'
+headline: '[YOUR HEADLINE — e.g. Enterprise Technology Analyst]'
+positioning: '[YOUR 2-3 SENTENCE VALUE PROPOSITION]'
+location: 'DFW / [YOUR CITY]'
+authorization: '[OPT/EAD, STEM OPT pathway, etc.]'
+target_roles: []
+target_industries: []
+target_locations:
+  - Plano
+  - Dallas
+  - Irving
+  - Frisco
+  - Remote DFW
+years_experience: null
+education:
+  school: '[YOUR SCHOOL]'
+  degree: '[YOUR DEGREE]'
+  graduation: '[YYYY or expected]'
+  relevant_coursework: []
 skills:
-  - Python
-  - SQL
-  - Streamlit
-  - Cloud Security (IAM/SIEM)
-  - AI Automation & Governance
-  - Data Analytics
-  - Enterprise Architecture
-experience_bullets:
-  - Built Career Intelligence OS — sponsor-aware role-fit scoring and interview prep dashboard (Streamlit + Python).
-  - Developed AI agent risk scoring framework with guardrails and responsible automation controls.
-  - Delivered secure cloud evidence lab covering IAM policy review and SIEM alert tuning.
-  - Designed data pipelines and KPI dashboards for enterprise decision support.
-education: MS/MBA-track STEM graduate — enterprise technology and analytics focus
-opt_status: OPT/EAD authorized; STEM OPT pathway eligible
-portfolio_links:
-  - title: Career Intelligence OS Demo
-    url: dashboard/app.py
-  - title: AI Agent Risk Scoring Case Study
-    url: case-studies/ai-agent-risk-scoring.md
-  - title: Secure Cloud Evidence Lab
-    url: case-studies/secure-cloud-evidence-lab.md
-proof_asset_ids:
-  - PA001
-  - PA002
-  - PA003
-  - PA004
-  - PA013
-star_stories:
-  - id: STAR001
-    title: Career Intelligence OS
-    situation: Fragmented DFW enterprise hiring data across 50+ employers.
-    task: Build a unified decision system for role fit, sponsorship signals, and interview prep.
-    action: Designed CSV schema, scoring engine, and Streamlit dashboard with verified sources.
-    result: Working demo with Mission Control, ICC briefs, and proof-matched outreach.
-    tags:
-      - python
-      - streamlit
-      - data-analytics
-      - enterprise
-  - id: STAR002
-    title: AI Agent Risk Scoring
-    situation: Teams deploying AI agents without consistent risk controls.
-    task: Create a governance framework for agent automation.
-    action: Built risk scoring model with guardrails, audit trails, and escalation paths.
-    result: Documented case study demonstrating responsible AI automation patterns.
-    tags:
-      - ai-automation
-      - governance
-      - risk-controls
-  - id: STAR003
-    title: Secure Cloud Evidence Lab
-    situation: Cloud security audits required IAM and SIEM evidence collection.
-    task: Demonstrate hands-on cloud security analysis skills.
-    action: Reviewed IAM policies, tuned SIEM alerts, and documented findings.
-    result: Portfolio-ready evidence lab with synthetic artifacts and remediation notes.
-    tags:
-      - cloud-security
-      - iam
-      - siem
+  technical: []
+  tools: []
+  domains: []
+certifications: []
+experience_bullets: []
+projects: []
+portfolio_links: []
+proof_asset_ids: []
+star_stories: []
+career_goals: ''
+deal_breakers: []
+salary_expectation_range: null
+preferred_company_tiers: []
+networking_positioning: ''

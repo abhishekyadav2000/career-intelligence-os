@@ -96,9 +96,40 @@ def recommend_action(tier: str, total_score: float) -> str:
     return "ignore"
 
 
+def _profile_role_terms(profile: dict | None) -> set[str]:
+    """Derive role-family match terms from user profile or defaults."""
+    if not profile:
+        return PROFILE_ROLE_FAMILIES
+    from src.profile_manager import get_target_role_families
+
+    roles = get_target_role_families(profile)
+    terms: set[str] = set()
+    for role in roles:
+        for token in role.lower().replace("/", " ").replace("-", " ").split():
+            if len(token) > 2:
+                terms.add(token)
+    return terms or PROFILE_ROLE_FAMILIES
+
+
+def _user_skill_hits(combined: str, profile: dict | None, profile_keywords: list[str] | None) -> tuple[int, list[str]]:
+    """Count profile skill matches in job text."""
+    if profile:
+        from src.profile_manager import get_skills_for_matching
+
+        skills = get_skills_for_matching(profile)
+    elif profile_keywords:
+        skills = profile_keywords
+    else:
+        return 0, []
+
+    matched = [s for s in skills if s.lower() in combined]
+    return len(matched), matched
+
+
 def score_role_demand(
     job_row: dict | pd.Series,
     profile_keywords: list[str] | None = None,
+    profile: dict | None = None,
     reference: datetime | None = None,
     sponsor_signal: str = "",
 ) -> dict:
@@ -118,6 +149,10 @@ def score_role_demand(
     loc_lower = location.lower()
 
     dfw_score = 20 if any(t in loc_lower for t in DFW_TERMS) else 0
+    if profile and profile.get("target_locations"):
+        target_locs = [str(l).lower() for l in profile["target_locations"]]
+        if any(t in loc_lower or loc_lower in t for t in target_locs):
+            dfw_score = max(dfw_score, 20)
 
     posted_dt = _parse_date(posted)
     recency_score = 0
@@ -126,10 +161,10 @@ def score_role_demand(
     elif posted_dt and (ref - posted_dt).days <= 30:
         recency_score = 8
 
-    profile_hits = sum(1 for term in PROFILE_ROLE_FAMILIES if term in combined)
-    profile_match_score = min(25, int(profile_hits / len(PROFILE_ROLE_FAMILIES) * 25) + (
-        5 if any(k in combined for k in ("python", "sql", "cloud", "security", "data")) else 0
-    ))
+    role_terms = _profile_role_terms(profile)
+    profile_hits = sum(1 for term in role_terms if term in combined)
+    skill_hit_count, matched_skills = _user_skill_hits(combined, profile, profile_keywords)
+    profile_match_score = min(25, int(profile_hits / max(len(role_terms), 1) * 20) + min(5, skill_hit_count))
     profile_match_score = min(25, profile_match_score)
 
     early_hits = sum(1 for t in EARLY_CAREER_TERMS if t in combined)
@@ -142,14 +177,25 @@ def score_role_demand(
     skill_cats = [k for k, v in categories.items() if v]
     skills_match_score = min(10, len(skill_cats) * 2)
 
-    portfolio_terms = ("automation", "dashboard", "analytics", "security", "cloud", "python", "streamlit")
-    portfolio_hits = sum(1 for t in portfolio_terms if t in combined)
+    portfolio_terms: list[str] = []
+    if profile:
+        for proj in profile.get("projects", []) or []:
+            if isinstance(proj, dict):
+                portfolio_terms.extend(str(proj.get("name", "")).lower().split())
+                for s in proj.get("skills", []) or []:
+                    portfolio_terms.append(str(s).lower())
+        portfolio_terms.extend(s.lower() for s in matched_skills[:6])
+    if not portfolio_terms:
+        portfolio_terms = list(("automation", "dashboard", "analytics", "security", "cloud", "python", "streamlit"))
+    portfolio_hits = sum(1 for t in portfolio_terms if t and t in combined)
     portfolio_support_score = min(10, portfolio_hits * 2 + 2)
 
     sponsor_lower = (sponsor_signal or str(job_row.get("visa_notes", ""))).lower()
     sponsor_score = 5 if any(s in sponsor_lower for s in ("sponsor", "h1b", "dol", "uscis")) else 2
 
-    if profile_keywords:
+    if skill_hit_count:
+        skills_match_score = min(10, skills_match_score + min(skill_hit_count, 5))
+    elif profile_keywords:
         kw_lower = [k.lower() for k in profile_keywords]
         extra = sum(1 for k in kw_lower if k in combined)
         skills_match_score = min(10, skills_match_score + extra)
@@ -194,9 +240,19 @@ def score_jobs_dataframe(
     jobs_df: pd.DataFrame,
     companies_df: pd.DataFrame | None = None,
     profile_keywords: list[str] | None = None,
+    profile: dict | None = None,
     reference: datetime | None = None,
 ) -> list[dict]:
     """Score all jobs and return role demand score dicts."""
+    if profile is None and profile_keywords is None:
+        try:
+            from src.profile_manager import get_skills_for_matching, load_profile
+
+            profile = load_profile()
+            profile_keywords = get_skills_for_matching(profile)
+        except Exception:
+            pass
+
     sponsor_map = {}
     if companies_df is not None and not companies_df.empty:
         col = "company" if "company" in companies_df.columns else "company_name"
@@ -209,6 +265,7 @@ def score_jobs_dataframe(
         score = score_role_demand(
             row,
             profile_keywords=profile_keywords,
+            profile=profile,
             reference=reference,
             sponsor_signal=sponsor_map.get(company, ""),
         )

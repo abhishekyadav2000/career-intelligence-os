@@ -40,12 +40,34 @@ def _tag_overlap(asset_tags: str, target_tags: set[str]) -> float:
     return overlap / max(len(target_tags), 1)
 
 
+def _project_tags(profile: dict | None) -> set[str]:
+    """Extract match tags from user projects and skills."""
+    tags: set[str] = set()
+    if not profile:
+        return tags
+    from src.profile_manager import get_skills_for_matching
+
+    for skill in get_skills_for_matching(profile):
+        tags.add(skill.lower().replace(" ", "-"))
+    for proj in profile.get("projects", []) or []:
+        if not isinstance(proj, dict):
+            continue
+        name = str(proj.get("name", "")).lower()
+        for token in name.replace("/", " ").replace("-", " ").split():
+            if len(token) > 2:
+                tags.add(token)
+        for s in proj.get("skills", []) or []:
+            tags.add(str(s).lower().replace(" ", "-"))
+    return tags
+
+
 def match_assets_to_role(
     job_id: str,
     proof_assets_df: pd.DataFrame,
     jobs_df: pd.DataFrame,
+    profile: dict | None = None,
 ) -> list[dict]:
-    """Match proof assets to a job by title and description tag overlap."""
+    """Match proof assets to a job by title, description, and user project overlap."""
     job_rows = jobs_df[jobs_df["job_id"] == job_id]
     if job_rows.empty or proof_assets_df.empty:
         return []
@@ -65,11 +87,21 @@ def match_assets_to_role(
     if "automation" in desc or "ai" in desc:
         target_tags.update({"ai-automation", "governance"})
 
+    project_tags = _project_tags(profile)
+    if project_tags:
+        target_tags.update(project_tags)
+
+    user_asset_ids: set[str] = set()
+    if profile:
+        user_asset_ids = {str(a) for a in profile.get("proof_asset_ids", []) or []}
+
     results = []
     for _, asset in proof_assets_df.iterrows():
         overlap = _tag_overlap(asset["tags"], target_tags)
         base_score = float(asset.get("relevance_score", 50))
         combined = round(base_score * 0.6 + overlap * 100 * 0.4, 1)
+        if user_asset_ids and str(asset["asset_id"]) in user_asset_ids:
+            combined = min(100.0, combined + 12.0)
         results.append({
             "asset_id": asset["asset_id"],
             "asset_type": asset["asset_type"],

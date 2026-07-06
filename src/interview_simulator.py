@@ -135,6 +135,9 @@ def build_simulator_context(
     jobs_df: pd.DataFrame | None = None,
 ) -> dict[str, Any]:
     """Assemble full context for simulator UI and question generation."""
+    from src.profile_manager import get_profile_for_simulator
+
+    sim_profile = get_profile_for_simulator(profile)
     company_name = company.get("company_name", company.get("company", ""))
     company_id = company.get("company_id", "")
     job_id = job.get("job_id", "") if job else ""
@@ -158,7 +161,8 @@ def build_simulator_context(
         "company_themes": themes,
         "company_packet_excerpt": packet[:2000] if packet else "",
         "role_reasoning": reasoning,
-        "profile": profile,
+        "profile": sim_profile,
+        "experience_bullets": sim_profile.get("experience_bullets", []),
         "insights": insights,
         "proof_assets": proof_assets[:5],
         "verified_question_count": len(insights),
@@ -207,12 +211,31 @@ def _fallback_question(round_name: str, context: dict) -> str:
     company = context.get("company_name", "the company")
     title = context.get("job_title", "this role")
     normalized = normalize_round(round_name)
+    profile = context.get("profile", {})
+    bullets = context.get("experience_bullets") or profile.get("experience_bullets", [])
+    bullet_hint = bullets[0][:80] if bullets else "a recent project from your portfolio"
+    headline = profile.get("headline", "your background")
+
     fallbacks = {
-        "recruiter_screen": f"Tell me about yourself and why you're interested in {title} at {company}.",
-        "hm_screen": f"Walk me through a project that best demonstrates your fit for {title}.",
-        "technical": "Describe how you would approach a data pipeline or automation task using Python and SQL.",
-        "behavioral": "Tell me about a time you had to learn a new technology quickly to deliver on a deadline.",
-        "final": f"Why {company}, and where do you see yourself contributing in the first 90 days?",
+        "recruiter_screen": (
+            f"Tell me about yourself and why you're interested in {title} at {company}. "
+            f"(Hint: lead with your headline — {headline})"
+        ),
+        "hm_screen": (
+            f"Walk me through a project that best demonstrates your fit for {title}. "
+            f"(Consider: {bullet_hint})"
+        ),
+        "technical": (
+            "Describe how you would approach a data pipeline or automation task using your core technical skills. "
+            f"Reference a real example if possible — e.g. {bullet_hint}."
+        ),
+        "behavioral": (
+            "Tell me about a time you had to learn a new technology quickly to deliver on a deadline. "
+            "Use STAR format with a specific situation from your experience."
+        ),
+        "final": (
+            f"Why {company}, and where do you see yourself contributing in the first 90 days?"
+        ),
     }
     return fallbacks.get(normalized, fallbacks["recruiter_screen"])
 

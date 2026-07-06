@@ -105,9 +105,12 @@ def seed_demand_signals():
 
 
 def seed_role_demand_scores():
+    from src.profile_manager import get_skills_for_matching, load_profile
+
     core = load_core(validate=False)
-    keywords = core["profile_keywords"]["skill"].tolist()
-    scores = score_jobs_dataframe(core["jobs"], core["companies"], keywords, reference=REF)
+    profile = load_profile()
+    keywords = get_skills_for_matching(profile) or core["profile_keywords"]["skill"].tolist()
+    scores = score_jobs_dataframe(core["jobs"], core["companies"], keywords, profile=profile, reference=REF)
     save_role_demand_scores(scores)
     tier_a = sum(1 for s in scores if s["fit_tier"] == "A")
     print(f"Wrote {len(scores)} role demand scores ({tier_a} Tier A) → role_demand_scores.csv")

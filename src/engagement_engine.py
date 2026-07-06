@@ -145,42 +145,55 @@ def generate_message_draft(
     profile: dict | None = None,
 ) -> str:
     """Generate copy-ready outreach draft — value-first, not begging."""
-    prof = {**DEFAULT_PROFILE, **(profile or {})}
-    name = prof.get("name", "Abhishek")
+    if profile:
+        prof = profile
+    else:
+        try:
+            from src.profile_manager import load_profile
+            prof = load_profile()
+        except Exception:
+            prof = DEFAULT_PROFILE
+
+    name = prof.get("name", "[YOUR NAME]")
     company = person.get("company_name", hook.get("company_name", "your team"))
     person_type = person.get("person_type", "recruiter")
     hook_title = hook.get("hook_title", "recent technology initiatives")
     topic = hook.get("topic", "cloud security and automation")
     opener = hook.get("suggested_opener", "")
+    net_pos = prof.get("networking_positioning", "")
+    location = prof.get("location", "DFW")
+    headline = prof.get("headline", "enterprise technology")
+    bullets = prof.get("experience_bullets", [])
+    proof_hint = bullets[0] if bullets else "portfolio proof aligned to your technology direction"
+
+    identity = net_pos if net_pos and not net_pos.startswith("[") else (
+        f"I'm {name}, a {location}-based professional focused on {headline}."
+    )
 
     templates = {
         "comment_on_post": (
-            f"Strong perspective on {topic}. I build similar governed automation patterns in DFW — "
-            f"especially around audit-ready controls and measurable outcomes. "
+            f"Strong perspective on {topic}. {identity} "
+            f"I build similar patterns — especially around audit-ready controls and measurable outcomes. "
             f"Would enjoy learning how {company} approaches this at scale."
         ),
         "connection_request": (
-            f"Hi — I'm {name}, a DFW-based enterprise technology analyst (UNT MIS) focused on "
-            f"{prof.get('headline', 'cloud security and data analytics')}. "
-            f"I saw {hook_title} and thought it connected to work I've done on decision systems "
-            f"and secure automation. Would value connecting."
+            f"Hi — {identity} "
+            f"I saw {hook_title} and thought it connected to work I've done ({proof_hint}). "
+            f"Would value connecting."
         ),
         "dm_after_connection": (
             f"Thanks for connecting. I noticed {company}'s work on {topic} — "
-            f"I recently built Career Intelligence OS (role-fit + proof-matching dashboard) and "
-            f"a Secure Cloud Evidence Lab covering IAM/SIEM. Happy to share a 2-min walkthrough "
+            f"{proof_hint}. Happy to share a brief walkthrough "
             f"if useful for your {person_type.replace('_', ' ')} network."
         ),
         "feedback_ask": (
-            f"I'm an emerging technology professional in DFW exploring {topic} roles at {company}. "
+            f"I'm exploring {topic} roles at {company} in {location}. "
             f"Not asking for a referral — I'd appreciate 10 minutes of feedback on whether my "
-            f"portfolio proof (automation governance + cloud security evidence) reads credible "
-            f"for teams like yours."
+            f"portfolio proof reads credible for teams like yours."
         ),
         "soft_role_bridge": (
             f"{opener or ('I followed ' + company + chr(39) + 's recent signal on ' + topic + '.')} "
-            f"I'm positioning for analyst-level roles where MIS, cloud security, and data automation intersect. "
-            f"My CI OS project demonstrates end-to-end: demand signals → role fit → proof assets. "
+            f"{identity} "
             f"Open to a brief conversation if timing aligns."
         ),
     }

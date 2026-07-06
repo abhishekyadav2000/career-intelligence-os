@@ -1,6 +1,11 @@
-"""Role fit scoring against universal enterprise technology profile."""
+"""Role fit scoring against the user's real profile."""
+
+from __future__ import annotations
+
+from typing import Any
 
 from src.keyword_extractor import SKILL_TAXONOMY, categorize_keywords
+from src.profile_manager import get_skills_for_matching, load_profile
 
 UNIVERSAL_PROFILE = (
     "Enterprise Technology Analyst — AI Automation, Cloud Security & Data Analytics"
@@ -27,6 +32,12 @@ SCORE_CATEGORIES = [
 ]
 
 
+def _profile_label(profile: dict | None) -> str:
+    if profile and profile.get("headline"):
+        return str(profile["headline"])
+    return UNIVERSAL_PROFILE
+
+
 def _category_score(matched: list[str], category: str) -> float:
     if not matched:
         return 0.0
@@ -47,14 +58,28 @@ def _business_fit(categories: dict) -> float:
     return round(sum(scores) / len(scores), 1) if scores else 0.0
 
 
+def _user_skill_boost(combined: str, profile: dict | None) -> tuple[float, list[str]]:
+    """Bonus fit from direct user skill string matches."""
+    if not profile:
+        return 0.0, []
+    skills = get_skills_for_matching(profile)
+    matched = [s for s in skills if s.lower() in combined.lower()]
+    if not skills:
+        return 0.0, []
+    boost = min(20.0, (len(matched) / len(skills)) * 20.0)
+    return boost, matched
+
+
 def score_role_fit(
     description: str,
     title: str = "",
     location: str = "",
     visa_notes: str = "",
     sponsor_signal: str = "",
+    profile: dict | None = None,
 ) -> dict:
-    """Score job against universal profile with six decision categories."""
+    """Score job against user profile (or universal fallback) with six decision categories."""
+    p = profile or load_profile()
     combined = f"{title} {description}"
     categories = categorize_keywords(combined)
 
@@ -66,7 +91,8 @@ def score_role_fit(
         dimension_scores[skill] = round(dim_score, 1)
         weighted_total += dim_score * weight
 
-    fit_score = round(weighted_total, 1)
+    skill_boost, user_matched = _user_skill_boost(combined, p)
+    fit_score = round(min(100.0, weighted_total + skill_boost), 1)
     if fit_score >= 75:
         fit_label = "Strong Fit"
     elif fit_score >= 55:
@@ -78,13 +104,22 @@ def score_role_fit(
 
     matched_categories = [k for k, v in categories.items() if v]
     gaps = [k for k in PROFILE_WEIGHTS if k not in matched_categories]
+    user_skills = get_skills_for_matching(p)
+    missing_user_skills = [s for s in user_skills if s.lower() not in combined.lower()][:6]
 
     from src.sponsorship_signal import score_sponsorship
     from src.noise_detector import detect_noise
 
     sponsorship = score_sponsorship(visa_notes, sponsor_signal)
     noise = detect_noise(description, title)
-    dfw_score = 80.0 if any(x in (location or "").lower() for x in ("dallas", "plano", "irving", "fort worth", "dfw")) else 40.0
+
+    target_locs = p.get("target_locations", []) if p else []
+    loc_lower = (location or "").lower()
+    dfw_score = 40.0
+    if any(x in loc_lower for x in ("dallas", "plano", "irving", "fort worth", "dfw", "frisco")):
+        dfw_score = 80.0
+    elif target_locs and any(str(t).lower() in loc_lower for t in target_locs):
+        dfw_score = 75.0
 
     category_scores = {
         "technical_fit": _technical_fit(categories),
@@ -98,10 +133,12 @@ def score_role_fit(
     return {
         "fit_score": fit_score,
         "fit_label": fit_label,
-        "profile": UNIVERSAL_PROFILE,
+        "profile": _profile_label(p),
         "dimension_scores": dimension_scores,
         "category_scores": category_scores,
         "matched_categories": matched_categories,
+        "matched_user_skills": user_matched,
+        "missing_user_skills": missing_user_skills,
         "gaps": gaps,
         "categories_found": categories,
         "sponsorship_detail": sponsorship,
@@ -109,8 +146,9 @@ def score_role_fit(
     }
 
 
-def score_jobs_dataframe(jobs_df, companies_df=None) -> list[dict]:
+def score_jobs_dataframe(jobs_df, companies_df=None, profile: dict | None = None) -> list[dict]:
     """Score all jobs; optionally enrich with company sponsor signals."""
+    p = profile or load_profile()
     sponsor_map = {}
     if companies_df is not None:
         sponsor_map = dict(zip(companies_df["company"], companies_df.get("sponsor_signal", "")))
@@ -123,6 +161,7 @@ def score_jobs_dataframe(jobs_df, companies_df=None) -> list[dict]:
             location=row.get("location", ""),
             visa_notes=row.get("visa_notes", ""),
             sponsor_signal=sponsor_map.get(row.get("company", row.get("company_name", "")), ""),
+            profile=p,
         )
         score["job_id"] = row.get("job_id")
         score["company_name"] = row.get("company_name", row.get("company"))

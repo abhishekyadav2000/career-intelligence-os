@@ -108,11 +108,17 @@ from src.interview_simulator import (
     save_simulator_session,
 )
 from src.profile_manager import (
+    build_positioning_statement,
     build_sixty_second_pitch,
     get_portfolio_summary,
+    get_skills_for_matching,
+    get_target_role_families,
     load_profile,
+    profile_completeness_score,
     save_profile,
+    validate_profile,
 )
+from src.profile_matcher import explain_match, match_job_to_profile
 
 from dashboard.icc_state import (
     CONVERSATION_TYPES,
@@ -913,6 +919,10 @@ def tab_demand_first():
 
   with sections[1]:
     render_section_header("Role Fit Board", summary.get("tier_a_roles", 0) + summary.get("tier_b_roles", 0))
+    user_profile = load_profile()
+    target_families = get_target_role_families(user_profile)
+    if target_families:
+      st.caption(f"Highlighting roles matching your targets: {', '.join(target_families[:5])}")
     scores_df = demand_data.get("role_demand_scores", load_role_demand_scores())
     if not scores_df.empty and company_id:
       scores_df = scores_df[scores_df["company_id"] == company_id]
@@ -922,11 +932,20 @@ def tab_demand_first():
       scores_df = scores_df.sort_values("total_fit_score", ascending=False)
       for _, row in scores_df.iterrows():
         tier = row.get("fit_tier", "D")
+        job_dict = row.to_dict()
+        profile_match = match_job_to_profile(job_dict, user_profile)
+        role_title = str(row.get("job_title", "")).lower()
+        role_family = str(row.get("role_family", "")).lower()
+        is_target = any(tf.lower() in role_title or tf.lower() in role_family for tf in target_families)
+        highlight = " 🎯" if is_target else ""
         st.markdown(
-          f"**{row.get('job_title', '')}** — {row.get('total_fit_score', 0)}/100 "
-          f"{render_fit_tier_badge(tier)} · `{row.get('recommended_action', '')}`",
+          f"**{row.get('job_title', '')}**{highlight} — {row.get('total_fit_score', 0)}/100 "
+          f"{render_fit_tier_badge(tier)} · `{row.get('recommended_action', '')}` · "
+          f"Profile match: **{profile_match['score']}/100**",
           unsafe_allow_html=True,
         )
+        if profile_match.get("matched_skills"):
+          st.caption(f"Matched skills: {', '.join(profile_match['matched_skills'][:5])}")
         st.caption(f"{row.get('location', '')} · posted {row.get('posted_date', '')}")
         if row.get("source_url"):
           st.markdown(render_source_chip(row.get("source_url")), unsafe_allow_html=True)
@@ -1088,11 +1107,14 @@ def tab_mission_control():
     else:
         st.caption(f"Portfolio view — select a company in sidebar to focus · {mc['date']}")
 
-    m1, m2, m3, m4 = st.columns(4)
+    m1, m2, m3, m4, m5 = st.columns(5)
     m1.metric("Monday Readiness", f"{readiness['total']}/100", readiness["label"])
     m2.metric("Pipeline Cards", metrics.get("total_cards", 0))
     m3.metric("Follow-Ups Due", metrics.get("follow_up_due", 0))
     m4.metric("Blocked", metrics.get("blocked", 0))
+    user_profile = load_profile()
+    profile_comp = profile_completeness_score(user_profile)
+    m5.metric("Profile Complete", f"{profile_comp['score']}/100")
 
     if mc.get("warnings"):
         with st.expander("Execution warnings", expanded=False):
@@ -1213,7 +1235,11 @@ def tab_mission_control():
             tcols = ["priority_score", "company_name", "job_title", "pipeline_stage", "recommendation_action", "data_confidence"]
             st.dataframe(targets_df[[c for c in tcols if c in targets_df.columns]], use_container_width=True, hide_index=True)
             for idx, row in targets_df.head(5).iterrows():
-                label_btn = f"{row.get('company_name', '')[:20]} — {row.get('job_title', '')[:24]}"
+                job_match = match_job_to_profile(row.to_dict(), user_profile)
+                label_btn = (
+                    f"{row.get('company_name', '')[:20]} — {row.get('job_title', '')[:24]} "
+                    f"(Profile: {job_match['score']}/100)"
+                )
                 if st.button(label_btn, key=f"mc_target_{row.get('job_id', idx)}"):
                     job_row = jobs_df[jobs_df["job_id"] == row.get("job_id")]
                     if not job_row.empty:
@@ -1695,9 +1721,18 @@ def tab_role_fit():
     )
     detail = next(s for s in scores if s["job_id"] == selected)
     st.write(f"**{detail['fit_label']}** ({detail['fit_score']}/100)")
+    job_row = jobs_df[jobs_df["job_id"] == selected].iloc[0]
+    user_profile = load_profile()
+    match_result = match_job_to_profile(job_row.to_dict(), user_profile)
+    st.caption(f"Profile match: {match_result['score']}/100 (Tier {match_result['fit_tier']})")
+    if match_result.get("matched_skills"):
+        st.write(f"**Your matched skills:** {', '.join(match_result['matched_skills'][:8])}")
+    if match_result.get("missing_skills"):
+        st.write(f"**Gaps to address:** {', '.join(match_result['missing_skills'][:6])}")
+    with st.expander("Why this tier?"):
+        st.markdown(explain_match(job_row.to_dict(), user_profile))
     cat_df = pd.DataFrame([{"category": k, "score": v} for k, v in detail["category_scores"].items()])
     st.bar_chart(cat_df.set_index("category")["score"])
-    job_row = jobs_df[jobs_df["job_id"] == selected].iloc[0]
     with st.expander("Job Description"):
         st.write(job_row["description"])
 
@@ -1846,53 +1881,189 @@ def tab_feedback():
 def tab_profile_portfolio():
     st.subheader("My Profile & Portfolio")
     _feature_caption("My Profile & Portfolio")
-    st.caption("In-app profile — used automatically by Interview Simulator")
+    st.caption("Your real profile powers role matching, outreach drafts, and the Interview Simulator. See docs/PROFILE-INTAKE.md.")
 
     profile = load_profile()
     summary = get_portfolio_summary(icc_company_id if icc_focus_mode else None, profile)
+    completeness = profile_completeness_score(profile)
+    validation = validate_profile(profile)
+
     profile_path = ROOT / "data" / "user_profile.yaml"
     last_edited = "—"
     if profile_path.exists():
         last_edited = datetime.fromtimestamp(profile_path.stat().st_mtime).strftime("%Y-%m-%d")
     proof_ids = profile.get("proof_asset_ids", [])
-    char_counts = sum(len(str(v)) for v in [
-        profile.get("positioning", ""),
-        " ".join(profile.get("experience_bullets", [])),
-    ])
+    skill_count = len(get_skills_for_matching(profile))
+
+    comp_score = completeness["score"]
+    comp_color = "normal" if comp_score >= 70 else "off"
+    st.metric("Profile Completeness", f"{comp_score}/100", delta=None)
+    if comp_score < 70:
+        st.warning(f"**Missing for better matching:** {', '.join(completeness['missing'][:8])}")
+
     render_metadata_ribbon([
         render_freshness_badge(last_edited),
+        f'<span class="ci-chip ci-chip-metric">{skill_count} skills</span>',
         f'<span class="ci-chip ci-chip-metric">{len(proof_ids)} proof links</span>',
-        f'<span class="ci-chip ci-chip-metric">{char_counts} chars</span>',
     ])
 
+    education = profile.get("education", {})
+    if not isinstance(education, dict):
+        education = {"school": str(education), "degree": "", "graduation": "", "relevant_coursework": []}
+    skills_obj = profile.get("skills", {})
+    if not isinstance(skills_obj, dict):
+        skills_obj = {"technical": profile.get("skills", []), "tools": [], "domains": []}
+
     with st.form("profile_edit_form"):
-        name = st.text_input("Name", value=profile.get("name", ""))
-        headline = st.text_input("Headline", value=profile.get("headline", ""))
+        st.markdown("#### Basics")
+        c1, c2 = st.columns(2)
+        with c1:
+            name = st.text_input("Name", value=profile.get("name", ""))
+            headline = st.text_input("Headline", value=profile.get("headline", ""))
+            location = st.text_input("Location", value=profile.get("location", ""))
+        with c2:
+            authorization = st.text_input("Work authorization", value=profile.get("authorization", profile.get("opt_status", "")))
+            years_experience = st.text_input("Years of experience", value=str(profile.get("years_experience") or ""))
         positioning = st.text_area("Positioning", value=profile.get("positioning", ""), height=80)
-        skills = st.text_input("Skills (comma-separated)", value=", ".join(profile.get("skills", [])))
-        education = st.text_input("Education", value=profile.get("education", ""))
-        opt_status = st.text_input("Work authorization", value=profile.get("opt_status", ""))
+        networking_positioning = st.text_area(
+            "Networking positioning",
+            value=profile.get("networking_positioning", ""),
+            height=60,
+            help="How you want to be perceived in conversations",
+        )
+
+        st.markdown("#### Target Career")
+        target_roles = st.text_input(
+            "Target role families (comma-separated)",
+            value=", ".join(profile.get("target_roles", [])),
+        )
+        target_industries = st.text_input(
+            "Target industries (comma-separated)",
+            value=", ".join(profile.get("target_industries", [])),
+        )
+        target_locations = st.text_input(
+            "Target locations (comma-separated)",
+            value=", ".join(profile.get("target_locations", [])),
+        )
+        career_goals = st.text_area("Career goals", value=profile.get("career_goals", ""), height=60)
+        deal_breakers = st.text_input(
+            "Deal breakers (comma-separated)",
+            value=", ".join(profile.get("deal_breakers", [])),
+        )
+        preferred_tiers = st.text_input(
+            "Preferred company tiers (comma-separated)",
+            value=", ".join(profile.get("preferred_company_tiers", [])),
+        )
+        salary_range = st.text_input(
+            "Salary expectation range (optional)",
+            value=str(profile.get("salary_expectation_range") or ""),
+        )
+
+        st.markdown("#### Skills & Tools")
+        technical = st.text_input(
+            "Technical skills (comma-separated)",
+            value=", ".join(skills_obj.get("technical", [])),
+        )
+        tools = st.text_input(
+            "Tools (comma-separated)",
+            value=", ".join(skills_obj.get("tools", [])),
+        )
+        domains = st.text_input(
+            "Domains (comma-separated)",
+            value=", ".join(skills_obj.get("domains", [])),
+        )
+        certifications = st.text_input(
+            "Certifications (comma-separated)",
+            value=", ".join(profile.get("certifications", [])),
+        )
+
+        st.markdown("#### Education")
+        ec1, ec2 = st.columns(2)
+        with ec1:
+            edu_school = st.text_input("School", value=education.get("school", ""))
+            edu_degree = st.text_input("Degree", value=education.get("degree", ""))
+        with ec2:
+            edu_grad = st.text_input("Graduation", value=education.get("graduation", ""))
+            edu_coursework = st.text_input(
+                "Relevant coursework (comma-separated)",
+                value=", ".join(education.get("relevant_coursework", [])),
+            )
+
+        st.markdown("#### Experience")
         bullets_text = st.text_area(
             "Experience bullets (one per line)",
             value="\n".join(profile.get("experience_bullets", [])),
             height=120,
         )
+
+        st.markdown("#### Projects")
+        projects_text = st.text_area(
+            "Projects (one per line: Name | Description | skill1, skill2 | url)",
+            value="\n".join(
+                f"{p.get('name', '')} | {p.get('description', '')} | {', '.join(p.get('skills', []))} | {p.get('url', '')}"
+                for p in profile.get("projects", [])
+                if isinstance(p, dict)
+            ),
+            height=100,
+        )
+
+        st.markdown("#### STAR Stories")
+        st.caption("Edit star_stories in user_profile.yaml for full STAR objects, or add via YAML after first save.")
+
         if st.form_submit_button("Save Profile", type="primary"):
+            projects = []
+            for line in projects_text.splitlines():
+                parts = [p.strip() for p in line.split("|")]
+                if parts and parts[0]:
+                    projects.append({
+                        "name": parts[0],
+                        "description": parts[1] if len(parts) > 1 else "",
+                        "skills": [s.strip() for s in parts[2].split(",") if s.strip()] if len(parts) > 2 else [],
+                        "url": parts[3] if len(parts) > 3 else "",
+                    })
+
             updated = dict(profile)
             updated.update({
                 "name": name,
                 "headline": headline,
                 "positioning": positioning,
-                "skills": [s.strip() for s in skills.split(",") if s.strip()],
-                "education": education,
-                "opt_status": opt_status,
+                "location": location,
+                "authorization": authorization,
+                "years_experience": int(years_experience) if years_experience.isdigit() else years_experience or None,
+                "networking_positioning": networking_positioning,
+                "target_roles": [s.strip() for s in target_roles.split(",") if s.strip()],
+                "target_industries": [s.strip() for s in target_industries.split(",") if s.strip()],
+                "target_locations": [s.strip() for s in target_locations.split(",") if s.strip()],
+                "career_goals": career_goals,
+                "deal_breakers": [s.strip() for s in deal_breakers.split(",") if s.strip()],
+                "preferred_company_tiers": [s.strip() for s in preferred_tiers.split(",") if s.strip()],
+                "salary_expectation_range": salary_range or None,
+                "skills": {
+                    "technical": [s.strip() for s in technical.split(",") if s.strip()],
+                    "tools": [s.strip() for s in tools.split(",") if s.strip()],
+                    "domains": [s.strip() for s in domains.split(",") if s.strip()],
+                },
+                "certifications": [s.strip() for s in certifications.split(",") if s.strip()],
+                "education": {
+                    "school": edu_school,
+                    "degree": edu_degree,
+                    "graduation": edu_grad,
+                    "relevant_coursework": [s.strip() for s in edu_coursework.split(",") if s.strip()],
+                },
                 "experience_bullets": [b.strip() for b in bullets_text.splitlines() if b.strip()],
+                "projects": projects,
             })
+            updated.pop("opt_status", None)
             path = save_profile(updated)
             st.success(f"Profile saved to {path.name}")
             st.rerun()
 
     st.divider()
+    positioning_stmt = build_positioning_statement(profile)
+    st.markdown("#### Positioning Statement")
+    st.text_area("Positioning preview", positioning_stmt, height=100, key="positioning_preview")
+    copy_to_clipboard_button(positioning_stmt, "positioning_copy")
+
     st.markdown("#### Linked Proof Assets")
     assets = summary.get("proof_assets", [])
     if assets:
@@ -1903,12 +2074,17 @@ def tab_profile_portfolio():
                 if link:
                     st.caption(f"Demo: `{link}`")
     else:
-        st.info("Add proof_asset_ids to user_profile.yaml")
+        st.info("Add proof_asset_ids to your profile after filling in projects and skills.")
 
     st.markdown("#### 60-Second Pitch")
     pitch = summary.get("sixty_second_pitch", build_sixty_second_pitch(profile))
     st.text_area("Pitch preview", pitch, height=120, key="pitch_preview")
     copy_to_clipboard_button(pitch, "pitch_copy")
+
+    if not validation["valid"]:
+        st.error("Profile validation: " + "; ".join(validation["errors"]))
+    for w in validation.get("warnings", [])[:5]:
+        st.caption(f"⚠ {w}")
 
     highlights = summary.get("resume_highlights", "")
     if highlights:
