@@ -260,6 +260,14 @@ Sample data migrated from DFW Top-50 Sponsor-Friendly Company Workbook:
 - 50 companies, ~117 jobs, ~75 contacts
 - See [docs/data-dictionary.md](docs/data-dictionary.md)
 
+## Case Studies
+
+Portfolio narratives that complement this repository:
+
+- [Career Intelligence OS](case-studies/career-intelligence-os.md)
+- [AI Agent Risk Scoring](case-studies/ai-agent-risk-scoring.md)
+- [Secure Cloud Evidence Lab](case-studies/secure-cloud-evidence-lab.md)
+
 ## License
 
 MIT — portfolio demonstration project.

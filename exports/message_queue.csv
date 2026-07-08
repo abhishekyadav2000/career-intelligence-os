@@ -1,0 +1,7 @@
+message_id,card_id,company_name,job_title,contact_type,person_name,pipeline_stage,message_draft,proof_asset_title,status,priority_score
+MQ-PC-J0001,PC-J0001,JPMorgan Chase,AI Automation Analyst,hiring_manager,Lori Beer,Ready to Contact,"Hi — I'm exploring the AI Automation Analyst opportunity at JPMorgan Chase. My background aligns with bank is pushing ai productivity and has large dfw tech headcount; roles exist around platform modernization, controls, automation, and data systems.. I'd like to share how Career Intelligence OS Dashboard demonstrates the Python, SQL, and analytics skills this role requires. Could we schedule a brief call to discuss the process and timeline?
+
+[Optional — add if asked about work authorization: I'm currently authorized to work in the U.S. on OPT/EAD and targeting roles aligned with my STEM OPT pathway.]",Career Intelligence OS Dashboard,ready,88.1
+MQ-PC-J0002,PC-J0002,JPMorgan Chase,Technology Analyst,hiring_manager,Lori Beer,Ready to Contact,"Hi — I'm exploring the Technology Analyst opportunity at JPMorgan Chase. My background aligns with data pipeline reliability and audit readiness. I'd like to share how Career Intelligence OS Dashboard demonstrates the Python, SQL, and analytics skills this role requires. Could we schedule a brief call to discuss the process and timeline?
+
+[Optional — add if asked about work authorization: I'm currently authorized to work in the U.S. on OPT/EAD and targeting roles aligned with my STEM OPT pathway.]",Career Intelligence OS Dashboard,ready,85.1
